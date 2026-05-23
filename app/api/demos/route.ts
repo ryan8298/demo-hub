@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase
       .from('demos')
       .select('*')
-      .filter('audience', '@>', `["${audience}"]`)
+      .filter('audience', '@>', JSON.stringify([audience]))
       .order('featured', { ascending: false })
       .order('created_at', { ascending: false });
 
