@@ -34,7 +34,7 @@ export default function AddDemoPage() {
     setMessage('');
 
     try {
-      const response = await fetch('/admin/demo/api/demos', {
+      const response = await fetch('/api/demos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
