@@ -29,11 +29,10 @@ export default function Landing() {
 
       if (!response.ok) throw new Error('Sign-up failed');
 
-      const data = await response.json();
+      await response.json();
       const isMicrosoft = formData.email.toLowerCase().endsWith('@microsoft.com');
-
       router.push(isMicrosoft ? '/microsoft/hub' : '/customer/hub');
-    } catch (err) {
+    } catch {
       setError('Failed to sign up. Please try again.');
     } finally {
       setLoading(false);
@@ -47,249 +46,150 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0f0d' }}>
-      {/* Header Navigation */}
-      <div className="border-b" style={{ borderColor: '#e0dfd5' }}>
+    <div className="min-h-screen bg-[#faf9f3] text-[#1a1a1a]">
+      {/* Top Nav */}
+      <nav className="border-b border-[#e2e0d3] bg-white/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold" style={{ color: '#1a1a1a' }}>
-            Echelix
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold">
+              E
+            </div>
+            <span className="text-xl font-bold tracking-tight">Echelix</span>
           </div>
-          <div style={{ color: '#7fac3d' }} className="text-sm font-semibold">
-            Demo Hub
+          <div className="flex items-center gap-6">
+            <span className="text-sm text-[#5c6360] hidden sm:block">Demo Hub</span>
+            <span className="badge">● Live</span>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Hero Section */}
-      <div className="border-b" style={{ borderColor: '#e0dfd5' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      {/* Hero */}
+      <section className="bg-grid relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left: Heading */}
-            <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight" style={{ color: '#1a1a1a' }}>
-                Experience Our Solutions
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e8f5e0] text-[#6a9530] text-xs font-semibold mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#7fac3d] animate-pulse" />
+                Interactive Solution Demonstrations
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-[1.05] tracking-tight">
+                Experience the future of <span className="text-[#7fac3d]">agentic</span> enterprise software.
               </h1>
-              <p className="text-xl mb-8" style={{ color: '#666666' }}>
-                Explore interactive demonstrations of how Echelix solutions can transform your organization
+              <p className="text-lg md:text-xl text-[#5c6360] mb-8 max-w-xl">
+                Explore hands-on demonstrations of Echelix solutions — purpose-built to modernize operations, accelerate AI adoption, and deliver measurable business value.
               </p>
-              <div className="flex gap-3">
-                <span
-                  className="text-sm font-semibold px-4 py-2 rounded-full"
-                  style={{
-                    background: '#e8f5e0',
-                    color: '#7fac3d',
-                  }}
-                >
-                  🚀 Live Demos
-                </span>
-                <span
-                  className="text-sm font-semibold px-4 py-2 rounded-full"
-                  style={{
-                    background: '#e8f5e0',
-                    color: '#7fac3d',
-                  }}
-                >
-                  💼 Enterprise Ready
-                </span>
+              <div className="flex flex-wrap gap-3 mb-2">
+                <span className="badge">🚀 Live Demos</span>
+                <span className="badge">🏢 Enterprise Ready</span>
+                <span className="badge">🔵 Microsoft Partner</span>
               </div>
             </div>
 
             {/* Right: Form */}
-            <div>
-              <div
-                className="rounded-lg p-8"
-                style={{
-                  background: '#f3f3e9',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <h2 className="text-2xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
-                  Access Demos
-                </h2>
-                <p className="mb-6" style={{ color: '#666666' }}>
-                  Enter your information to explore our solutions
+            <div className="lg:col-span-5">
+              <div className="bg-white rounded-2xl p-8 shadow-[0_8px_32px_-8px_rgba(10,15,13,0.12)] border border-[#e2e0d3]">
+                <h2 className="text-2xl font-bold mb-1">Access the Demo Hub</h2>
+                <p className="text-sm text-[#5c6360] mb-6">
+                  Enter your details to explore live solution demos.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {error && (
-                    <div
-                      className="p-4 rounded-lg text-sm"
-                      style={{
-                        background: '#fde9e9',
-                        color: '#cd3232',
-                        borderLeft: '4px solid #cd3232',
-                      }}
-                    >
+                    <div className="p-3 rounded-lg text-sm bg-[#fde9e9] text-[#cd3232] border-l-4 border-[#cd3232]">
                       {error}
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <input
                       type="text"
-                      placeholder="First Name"
+                      placeholder="First name"
                       value={formData.first_name}
                       onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                       required
-                      className="w-full px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
-                      style={{
-                        background: '#ffffff',
-                        borderColor: '#e0dfd5',
-                        color: '#1a1a1a',
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#7fac3d';
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#e0dfd5';
-                      }}
+                      className="input-field"
                     />
-
                     <input
                       type="text"
-                      placeholder="Last Name"
+                      placeholder="Last name"
                       value={formData.last_name}
                       onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                       required
-                      className="w-full px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
-                      style={{
-                        background: '#ffffff',
-                        borderColor: '#e0dfd5',
-                        color: '#1a1a1a',
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#7fac3d';
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#e0dfd5';
-                      }}
+                      className="input-field"
                     />
                   </div>
 
                   <input
                     type="email"
-                    placeholder="Work Email"
+                    placeholder="Work email"
                     value={formData.email}
                     onChange={handleEmailChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
-                    style={{
-                      background: '#ffffff',
-                      borderColor: isMicrosoftEmail ? '#7fac3d' : '#e0dfd5',
-                      color: '#1a1a1a',
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#7fac3d';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = isMicrosoftEmail ? '#7fac3d' : '#e0dfd5';
-                    }}
+                    className="input-field"
                   />
 
                   {isMicrosoftEmail && (
-                    <div
-                      className="p-3 rounded-lg text-sm flex items-center gap-2"
-                      style={{
-                        background: '#f0f8ed',
-                        color: '#7fac3d',
-                      }}
-                    >
-                      ✓ Microsoft access detected
+                    <div className="p-3 rounded-lg text-sm bg-[#e8f5e0] text-[#6a9530] flex items-center gap-2 border-l-4 border-[#7fac3d]">
+                      <span>✓</span>
+                      <span>Microsoft account detected — you&apos;ll get the Microsoft Partner hub.</span>
                     </div>
                   )}
 
                   <input
                     type="text"
-                    placeholder="Company Name"
+                    placeholder="Company name"
                     value={formData.company_name}
                     onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                     required
-                    className="w-full px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
-                    style={{
-                      background: '#ffffff',
-                      borderColor: '#e0dfd5',
-                      color: '#1a1a1a',
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#7fac3d';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e0dfd5';
-                    }}
+                    className="input-field"
                   />
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 px-6 rounded-lg font-semibold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      background: '#7fac3d',
-                      color: '#f3f3e9',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#6a9530';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#7fac3d';
-                    }}
-                  >
-                    {loading ? 'Signing up...' : 'Explore Demos →'}
+                  <button type="submit" disabled={loading} className="btn-primary w-full text-base">
+                    {loading ? 'Signing you in…' : 'Explore Demos →'}
                   </button>
                 </form>
 
-                <p
-                  className="text-center text-xs mt-4"
-                  style={{ color: '#999999' }}
-                >
-                  By accessing demos, you agree to our Terms of Service
+                <p className="text-center text-xs mt-4 text-[#8a8f8c]">
+                  By accessing demos, you agree to our Terms of Service.
                 </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Info Section */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="text-2xl mb-2">🎯</div>
-            <h3 className="text-lg font-bold mb-2" style={{ color: '#1a1a1a' }}>
-              Interactive Demos
-            </h3>
-            <p style={{ color: '#666666' }}>
-              Experience live, hands-on demonstrations of our solutions in real time
-            </p>
-          </div>
-          <div>
-            <div className="text-2xl mb-2">🔐</div>
-            <h3 className="text-lg font-bold mb-2" style={{ color: '#1a1a1a' }}>
-              Secure Access
-            </h3>
-            <p style={{ color: '#666666' }}>
-              Enterprise-grade security with Microsoft Teams integration for authorized users
-            </p>
-          </div>
-          <div>
-            <div className="text-2xl mb-2">⚡</div>
-            <h3 className="text-lg font-bold mb-2" style={{ color: '#1a1a1a' }}>
-              Quick Onboarding
-            </h3>
-            <p style={{ color: '#666666' }}>
-              Start exploring in seconds with just your email and company information
-            </p>
+      {/* Feature Strip */}
+      <section className="bg-[#f3f3e9] border-y border-[#e2e0d3]">
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: '🎯', title: 'Interactive Demos', body: 'Experience live, hands-on demonstrations of every Echelix solution in real time.' },
+              { icon: '🔐', title: 'Secure Access', body: 'Enterprise-grade security with seamless Microsoft Teams integration for partners.' },
+              { icon: '⚡', title: 'Instant Onboarding', body: 'Start exploring in seconds — just your email and company information.' },
+            ].map((f) => (
+              <div key={f.title} className="bg-white rounded-xl p-6 border border-[#e2e0d3]">
+                <div className="text-3xl mb-3">{f.icon}</div>
+                <h3 className="text-lg font-bold mb-2">{f.title}</h3>
+                <p className="text-sm text-[#5c6360]">{f.body}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Footer */}
-      <div className="border-t" style={{ borderColor: '#e0dfd5' }}>
-        <div className="max-w-7xl mx-auto px-6 py-8 text-center">
-          <p style={{ color: '#999999' }} className="text-sm">
-            Echelix Demo Hub • Modernize. Build Agentic Apps. Deliver Business Value.
+      <footer className="border-t border-[#e2e0d3] bg-white">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold text-xs">E</div>
+            <span className="font-semibold text-sm">Echelix Demo Hub</span>
+          </div>
+          <p className="text-xs text-[#8a8f8c]">
+            Modernize. Build Agentic Apps. Deliver Business Value.
           </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
