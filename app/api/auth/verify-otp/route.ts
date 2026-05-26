@@ -39,17 +39,48 @@ export async function POST(req: NextRequest) {
   }
 
   // Verify the OTP against Supabase Auth.
-  const { data, error } = await supabaseAdmin.auth.verifyOtp({
-    email,
-    token: code,
-    type: "email",
-  });
+  //
+  // `signInWithOtp` issues different token types depending on whether the
+  // email already exists:
+  //   • brand-new user  →  type: 'signup'
+  //   • existing user   →  type: 'email'
+  //
+  // We don't know which case we're in from the client side, so try both.
+  // Each attempt is a no-op DB read if the type doesn't match — cheap.
+  let data: Awaited<ReturnType<typeof supabaseAdmin.auth.verifyOtp>>["data"] | null = null;
+  let lastError: { message?: string; status?: number; code?: string } | null = null;
 
-  if (error || !data?.user) {
-    return NextResponse.json(
-      { error: "Invalid or expired code. Please request a new one." },
-      { status: 401 }
-    );
+  for (const type of ["email", "signup"] as const) {
+    const result = await supabaseAdmin.auth.verifyOtp({ email, token: code, type });
+    if (!result.error && result.data?.user) {
+      data = result.data;
+      lastError = null;
+      break;
+    }
+    lastError = {
+      message: result.error?.message,
+      status: result.error?.status,
+      code: result.error?.code,
+    };
+  }
+
+  if (!data) {
+    console.error("Supabase verifyOtp failed:", { email, lastError });
+
+    const msg = (lastError?.message || "").toLowerCase();
+    let userMessage = "Invalid or expired code. Please request a new one.";
+    let httpStatus = 401;
+
+    if (msg.includes("expired")) {
+      userMessage = "That code has expired. Please request a new one.";
+    } else if (msg.includes("rate") || msg.includes("too many") || lastError?.status === 429) {
+      userMessage = "Too many attempts. Please wait a few minutes before trying again.";
+      httpStatus = 429;
+    } else if (msg.includes("invalid")) {
+      userMessage = "That code doesn't match. Double-check the digits or request a new one.";
+    }
+
+    return NextResponse.json({ error: userMessage }, { status: httpStatus });
   }
 
   const is_microsoft = email.endsWith("@microsoft.com");
