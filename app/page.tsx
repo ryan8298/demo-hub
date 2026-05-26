@@ -11,28 +11,88 @@ export default function Landing() {
     email: '',
     company_name: ''
   });
+  const [step, setStep] = useState<'profile' | 'code'>('profile');
+  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [isMicrosoftEmail, setIsMicrosoftEmail] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  function openModal() {
+    setError('');
+    setInfo('');
+    setCode('');
+    setStep('profile');
+    setShowForm(true);
+  }
+
+  async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('/api/auth', {
+      const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ email: formData.email }),
       });
-      if (!response.ok) throw new Error('Sign-up failed');
-      await response.json();
-      const isMicrosoft = formData.email.toLowerCase().endsWith('@microsoft.com');
-      router.push(isMicrosoft ? '/microsoft/hub' : '/customer/hub');
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Could not send code.');
+        return;
+      }
+      setInfo(`A 6-digit code was sent to ${formData.email}.`);
+      setStep('code');
     } catch {
-      setError('Failed to sign up. Please try again.');
+      setError('Network error — please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Verification failed.');
+        return;
+      }
+      router.push(data.redirect || '/customer/hub');
+    } catch {
+      setError('Network error — please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResendOtp() {
+    setLoading(true);
+    setError('');
+    setInfo('');
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Could not resend code.');
+        return;
+      }
+      setInfo('New code sent.');
+    } catch {
+      setError('Network error — please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,7 +118,7 @@ export default function Landing() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
               </svg>
             </button>
-            <button onClick={() => setShowForm(true)} className="btn-pill">
+            <button onClick={() => openModal()} className="btn-pill">
               Menu
             </button>
           </div>
@@ -88,7 +148,7 @@ export default function Landing() {
               Explore live, interactive demonstrations of Echelix solutions — purpose-built to modernize operations, embed AI, and deliver measurable business value, fast.
             </p>
             <div className="flex flex-wrap gap-3 items-center">
-              <button onClick={() => setShowForm(true)} className="btn-pill">
+              <button onClick={() => openModal()} className="btn-pill">
                 Access Demos →
               </button>
               <a href="#features" className="btn-ghost">
@@ -160,7 +220,7 @@ export default function Landing() {
           <h2 className="font-serif text-4xl md:text-6xl text-[#F3F3E9] mb-8 max-w-3xl mx-auto leading-[1.05]">
             See what <em className="text-[#B2EEDA] not-italic">agentic</em> looks like in production.
           </h2>
-          <button onClick={() => setShowForm(true)} className="btn-pill">
+          <button onClick={() => openModal()} className="btn-pill">
             Access Demos →
           </button>
         </div>
@@ -193,68 +253,126 @@ export default function Landing() {
             >
               ✕
             </button>
-            <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-3">Access Demos</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-3">
+              {step === 'profile' ? 'Access Demos' : 'Verify your email'}
+            </p>
             <h2 className="font-serif text-3xl text-[#F3F3E9] mb-2 leading-tight">
-              Step inside the hub.
+              {step === 'profile' ? 'Step inside the hub.' : 'Check your inbox.'}
             </h2>
             <p className="text-sm text-[#8B8586] mb-6">
-              Enter your details and we&apos;ll route you to the right experience.
+              {step === 'profile'
+                ? "Enter your details — we'll send a 6-digit code to verify your email."
+                : `Enter the 6-digit code we sent to ${formData.email}.`}
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-              {error && (
-                <div className="p-3 rounded-lg text-sm bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30">
-                  {error}
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="text"
-                  placeholder="First name"
-                  value={formData.first_name}
-                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                  required
-                  className="input-field"
-                />
-                <input
-                  type="text"
-                  placeholder="Last name"
-                  value={formData.last_name}
-                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                  required
-                  className="input-field"
-                />
+            {error && (
+              <div className="p-3 mb-3 rounded-lg text-sm bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30">
+                {error}
               </div>
+            )}
+            {info && !error && (
+              <div className="p-3 mb-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25">
+                {info}
+              </div>
+            )}
 
-              <input
-                type="email"
-                placeholder="Work email"
-                value={formData.email}
-                onChange={handleEmailChange}
-                required
-                className="input-field"
-              />
-
-              {isMicrosoftEmail && (
-                <div className="p-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25">
-                  ✓ Microsoft account detected — routing to Partner Hub.
+            {step === 'profile' ? (
+              <form onSubmit={handleSendOtp} className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    placeholder="First name"
+                    value={formData.first_name}
+                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    required
+                    className="input-field"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Last name"
+                    value={formData.last_name}
+                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    required
+                    className="input-field"
+                  />
                 </div>
-              )}
 
-              <input
-                type="text"
-                placeholder="Company name"
-                value={formData.company_name}
-                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                required
-                className="input-field"
-              />
+                <input
+                  type="email"
+                  placeholder="Work email"
+                  value={formData.email}
+                  onChange={handleEmailChange}
+                  required
+                  className="input-field"
+                />
 
-              <button type="submit" disabled={loading} className="btn-pill w-full mt-2">
-                {loading ? 'Signing in…' : 'Enter the Hub →'}
-              </button>
-            </form>
+                {isMicrosoftEmail && (
+                  <div className="p-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25">
+                    ✓ Microsoft account detected — you&apos;ll be routed to the Partner Hub.
+                  </div>
+                )}
+
+                <input
+                  type="text"
+                  placeholder="Company name"
+                  value={formData.company_name}
+                  onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                  required
+                  className="input-field"
+                />
+
+                <button type="submit" disabled={loading} className="btn-pill w-full mt-2">
+                  {loading ? 'Sending code…' : 'Send Verification Code →'}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="space-y-3">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="\d{6}"
+                  maxLength={6}
+                  placeholder="••••••"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  required
+                  autoFocus
+                  className="input-field text-center text-2xl tracking-[0.5em] font-mono"
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading || code.length !== 6}
+                  className="btn-pill w-full mt-2"
+                >
+                  {loading ? 'Verifying…' : 'Verify & Enter Hub →'}
+                </button>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep('profile');
+                      setError('');
+                      setInfo('');
+                      setCode('');
+                    }}
+                    className="text-xs uppercase tracking-[0.2em] text-[#8B8586] hover:text-[#B2EEDA] transition"
+                  >
+                    ← Change email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={loading}
+                    className="text-xs uppercase tracking-[0.2em] text-[#8B8586] hover:text-[#B2EEDA] transition disabled:opacity-50"
+                  >
+                    Resend code
+                  </button>
+                </div>
+              </form>
+            )}
 
             <p className="text-center text-[10px] uppercase tracking-[0.2em] mt-5 text-[#605A5B]">
               By continuing, you agree to our Terms.

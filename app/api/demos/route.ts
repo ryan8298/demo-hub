@@ -1,91 +1,85 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const audience = searchParams.get('audience') || 'customer';
+    const audience = searchParams.get("audience") || "customer";
 
-    let { data, error } = await supabase
-      .from('demos')
-      .select('*')
-      .order('featured', { ascending: false })
-      .order('created_at', { ascending: false });
+    // Filter at the database. `audience` is a text[] column — `contains`
+    // returns rows whose array includes every element of the given array.
+    const { data, error } = await supabase
+      .from("demos")
+      .select("*")
+      .contains("audience", [audience])
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
-
-    // Filter by audience on the client side
-    if (data) {
-      data = data.filter(demo => demo.audience && demo.audience.includes(audience));
-    }
-
-    return NextResponse.json(data);
+    return NextResponse.json(data ?? []);
   } catch (error) {
-    console.error('Error fetching demos:', error);
+    console.error("Error fetching demos:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch demos' },
+      { error: "Failed to fetch demos" },
       { status: 500 }
     );
   }
 }
 
 export async function POST(request: NextRequest) {
+  // Cookie-based admin auth. No more X-Admin-Key header, no more
+  // NEXT_PUBLIC_ADMIN_API_KEY in the client bundle.
+  const unauth = await requireAdmin(request);
+  if (unauth) return unauth;
+
   try {
-    // Validate admin API key
-    const adminKey = request.headers.get('X-Admin-Key');
-    const expectedKey = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_API_KEY;
-
-    console.log('Admin Key Check:', {
-      received: adminKey,
-      expected: expectedKey,
-      adminKeyEmpty: !adminKey,
-      expectedKeyEmpty: !expectedKey,
-    });
-
-    if (adminKey !== expectedKey) {
-      return NextResponse.json(
-        { error: 'Unauthorized', debug: { received: adminKey?.substring(0, 10), expected: expectedKey?.substring(0, 10) } },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { title, description, demo_url, slug, audience, roi_summary, industry, preview_image_url } = body;
+    const {
+      title,
+      description,
+      demo_url,
+      slug,
+      audience,
+      roi_summary,
+      industry,
+      preview_image_url,
+    } = body;
 
-    // Validate required fields
     if (!title || !demo_url || !slug || !audience || audience.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const { data, error } = await supabase
-      .from('demos')
+    // Writes go through the service-role client. With RLS enabled (step 3)
+    // the anon client cannot insert at all — only the service role can.
+    const { data, error } = await supabaseAdmin
+      .from("demos")
       .insert([
         {
           title,
           description: description || null,
           demo_url,
           slug,
-          audience: audience,
+          audience,
           roi_summary: roi_summary || null,
           industry: industry || null,
           preview_image_url: preview_image_url || null,
           featured: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        }
+        },
       ])
       .select();
 
     if (error) throw error;
-
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Error creating demo:', error);
+    console.error("Error creating demo:", error);
     return NextResponse.json(
-      { error: 'Failed to create demo' },
+      { error: "Failed to create demo" },
       { status: 500 }
     );
   }

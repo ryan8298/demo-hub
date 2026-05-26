@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { EchelixLogo } from '@/components/HubShared';
 
 const INDUSTRIES = [
@@ -16,6 +17,7 @@ const INDUSTRIES = [
 ];
 
 export default function AddDemoPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -94,13 +96,16 @@ export default function AddDemoPage() {
     try {
       const response = await fetch('/api/demos', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Key': process.env.NEXT_PUBLIC_ADMIN_API_KEY || '',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin', // ensures the admin session cookie is sent
         body: JSON.stringify({ ...formData, preview_image_url: previewImage || undefined }),
       });
       const data = await response.json();
+      if (response.status === 401) {
+        // Session expired or was revoked — bounce to login
+        router.push('/admin/login?next=/admin/demo/add');
+        return;
+      }
       if (!response.ok) {
         setMessageType('error');
         setMessage(`Error: ${data.error || 'Failed to create demo'}`);
@@ -127,7 +132,20 @@ export default function AddDemoPage() {
           <a href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-7 md:h-8 w-auto" />
           </a>
-          <span className="badge">Admin</span>
+          <div className="flex items-center gap-3">
+            <span className="badge">Admin</span>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+                router.push('/admin/login');
+                router.refresh();
+              }}
+              className="text-[10px] uppercase tracking-[0.25em] text-[#8B8586] hover:text-[#B2EEDA] transition"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </nav>
 
