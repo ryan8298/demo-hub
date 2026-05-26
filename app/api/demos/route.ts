@@ -6,14 +6,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const audience = searchParams.get('audience') || 'customer';
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('demos')
       .select('*')
-      .overlaps('audience', [audience])
       .order('featured', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+
+    // Filter by audience on the client side
+    if (data) {
+      data = data.filter(demo => demo.audience && demo.audience.includes(audience));
+    }
 
     return NextResponse.json(data);
   } catch (error) {
