@@ -7,6 +7,7 @@ import {
   COOKIE_VISITOR,
   VISITOR_TTL_SECONDS,
 } from "@/lib/session";
+import { isMicrosoftEmail } from "@/lib/microsoft-access";
 
 /**
  * Step 2 of visitor auth: verify the 6-digit code, capture profile data,
@@ -102,7 +103,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const is_microsoft = email.endsWith("@microsoft.com");
+  // Microsoft hub eligibility — production = @microsoft.com only, plus any
+  // emails/domains listed in MICROSOFT_TEST_EMAILS env var for testing.
+  const is_microsoft = isMicrosoftEmail(email);
 
   // Persist the profile for analytics / personalization.
   if (first_name && last_name && company_name) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession, COOKIE_ADMIN, COOKIE_VISITOR } from "@/lib/session";
+import { isMicrosoftEmail } from "@/lib/microsoft-access";
 
 /**
  * Next.js 16 Proxy (formerly Middleware) — runs at the edge before
@@ -36,10 +37,11 @@ export async function proxy(req: NextRequest) {
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
-    // Microsoft hub requires a verified @microsoft.com email
+    // Microsoft hub requires a verified @microsoft.com email (or an entry
+    // in MICROSOFT_TEST_EMAILS env var — see lib/microsoft-access.ts).
     if (pathname.startsWith("/microsoft")) {
-      const email = String(session.sub || "").toLowerCase();
-      if (!email.endsWith("@microsoft.com")) {
+      const email = String(session.sub || "");
+      if (!isMicrosoftEmail(email)) {
         const url = req.nextUrl.clone();
         url.pathname = "/customer/hub";
         return NextResponse.redirect(url);
