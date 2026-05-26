@@ -17,7 +17,16 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return NextResponse.json(data ?? []);
+
+    // Edge cache the response. s-maxage tells Vercel to serve cached
+    // responses for 60s; stale-while-revalidate lets it serve a stale
+    // response while it refreshes in the background. Net effect: with 50
+    // concurrent users, Supabase sees ~1 query per minute instead of 50.
+    return NextResponse.json(data ?? [], {
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      },
+    });
   } catch (error) {
     console.error("Error fetching demos:", error);
     return NextResponse.json(

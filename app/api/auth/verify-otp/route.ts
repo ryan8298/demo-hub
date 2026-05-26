@@ -8,6 +8,12 @@ import {
   VISITOR_TTL_SECONDS,
 } from "@/lib/session";
 import { isMicrosoftEmail } from "@/lib/microsoft-access";
+import { consume, clientIp } from "@/lib/rate-limit";
+
+// 10 verify attempts per IP per 10 minutes. Strict enough to make brute-
+// forcing a 6-digit code infeasible (10 / 1,000,000 = 0.001% chance per window).
+const VERIFY_LIMIT = 10;
+const VERIFY_WINDOW_SECONDS = 600;
 
 /**
  * Step 2 of visitor auth: verify the 6-digit code, capture profile data,
@@ -36,6 +42,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Email and code are required." },
       { status: 400 }
+    );
+  }
+
+  // Rate limit BEFORE hitting Supabase — keeps both us and them out of
+  // brute-force territory.
+  const ip = clientIp(req);
+  const ipResult = consume(`otp-verify:ip:${ip}`, VERIFY_LIMIT, VERIFY_WINDOW_SECONDS);
+  const emailResult = consume(
+    `otp-verify:email:${email}`,
+    VERIFY_LIMIT,
+    VERIFY_WINDOW_SECONDS
+  );
+  if (!ipResult.ok || !emailResult.ok) {
+    const reset = Math.max(ipResult.resetSeconds, emailResult.resetSeconds);
+    return NextResponse.json(
+      {
+        error: `Too many attempts. Try again in ${Math.ceil(reset / 60)} minute${
+          reset > 60 ? "s" : ""
+        }.`,
+      },
+      { status: 429, headers: { "Retry-After": String(reset) } }
     );
   }
 

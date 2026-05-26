@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { consume, clientIp } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// 5 OTP send requests per IP per 10 minutes. Resend free tier is 100/day,
+// so this protects both quota and real users from accidental abuse.
+const SEND_LIMIT = 5;
+const SEND_WINDOW_SECONDS = 600;
 
 /**
  * Step 1 of visitor auth: send a one-time passcode (6-8 digits, configurable
@@ -22,6 +28,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Please enter a valid work email." },
       { status: 400 }
+    );
+  }
+
+  // Rate limit by IP first (cheap, no DB hit). Use both IP and email keys
+  // so an attacker can't brute one email across IPs and a shared NAT can't
+  // lock out an entire office.
+  const ip = clientIp(req);
+  const ipResult = consume(`otp-send:ip:${ip}`, SEND_LIMIT, SEND_WINDOW_SECONDS);
+  const emailResult = consume(
+    `otp-send:email:${email}`,
+    SEND_LIMIT,
+    SEND_WINDOW_SECONDS
+  );
+  if (!ipResult.ok || !emailResult.ok) {
+    const reset = Math.max(ipResult.resetSeconds, emailResult.resetSeconds);
+    return NextResponse.json(
+      {
+        error: `Too many code requests. Try again in ${Math.ceil(reset / 60)} minute${
+          reset > 60 ? "s" : ""
+        }.`,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(reset) },
+      }
     );
   }
 
