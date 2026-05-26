@@ -41,9 +41,18 @@ export async function PUT(
     if (error) throw error;
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error updating demo:", error);
+    const err = error as {
+      message?: string;
+      code?: string;
+      hint?: string;
+      details?: string;
+    };
+    console.error("Error updating demo:", err);
     return NextResponse.json(
-      { error: "Failed to update demo" },
+      {
+        error: `Failed to update demo: ${err.message || "Unknown error"}`,
+        detail: { code: err.code, hint: err.hint, details: err.details },
+      },
       { status: 500 }
     );
   }

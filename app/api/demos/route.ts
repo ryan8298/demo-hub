@@ -94,9 +94,23 @@ export async function POST(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error creating demo:", error);
+    // Supabase's PostgrestError carries message + code + hint + details
+    const err = error as {
+      message?: string;
+      code?: string;
+      hint?: string;
+      details?: string;
+    };
+    console.error("Error creating demo:", err);
     return NextResponse.json(
-      { error: "Failed to create demo" },
+      {
+        error: `Failed to create demo: ${err.message || "Unknown error"}`,
+        detail: {
+          code: err.code,
+          hint: err.hint,
+          details: err.details,
+        },
+      },
       { status: 500 }
     );
   }

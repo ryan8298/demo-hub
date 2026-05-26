@@ -185,7 +185,10 @@ export function DemoLinkCard({
       });
       const data = await res.json();
       if (!res.ok) {
-        setUploadError(data.error || 'Upload failed.');
+        const detailStr = data.detail
+          ? ` (${JSON.stringify(data.detail)})`
+          : '';
+        setUploadError((data.error || 'Upload failed.') + detailStr);
         return;
       }
       onPreviewChange(data.url);
@@ -514,7 +517,10 @@ export function DetailPageCard({
       });
       const data = await res.json();
       if (!res.ok) {
-        setUploadError(data.error || 'Upload failed.');
+        const detailStr = data.detail
+          ? ` (${JSON.stringify(data.detail)})`
+          : '';
+        setUploadError((data.error || 'Upload failed.') + detailStr);
         return;
       }
       update({ architecture_diagram_url: data.url });
@@ -564,12 +570,12 @@ export function DetailPageCard({
 
         <Field
           label="Architecture Diagram"
-          hint="High-level Microsoft-based solution architecture. PNG/JPG/SVG, max 5 MB."
+          hint="High-level Microsoft-based solution architecture. PNG, JPG, WebP, SVG, or PDF — max 10 MB."
         >
           <label className="block">
             <input
               type="file"
-              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml,application/pdf,.pdf"
               onChange={handleArchUpload}
               disabled={uploading}
               className="block w-full text-sm text-grey-300
@@ -585,40 +591,80 @@ export function DetailPageCard({
           </label>
           {uploading && <p className="text-xs text-grey-400 mt-2">Uploading…</p>}
           {uploadError && (
-            <p className="text-xs text-error mt-2" role="alert">
+            <p className="text-xs text-error mt-2 break-words" role="alert">
               {uploadError}
             </p>
           )}
         </Field>
 
         {values.architecture_diagram_url && (
-          <div className="p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam">
-                ✓ Architecture diagram uploaded
-              </p>
-              <button
-                type="button"
-                onClick={() => update({ architecture_diagram_url: '' })}
-                className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition"
-              >
-                Remove
-              </button>
-            </div>
-            <div className="relative w-full h-48 rounded overflow-hidden bg-black/40">
-              <Image
-                src={values.architecture_diagram_url}
-                alt="Architecture diagram"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain"
-                unoptimized={values.architecture_diagram_url.startsWith('http')}
-              />
-            </div>
-          </div>
+          <ArchitecturePreview
+            url={values.architecture_diagram_url}
+            onRemove={() => update({ architecture_diagram_url: '' })}
+          />
         )}
       </div>
     </section>
+  );
+}
+
+/**
+ * Preview tile for an uploaded architecture diagram. Renders an image
+ * via next/image OR a PDF badge with download link — based on the URL
+ * extension / content type.
+ */
+function ArchitecturePreview({
+  url,
+  onRemove,
+}: {
+  url: string;
+  onRemove: () => void;
+}) {
+  const isPdf = /\.pdf(\?|$)/i.test(url);
+  return (
+    <div className="p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam">
+          ✓ Architecture diagram uploaded {isPdf && '(PDF)'}
+        </p>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition"
+        >
+          Remove
+        </button>
+      </div>
+      {isPdf ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 p-4 rounded bg-black/40 hover:bg-black/60 transition"
+        >
+          <div className="w-10 h-12 rounded bg-error/20 border border-error/40 flex items-center justify-center text-error text-[10px] font-bold">
+            PDF
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-milk truncate">{url.split('/').pop()}</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-grey-500 mt-1">
+              Click to open in a new tab
+            </p>
+          </div>
+        </a>
+      ) : (
+        <div className="relative w-full h-48 rounded overflow-hidden bg-black/40">
+          <Image
+            src={url}
+            alt="Architecture diagram"
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-contain"
+            unoptimized={url.startsWith('http')}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -647,9 +693,9 @@ export function SubmitCard({
       {message && (
         <div
           role={messageType === 'error' ? 'alert' : 'status'}
-          className={`p-3 rounded-lg text-xs mb-4 border ${
+          className={`p-3 rounded-lg text-xs mb-4 border whitespace-pre-wrap break-words font-mono ${
             messageType === 'success'
-              ? 'bg-sea-foam/5 text-sea-foam border-sea-foam/30'
+              ? 'bg-sea-foam/5 text-sea-foam border-sea-foam/30 font-sans'
               : 'bg-error/10 text-error border-error/30'
           }`}
         >

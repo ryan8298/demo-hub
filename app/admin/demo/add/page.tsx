@@ -94,7 +94,12 @@ export default function AddDemoPage() {
       }
       if (!response.ok) {
         setMessageType('error');
-        setMessage(`Error: ${data.error || 'Failed to create demo'}`);
+        // Surface raw Supabase error detail so we can diagnose without
+        // digging through Vercel logs.
+        const detailStr = data.detail
+          ? `\n\nDetail: ${JSON.stringify(data.detail)}`
+          : '';
+        setMessage(`${data.error || 'Failed to create demo'}${detailStr}`);
         return;
       }
       setMessageType('success');

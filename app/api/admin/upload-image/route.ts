@@ -3,13 +3,14 @@ import { requireAdmin } from "@/lib/require-admin";
 import { supabaseAdmin } from "@/lib/supabase";
 import { consume, clientIp } from "@/lib/rate-limit";
 
-const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = new Set([
   "image/png",
   "image/jpeg",
   "image/webp",
   "image/gif",
   "image/svg+xml",
+  "application/pdf",
 ]);
 
 const ALLOWED_FOLDERS = new Set(["previews", "architecture"]);
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
   }
   if (!ALLOWED_TYPES.has(file.type)) {
     return NextResponse.json(
-      { error: "Unsupported file type. Use PNG, JPG, WebP, GIF, or SVG." },
+      { error: "Unsupported file type. Use PNG, JPG, WebP, GIF, SVG, or PDF." },
       { status: 400 }
     );
   }
@@ -93,9 +94,29 @@ export async function POST(req: NextRequest) {
     });
 
   if (uploadError) {
-    console.error("storage upload failed:", uploadError.message);
+    // Full detail to Vercel logs
+    console.error("storage upload failed:", {
+      message: uploadError.message,
+      name: uploadError.name,
+      bucket: "demo-assets",
+      path,
+      contentType: file.type,
+      size: file.size,
+    });
+
+    // Surface the actual error to the admin so they don't have to dig
+    // through Vercel logs. Admin route — no PII risk.
+    const msg = uploadError.message || "Upload failed";
     return NextResponse.json(
-      { error: "Upload failed. Check that the 'demo-assets' bucket exists." },
+      {
+        error: `Upload failed: ${msg}`,
+        detail: {
+          name: uploadError.name,
+          bucket: "demo-assets",
+          path,
+          contentType: file.type,
+        },
+      },
       { status: 500 }
     );
   }

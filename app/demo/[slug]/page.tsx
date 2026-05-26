@@ -146,26 +146,44 @@ export default async function PublicDemoPage({
           </section>
         )}
 
-        {/* Architecture diagram */}
+        {/* Architecture diagram — image or PDF */}
         {demo.architecture_diagram_url && (
           <section className="mt-12">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-3">
-              Solution Architecture
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-sage">
+                Solution Architecture
+              </p>
+              <a
+                href={demo.architecture_diagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-sea-foam transition"
+              >
+                Open ↗
+              </a>
+            </div>
             <h2 className="font-serif text-2xl md:text-3xl text-milk mb-6">
               How it fits together
             </h2>
             <div className="card p-4 md:p-6">
-              <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden bg-black/40">
-                <Image
+              {/\.pdf(\?|$)/i.test(demo.architecture_diagram_url) ? (
+                <iframe
                   src={demo.architecture_diagram_url}
-                  alt={`${demo.title} architecture diagram`}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 1200px"
-                  className="object-contain"
-                  unoptimized={demo.architecture_diagram_url.startsWith('http')}
+                  title={`${demo.title} architecture diagram`}
+                  className="w-full h-[600px] rounded-lg bg-black/40 border-0"
                 />
-              </div>
+              ) : (
+                <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden bg-black/40">
+                  <Image
+                    src={demo.architecture_diagram_url}
+                    alt={`${demo.title} architecture diagram`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 1200px"
+                    className="object-contain"
+                    unoptimized={demo.architecture_diagram_url.startsWith('http')}
+                  />
+                </div>
+              )}
             </div>
           </section>
         )}

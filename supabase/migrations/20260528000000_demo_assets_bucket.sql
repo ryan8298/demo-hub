@@ -15,8 +15,8 @@ VALUES (
   'demo-assets',
   'demo-assets',
   true,
-  5242880,  -- 5 MB per file
-  ARRAY['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml']
+  10485760,  -- 10 MB per file (PDFs of architecture diagrams can exceed 5 MB)
+  ARRAY['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml', 'application/pdf']
 )
 ON CONFLICT (id) DO UPDATE
   SET public = EXCLUDED.public,
