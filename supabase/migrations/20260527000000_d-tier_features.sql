@@ -5,21 +5,29 @@
 --                                   with an atomic increment function
 --
 --  Run via the Supabase SQL editor. Idempotent.
+--
+--  Note: The Supabase SQL editor does NOT wrap multi-statement scripts in a
+--  single transaction by default. We split column ADD from the NOT NULL
+--  constraint, with a backfill in between, so a partial earlier run can't
+--  block re-application.
 -- =============================================================================
 
 -- D7: tags ---------------------------------------------------------------------
-ALTER TABLE public.demos
-  ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE public.demos ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+UPDATE public.demos SET tags = '{}' WHERE tags IS NULL;
+ALTER TABLE public.demos ALTER COLUMN tags SET NOT NULL;
 
--- GIN index for fast `tags @> ARRAY['foo']` filter pushdown from the API.
+-- GIN index for fast `tags @> ARRAY['foo']` filter pushdown.
 CREATE INDEX IF NOT EXISTS idx_demos_tags_gin
   ON public.demos USING GIN (tags);
 
 -- D2: counters -----------------------------------------------------------------
-ALTER TABLE public.demos
-  ADD COLUMN IF NOT EXISTS view_count  INTEGER NOT NULL DEFAULT 0;
-ALTER TABLE public.demos
-  ADD COLUMN IF NOT EXISTS click_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE public.demos ADD COLUMN IF NOT EXISTS view_count  INTEGER DEFAULT 0;
+ALTER TABLE public.demos ADD COLUMN IF NOT EXISTS click_count INTEGER DEFAULT 0;
+UPDATE public.demos SET view_count  = 0 WHERE view_count  IS NULL;
+UPDATE public.demos SET click_count = 0 WHERE click_count IS NULL;
+ALTER TABLE public.demos ALTER COLUMN view_count  SET NOT NULL;
+ALTER TABLE public.demos ALTER COLUMN click_count SET NOT NULL;
 
 -- Atomic increment via a Postgres function. Avoids read-modify-write races
 -- when many users hit the same demo simultaneously.
