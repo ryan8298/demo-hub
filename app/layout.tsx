@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -11,10 +11,14 @@ const inter = Inter({
   display: "swap",
 });
 
-const fraunces = Fraunces({
+// Newsreader — modern editorial serif, closest free analogue to the
+// PP Editorial New / Tiempos Headline family used on echelix.com.
+// If we ever license PP Editorial New, this is the one place to swap.
+const newsreader = Newsreader({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-fraunces",
+  style: ["normal", "italic"],
+  variable: "--font-fraunces", // keep the same CSS variable name so we don't have to update globals.css
   display: "swap",
 });
 
@@ -73,7 +77,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
       <body>
         {children}
         {/* Vercel observability — free, no PII, no setup beyond enabling in dashboard */}

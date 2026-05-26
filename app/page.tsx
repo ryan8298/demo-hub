@@ -129,44 +129,42 @@ export default function Landing() {
               </svg>
             </button>
             <button onClick={openModal} className="btn-pill">
-              Sign In
+              Sign in
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Hero — wave bg anchored to bottom so it always sits behind the headline */}
+      {/* Hero — echelix.com mirror: centered, pure-white, vivid wave */}
       <section className="relative min-h-screen flex flex-col justify-center pt-24 pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          {/* Wave anchored bottom. next/image picks the best format
-              (AVIF on modern browsers) — ~6× smaller than the source JPG. */}
-          <div className="absolute inset-x-0 bottom-0 h-[70vh] min-h-[420px]">
+          {/* Wave anchored bottom, bumped to full opacity to match echelix.com */}
+          <div className="absolute inset-x-0 bottom-0 h-[75vh] min-h-[480px]">
             <Image
               src="/wave-bg.jpg"
               alt=""
               fill
               priority
               sizes="100vw"
-              className="object-cover object-bottom opacity-70"
+              className="object-cover object-bottom opacity-95"
               aria-hidden="true"
             />
           </div>
-          {/* Gradient overlays for legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/30 to-black" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/40" />
+          {/* Top fade only — keep the wave visible below the headline */}
+          <div className="absolute inset-x-0 top-0 h-[40vh] bg-gradient-to-b from-black via-black/80 to-transparent" />
         </div>
 
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10 w-full">
-          <div className="max-w-5xl">
-            <h1 className="editorial font-serif text-[clamp(2.5rem,7vw,6.5rem)] text-milk mb-8">
+          <div className="text-center max-w-[1100px] mx-auto">
+            <h1 className="font-serif text-[clamp(2.75rem,8vw,7rem)] text-white leading-[1.04] tracking-[-0.02em] mb-8">
               Experience the future of{' '}
               <em className="text-sea-foam not-italic">agentic</em> enterprise software.
             </h1>
-            <p className="text-base md:text-lg text-grey-300 max-w-2xl mb-10 leading-relaxed">
+            <p className="text-base md:text-lg text-grey-200 max-w-2xl mx-auto mb-10 leading-relaxed">
               Explore live, interactive demonstrations of Echelix solutions — purpose-built
               to modernize operations, embed AI, and deliver measurable business value, fast.
             </p>
-            <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex flex-wrap gap-3 items-center justify-center">
               <button onClick={openModal} className="btn-pill">
                 Access Demos →
               </button>
@@ -177,10 +175,16 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Scroll indicator (left edge) */}
+        {/* Scroll indicator (left edge) — matches echelix.com */}
         <div className="absolute left-6 md:left-8 bottom-12 flex items-center gap-3 z-10">
-          <span className="block w-12 h-px bg-milk/30" />
+          <span className="block w-12 h-px bg-white/40" />
           <span className="scroll-indicator">Scroll</span>
+        </div>
+
+        {/* Social icons (right edge) — matches echelix.com */}
+        <div className="absolute right-6 md:right-8 bottom-12 flex flex-col gap-3 z-10 text-white/60">
+          <a href="#" aria-label="X" className="text-xs hover:text-sea-foam transition">𝕏</a>
+          <a href="#" aria-label="LinkedIn" className="text-xs hover:text-sea-foam transition">in</a>
         </div>
       </section>
 
