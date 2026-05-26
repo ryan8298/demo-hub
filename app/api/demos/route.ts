@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
   try {
     // Validate admin API key
     const adminKey = request.headers.get('X-Admin-Key');
-    if (adminKey !== process.env.ADMIN_API_KEY) {
+    const expectedKey = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_API_KEY;
+    if (adminKey !== expectedKey) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
