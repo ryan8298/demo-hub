@@ -6,6 +6,7 @@ import {
   ADMIN_TTL_SECONDS,
 } from "@/lib/session";
 import { consume, clientIp } from "@/lib/rate-limit";
+import { ADMIN_PASSWORD } from "@/lib/env";
 
 // 10 admin login attempts per IP per 15 minutes.
 const ADMIN_LIMIT = 10;
@@ -20,14 +21,10 @@ function safeEqual(a: string, b: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) {
-    // Misconfigured server. Fail closed.
-    return NextResponse.json(
-      { error: "Admin login is disabled (server not configured)" },
-      { status: 503 }
-    );
-  }
+  // ADMIN_PASSWORD is validated at module load in lib/env.ts — if it
+  // were missing, the build/instance would have failed already with a
+  // clear error message.
+  const expected = ADMIN_PASSWORD;
 
   // Rate limit by IP — protects against password spraying.
   const ip = clientIp(req);

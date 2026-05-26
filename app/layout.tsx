@@ -37,10 +37,8 @@ export const metadata: Metadata = {
     "AI integration",
     "Azure",
   ],
-  icons: {
-    // Browsers will fall through this list until one resolves.
-    icon: [{ url: "/echelix-logo.png", type: "image/png" }],
-  },
+  // Favicon and apple-touch-icon are auto-wired by app/icon.tsx and
+  // app/apple-icon.tsx — no manual icons block needed.
   openGraph: {
     type: "website",
     url: "https://echelix.app",

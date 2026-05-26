@@ -57,14 +57,13 @@ function safeEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
+// Read from the validated env module. SESSION_SECRET length is enforced
+// at module load (lib/env.ts), so by the time we get here it's guaranteed
+// to be present and ≥32 chars on the server.
+import { SESSION_SECRET } from "@/lib/env";
+
 function getSecret(): string {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 32) {
-    throw new Error(
-      "SESSION_SECRET env var is missing or too short (need at least 32 chars)"
-    );
-  }
-  return s;
+  return SESSION_SECRET;
 }
 
 export async function signSession(payload: SessionPayload): Promise<string> {
