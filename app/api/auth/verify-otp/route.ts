@@ -40,33 +40,36 @@ export async function POST(req: NextRequest) {
 
   // Verify the OTP against Supabase Auth.
   //
-  // `signInWithOtp` issues different token types depending on whether the
-  // email already exists:
-  //   • brand-new user  →  type: 'signup'
-  //   • existing user   →  type: 'email'
-  //
-  // We don't know which case we're in from the client side, so try both.
-  // Each attempt is a no-op DB read if the type doesn't match — cheap.
-  let data: Awaited<ReturnType<typeof supabaseAdmin.auth.verifyOtp>>["data"] | null = null;
-  let lastError: { message?: string; status?: number; code?: string } | null = null;
+  // signInWithOtp can issue different token types depending on user state
+  // ('email' for existing, 'signup' for brand new, 'magiclink' for the URL
+  // variant). Try them all in order — each mismatched attempt is cheap.
+  type VerifyResult = Awaited<ReturnType<typeof supabaseAdmin.auth.verifyOtp>>;
+  let data: VerifyResult["data"] | null = null;
+  const attempts: Array<{
+    type: string;
+    message?: string;
+    status?: number;
+    code?: string;
+  }> = [];
 
-  for (const type of ["email", "signup"] as const) {
+  for (const type of ["email", "signup", "magiclink"] as const) {
     const result = await supabaseAdmin.auth.verifyOtp({ email, token: code, type });
-    if (!result.error && result.data?.user) {
-      data = result.data;
-      lastError = null;
-      break;
-    }
-    lastError = {
+    attempts.push({
+      type,
       message: result.error?.message,
       status: result.error?.status,
       code: result.error?.code,
-    };
+    });
+    if (!result.error && result.data?.user) {
+      data = result.data;
+      break;
+    }
   }
 
   if (!data) {
-    console.error("Supabase verifyOtp failed:", { email, lastError });
+    console.error("Supabase verifyOtp failed:", { email, codeLength: code.length, attempts });
 
+    const lastError = attempts[attempts.length - 1];
     const msg = (lastError?.message || "").toLowerCase();
     let userMessage = "Invalid or expired code. Please request a new one.";
     let httpStatus = 401;
@@ -80,7 +83,23 @@ export async function POST(req: NextRequest) {
       userMessage = "That code doesn't match. Double-check the digits or request a new one.";
     }
 
-    return NextResponse.json({ error: userMessage }, { status: httpStatus });
+    // TEMP DEBUG: surface raw Supabase error so we can diagnose. Strip
+    // this `debug` field after the OTP flow is verified working.
+    return NextResponse.json(
+      {
+        error: userMessage,
+        debug: {
+          attempts: attempts.map((a) => ({
+            type: a.type,
+            message: a.message,
+            status: a.status,
+            code: a.code,
+          })),
+          codeLength: code.length,
+        },
+      },
+      { status: httpStatus }
+    );
   }
 
   const is_microsoft = email.endsWith("@microsoft.com");

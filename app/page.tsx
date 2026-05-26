@@ -64,7 +64,10 @@ export default function Landing() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Verification failed.');
+        const base = data.error || 'Verification failed.';
+        // TEMP DEBUG: append raw Supabase error so we can diagnose flow issues
+        const dbg = data.debug ? `\n\nDebug: ${JSON.stringify(data.debug)}` : '';
+        setError(base + dbg);
         return;
       }
       router.push(data.redirect || '/customer/hub');
@@ -266,7 +269,7 @@ export default function Landing() {
             </p>
 
             {error && (
-              <div className="p-3 mb-3 rounded-lg text-sm bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30">
+              <div className="p-3 mb-3 rounded-lg text-xs bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30 whitespace-pre-wrap break-words">
                 {error}
               </div>
             )}
