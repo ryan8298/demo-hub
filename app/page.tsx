@@ -70,7 +70,7 @@ export default function Landing() {
         {/* Wave background image */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/wave-bg.jpg"
+            src="/wave-bg.jpg.jpg"
             alt=""
             className="w-full h-full object-cover opacity-65"
             aria-hidden="true"
