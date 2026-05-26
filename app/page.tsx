@@ -105,7 +105,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#F3F3E9]">
+    <div className="min-h-screen bg-black text-milk">
       {/* Top Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
@@ -116,7 +116,7 @@ export default function Landing() {
             <button
               type="button"
               aria-label="Search"
-              className="w-9 h-9 rounded-full border border-[#F3F3E9]/20 flex items-center justify-center text-[#F3F3E9]/70 hover:border-[#B2EEDA] hover:text-[#B2EEDA] transition"
+              className="w-9 h-9 rounded-full border border-milk/20 flex items-center justify-center text-milk/70 hover:border-sea-foam hover:text-sea-foam transition"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -152,11 +152,11 @@ export default function Landing() {
 
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10 w-full">
           <div className="max-w-5xl">
-            <h1 className="editorial font-serif text-[clamp(2.5rem,7vw,6.5rem)] text-[#F3F3E9] mb-8">
+            <h1 className="editorial font-serif text-[clamp(2.5rem,7vw,6.5rem)] text-milk mb-8">
               Experience the future of{' '}
-              <em className="text-[#B2EEDA] not-italic">agentic</em> enterprise software.
+              <em className="text-sea-foam not-italic">agentic</em> enterprise software.
             </h1>
-            <p className="text-base md:text-lg text-[#B2AEAF] max-w-2xl mb-10 leading-relaxed">
+            <p className="text-base md:text-lg text-grey-300 max-w-2xl mb-10 leading-relaxed">
               Explore live, interactive demonstrations of Echelix solutions — purpose-built
               to modernize operations, embed AI, and deliver measurable business value, fast.
             </p>
@@ -173,7 +173,7 @@ export default function Landing() {
 
         {/* Scroll indicator (left edge) */}
         <div className="absolute left-6 md:left-8 bottom-12 flex items-center gap-3 z-10">
-          <span className="block w-12 h-px bg-[#F3F3E9]/30" />
+          <span className="block w-12 h-px bg-milk/30" />
           <span className="scroll-indicator">Scroll</span>
         </div>
       </section>
@@ -182,15 +182,15 @@ export default function Landing() {
       <section id="features" className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-20 md:py-24">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12 md:mb-16">
-            <p className="md:col-span-3 text-xs uppercase tracking-[0.25em] text-[#7FAC9D]">
+            <p className="md:col-span-3 text-xs uppercase tracking-[0.25em] text-sage">
               Why Echelix
             </p>
-            <h2 className="md:col-span-9 font-serif text-3xl md:text-5xl text-[#F3F3E9] leading-tight">
+            <h2 className="md:col-span-9 font-serif text-3xl md:text-5xl text-milk leading-tight">
               Solutions engineered for the next era of enterprise — agentic, integrated, measurable.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#F3F3E9]/10 border hairline">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-milk/10 border hairline">
             {[
               {
                 num: '01',
@@ -209,9 +209,9 @@ export default function Landing() {
               },
             ].map((f) => (
               <div key={f.num} className="bg-black p-8 md:p-10 hover:bg-[#0a0a0a] transition">
-                <div className="text-xs tracking-[0.25em] text-[#7FAC9D] mb-6">{f.num}</div>
-                <h3 className="font-serif text-2xl md:text-3xl text-[#F3F3E9] mb-4">{f.title}</h3>
-                <p className="text-sm text-[#8B8586] leading-relaxed">{f.body}</p>
+                <div className="text-xs tracking-[0.25em] text-sage mb-6">{f.num}</div>
+                <h3 className="font-serif text-2xl md:text-3xl text-milk mb-4">{f.title}</h3>
+                <p className="text-sm text-grey-400 leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
@@ -221,11 +221,11 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-20 md:py-24 text-center">
-          <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-6">
+          <p className="text-xs uppercase tracking-[0.25em] text-sage mb-6">
             Ready When You Are
           </p>
-          <h2 className="font-serif text-4xl md:text-6xl text-[#F3F3E9] mb-8 max-w-3xl mx-auto leading-[1.05]">
-            See what <em className="text-[#B2EEDA] not-italic">agentic</em> looks like in production.
+          <h2 className="font-serif text-4xl md:text-6xl text-milk mb-8 max-w-3xl mx-auto leading-[1.05]">
+            See what <em className="text-sea-foam not-italic">agentic</em> looks like in production.
           </h2>
           <button onClick={openModal} className="btn-pill">
             Access Demos →
@@ -237,7 +237,7 @@ export default function Landing() {
       <footer className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <EchelixLogo className="h-6 w-auto opacity-80" />
-          <p className="text-xs text-[#605A5B]">
+          <p className="text-xs text-grey-600">
             Modernize. Build Agentic Apps. Deliver Business Value.
           </p>
         </div>
@@ -252,21 +252,21 @@ export default function Landing() {
         <button
           type="button"
           onClick={() => setShowForm(false)}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#F3F3E9]/15 flex items-center justify-center text-[#F3F3E9]/60 hover:text-[#B2EEDA] hover:border-[#B2EEDA] transition"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full border border-milk/15 flex items-center justify-center text-milk/60 hover:text-sea-foam hover:border-sea-foam transition"
           aria-label="Close"
         >
           ✕
         </button>
-        <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-3">
+        <p className="text-xs uppercase tracking-[0.25em] text-sage mb-3">
           {step === 'profile' ? 'Access Demos' : 'Verify your email'}
         </p>
         <h2
           id="signin-modal-title"
-          className="font-serif text-3xl text-[#F3F3E9] mb-2 leading-tight"
+          className="font-serif text-3xl text-milk mb-2 leading-tight"
         >
           {step === 'profile' ? 'Step inside the hub.' : 'Check your inbox.'}
         </h2>
-        <p className="text-sm text-[#8B8586] mb-6">
+        <p className="text-sm text-grey-400 mb-6">
           {step === 'profile'
             ? "Enter your details — we'll send a verification code to your email."
             : `Enter the verification code we sent to ${formData.email}.`}
@@ -275,7 +275,7 @@ export default function Landing() {
         {error && (
           <div
             role="alert"
-            className="p-3 mb-3 rounded-lg text-xs bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30 whitespace-pre-wrap break-words"
+            className="p-3 mb-3 rounded-lg text-xs bg-error/10 text-error border border-error/30 whitespace-pre-wrap break-words"
           >
             {error}
           </div>
@@ -283,7 +283,7 @@ export default function Landing() {
         {info && !error && (
           <div
             role="status"
-            className="p-3 mb-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25"
+            className="p-3 mb-3 rounded-lg text-xs bg-sea-foam/8 text-sea-foam border border-sea-foam/25"
           >
             {info}
           </div>
@@ -327,7 +327,7 @@ export default function Landing() {
             />
 
             {isMicrosoftEmail && (
-              <div className="p-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25">
+              <div className="p-3 rounded-lg text-xs bg-sea-foam/8 text-sea-foam border border-sea-foam/25">
                 ✓ Microsoft account detected — you&apos;ll be routed to the Partner Hub.
               </div>
             )}
@@ -382,7 +382,7 @@ export default function Landing() {
                   setInfo('');
                   setCode('');
                 }}
-                className="text-xs uppercase tracking-[0.2em] text-[#8B8586] hover:text-[#B2EEDA] transition"
+                className="text-xs uppercase tracking-[0.2em] text-grey-400 hover:text-sea-foam transition"
               >
                 ← Change email
               </button>
@@ -390,7 +390,7 @@ export default function Landing() {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={loading}
-                className="text-xs uppercase tracking-[0.2em] text-[#8B8586] hover:text-[#B2EEDA] transition disabled:opacity-50"
+                className="text-xs uppercase tracking-[0.2em] text-grey-400 hover:text-sea-foam transition disabled:opacity-50"
               >
                 Resend code
               </button>
@@ -398,7 +398,7 @@ export default function Landing() {
           </form>
         )}
 
-        <p className="text-center text-[10px] uppercase tracking-[0.2em] mt-5 text-[#605A5B]">
+        <p className="text-center text-[10px] uppercase tracking-[0.2em] mt-5 text-grey-600">
           By continuing, you agree to our Terms.
         </p>
       </Modal>

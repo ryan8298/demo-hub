@@ -38,12 +38,34 @@
 }
 
 @theme {
+  /* Brand */
   --color-sage: #7FAC9D;
   --color-sage-light: #9CC3B5;
   --color-sage-dark: #5F8A7C;
-  --color-black: #020202;
   --color-milk: #F3F3E9;
   --color-sea-foam: #B2EEDA;
+  --color-sea-foam-dark: #8FD7BE;
+
+  /* Greyscale (used everywhere for text + borders) */
+  --color-grey-50: #F6F5F5;
+  --color-grey-100: #E7E6E6;
+  --color-grey-200: #D2CFD0;
+  --color-grey-300: #B2AEAF;
+  --color-grey-400: #8B8586;
+  --color-grey-500: #706A6B;
+  --color-grey-600: #605A5B;
+  --color-grey-700: #514D4D;
+  --color-grey-800: #464445;
+  --color-grey-900: #3E3B3B;
+  --color-grey-950: #151414;
+
+  /* System */
+  --color-success: #6DCD32;
+  --color-error: #CD3232;
+  --color-warning: #CD9432;
+  --color-info: #3285CD;
+
+  /* Fonts */
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-serif: var(--font-fraunces), 'Times New Roman', serif;
 }

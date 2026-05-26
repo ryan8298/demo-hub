@@ -32,7 +32,7 @@ export function HubNav({ label, partner }: { label: string; partner?: boolean })
           <EchelixLogo className="h-8 md:h-9 w-auto" />
         </a>
         <div className="flex items-center gap-4">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[#706A6B] hidden md:block">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-grey-500 hidden md:block">
             {label}
           </span>
           {partner && (
@@ -59,7 +59,7 @@ function SignOutButton() {
   return (
     <button
       onClick={handleSignOut}
-      className="text-[10px] uppercase tracking-[0.25em] text-[#8B8586] hover:text-[#B2EEDA] transition"
+      className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
       type="button"
     >
       Sign out
@@ -75,7 +75,7 @@ export function HubFooter() {
     <footer className="border-t hairline">
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
         <EchelixLogo className="h-6 w-auto opacity-80" />
-        <p className="text-xs text-[#605A5B]">
+        <p className="text-xs text-grey-600">
           Modernize. Build Agentic Apps. Deliver Business Value.
         </p>
       </div>
@@ -105,11 +105,11 @@ export function DemoCardSkeleton() {
     <div className="card overflow-hidden flex flex-col animate-pulse">
       <div className="w-full h-56 bg-gradient-to-br from-[#1a1f1d] to-[#0a0f0d]" />
       <div className="p-6 space-y-3">
-        <div className="h-4 w-20 rounded-full bg-[#F3F3E9]/5" />
-        <div className="h-6 w-3/4 rounded bg-[#F3F3E9]/10" />
-        <div className="h-3 w-full rounded bg-[#F3F3E9]/5" />
-        <div className="h-3 w-5/6 rounded bg-[#F3F3E9]/5" />
-        <div className="h-10 w-full rounded-full bg-[#F3F3E9]/5 mt-3" />
+        <div className="h-4 w-20 rounded-full bg-milk/5" />
+        <div className="h-6 w-3/4 rounded bg-milk/10" />
+        <div className="h-3 w-full rounded bg-milk/5" />
+        <div className="h-3 w-5/6 rounded bg-milk/5" />
+        <div className="h-10 w-full rounded-full bg-milk/5 mt-3" />
       </div>
     </div>
   );
@@ -169,7 +169,7 @@ export function DemoCard({
       aria-expanded={expanded}
     >
       <div
-        className={`relative w-full overflow-hidden bg-gradient-to-br from-[#7FAC9D] via-[#5F8A7C] to-[#020202] ${
+        className={`relative w-full overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-[#020202] ${
           featured ? 'h-72' : 'h-56'
         }`}
       >
@@ -195,24 +195,24 @@ export function DemoCard({
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
           </>
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#F3F3E9]/80">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-milk/80">
             <div className="text-3xl mb-2 font-serif">◆</div>
             <p className="text-[10px] uppercase tracking-[0.2em]">Demo Preview</p>
           </div>
         )}
 
         {featured && (
-          <span className="absolute top-3 left-3 text-[9px] font-medium uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-[#B2EEDA] text-black border border-[#B2EEDA]">
+          <span className="absolute top-3 left-3 text-[9px] font-medium uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-sea-foam text-black border border-sea-foam">
             ★ Featured
           </span>
         )}
         {!featured && demo.featured && (
-          <span className="absolute top-3 left-3 text-[9px] font-medium uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-black/70 backdrop-blur text-[#B2EEDA] border border-[#B2EEDA]/30">
+          <span className="absolute top-3 left-3 text-[9px] font-medium uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-black/70 backdrop-blur text-sea-foam border border-sea-foam/30">
             ★ Featured
           </span>
         )}
         {partner && (
-          <span className="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-medium px-2.5 py-1 rounded-full bg-black/70 backdrop-blur text-[#F3F3E9] border border-[#F3F3E9]/20">
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-medium px-2.5 py-1 rounded-full bg-black/70 backdrop-blur text-milk border border-milk/20">
             <MicrosoftSquares className="w-2 h-2" />
             Co-Sell
           </span>
@@ -227,13 +227,13 @@ export function DemoCard({
         </div>
 
         <h3
-          className={`font-serif text-[#F3F3E9] leading-tight mb-3 ${
+          className={`font-serif text-milk leading-tight mb-3 ${
             featured ? 'text-3xl' : 'text-2xl'
           }`}
         >
           {demo.title}
         </h3>
-        <p className="text-sm text-[#8B8586] line-clamp-3 mb-6 leading-relaxed">
+        <p className="text-sm text-grey-400 line-clamp-3 mb-6 leading-relaxed">
           {demo.description || 'Interactive solution demonstration.'}
         </p>
 
@@ -258,28 +258,28 @@ export function DemoCard({
         {expanded && (
           <div className="mt-6 pt-6 border-t hairline space-y-5">
             {demo.roi_summary && (
-              <div className="p-4 rounded-lg bg-[#B2EEDA]/5 border border-[#B2EEDA]/15">
-                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#B2EEDA] mb-2">
+              <div className="p-4 rounded-lg bg-sea-foam/5 border border-sea-foam/15">
+                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam mb-2">
                   ROI Summary
                 </h4>
-                <p className="text-sm text-[#F3F3E9] leading-relaxed">{demo.roi_summary}</p>
+                <p className="text-sm text-milk leading-relaxed">{demo.roi_summary}</p>
               </div>
             )}
 
             {demo.deployment_timeline && demo.deployment_timeline.length > 0 && (
               <div>
-                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#7FAC9D] mb-3">
+                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-sage mb-3">
                   Implementation Timeline
                 </h4>
                 <div className="space-y-3">
                   {demo.deployment_timeline.map((phase, idx) => (
                     <div key={idx} className="flex items-start gap-3 text-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#B2EEDA] mt-2 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-sea-foam mt-2 flex-shrink-0" />
                       <div>
-                        <span className="font-medium text-[#F3F3E9]">{phase.phase}</span>
-                        <span className="text-[#8B8586]"> — {phase.duration}</span>
+                        <span className="font-medium text-milk">{phase.phase}</span>
+                        <span className="text-grey-400"> — {phase.duration}</span>
                         {phase.details && (
-                          <p className="text-xs text-[#706A6B] mt-1 leading-relaxed">{phase.details}</p>
+                          <p className="text-xs text-grey-500 mt-1 leading-relaxed">{phase.details}</p>
                         )}
                       </div>
                     </div>
@@ -369,7 +369,7 @@ export function Modal({
     >
       <div
         ref={dialogRef}
-        className="relative w-full max-w-md bg-[#0a0a0a] border border-[#F3F3E9]/10 rounded-2xl p-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-[#0a0a0a] border border-milk/10 rounded-2xl p-8 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {children}

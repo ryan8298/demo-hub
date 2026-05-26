@@ -1,10 +1,16 @@
-'use client';
-
 import { DemoHubLayout, MicrosoftSquares } from '@/components/DemoHubLayout';
+import { listDemosForAudience } from '@/lib/demos';
 
-export default function MicrosoftHub() {
+// Server Component — fetches demos at request time and ships them in the
+// initial HTML. Cached for 60s at the route level (revalidate below).
+export const revalidate = 60;
+
+export default async function MicrosoftHub() {
+  const demos = await listDemosForAudience('microsoft');
+
   return (
     <DemoHubLayout
+      initialDemos={demos}
       variant={{
         audience: 'microsoft',
         navLabel: 'Partner Hub',
@@ -19,7 +25,7 @@ export default function MicrosoftHub() {
         heading: (
           <>
             Co-sell ready solutions for{' '}
-            <em className="text-[#B2EEDA] not-italic">Microsoft</em> teams.
+            <em className="text-sea-foam not-italic">Microsoft</em> teams.
           </>
         ),
         description:

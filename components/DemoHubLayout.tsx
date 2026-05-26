@@ -1,21 +1,20 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Demo } from '@/lib/types';
 import {
   HubNav,
   HubFooter,
   DemoCard,
-  DemoGridSkeleton,
   MicrosoftSquares,
 } from '@/components/HubShared';
 
 /**
  * Shared hub layout used by both /customer/hub and /microsoft/hub.
  *
- * Each hub just specifies its eyebrow, heading, supporting text, and
- * audience query — everything else (data fetch, search, filter, grid,
- * empty/loading states, featured row) is identical.
+ * Demos are passed in as `initialDemos` — the hub pages are now async
+ * Server Components that query Supabase at request time. This eliminates
+ * the spinner flash and the client→API round-trip.
  */
 export type HubVariant = {
   audience: 'customer' | 'microsoft';
@@ -27,37 +26,17 @@ export type HubVariant = {
   partner?: boolean;
 };
 
-export function DemoHubLayout({ variant }: { variant: HubVariant }) {
-  const [demos, setDemos] = useState<Demo[]>([]);
+export function DemoHubLayout({
+  variant,
+  initialDemos,
+}: {
+  variant: HubVariant;
+  initialDemos: Demo[];
+}) {
+  const [demos] = useState<Demo[]>(initialDemos);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [search, setSearch] = useState('');
   const [industryFilter, setIndustryFilter] = useState<string>('All');
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(false);
-    fetch(`/api/demos?audience=${variant.audience}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled) return;
-        setDemos(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setError(true);
-        setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [variant.audience]);
 
   const industries = useMemo(() => {
     const set = new Set<string>();
@@ -89,19 +68,19 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#F3F3E9]">
+    <div className="min-h-screen bg-black text-milk">
       <HubNav label={variant.navLabel} partner={variant.partner} />
 
       {/* Hero */}
       <header className="bg-wave relative pt-32 pb-20 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
-          <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-6 flex items-center gap-2">
+          <p className="text-xs uppercase tracking-[0.25em] text-sage mb-6 flex items-center gap-2">
             {variant.eyebrow}
           </p>
-          <h1 className="editorial font-serif text-[clamp(2.5rem,6vw,5.5rem)] text-[#F3F3E9] leading-[1.04] mb-6 max-w-4xl">
+          <h1 className="editorial font-serif text-[clamp(2.5rem,6vw,5.5rem)] text-milk leading-[1.04] mb-6 max-w-4xl">
             {variant.heading}
           </h1>
-          <p className="text-base md:text-lg text-[#B2AEAF] max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg text-grey-300 max-w-2xl leading-relaxed">
             {variant.description}
           </p>
         </div>
@@ -120,7 +99,7 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
               aria-label="Search demos"
             />
             <svg
-              className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#706A6B]"
+              className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-grey-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -145,8 +124,8 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
                   onClick={() => setIndustryFilter(ind)}
                   className={`text-[10px] uppercase tracking-[0.15em] font-medium px-3 md:px-4 py-2 rounded-full transition border whitespace-nowrap ${
                     active
-                      ? 'bg-[#B2EEDA] text-black border-[#B2EEDA]'
-                      : 'bg-transparent text-[#B2AEAF] border-[#F3F3E9]/15 hover:border-[#B2EEDA] hover:text-[#B2EEDA]'
+                      ? 'bg-sea-foam text-black border-sea-foam'
+                      : 'bg-transparent text-grey-300 border-milk/15 hover:border-sea-foam hover:text-sea-foam'
                   }`}
                 >
                   {ind}
@@ -162,11 +141,7 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
 
       {/* Grid */}
       <main className="max-w-[1400px] mx-auto px-6 md:px-8 py-12 md:py-16">
-        {loading ? (
-          <DemoGridSkeleton />
-        ) : error ? (
-          <ErrorState onRetry={() => window.location.reload()} />
-        ) : filtered.length === 0 ? (
+        {filtered.length === 0 ? (
           <EmptyState
             filtersActive={filtersActive}
             onClear={clearFilters}
@@ -175,7 +150,7 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
           <>
             {featured.length > 0 && (
               <section className="mb-12">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#7FAC9D] mb-4">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-4">
                   ★ Featured
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -198,7 +173,7 @@ export function DemoHubLayout({ variant }: { variant: HubVariant }) {
             {regular.length > 0 && (
               <section>
                 {featured.length > 0 && (
-                  <p className="text-[10px] uppercase tracking-[0.25em] text-[#706A6B] mb-4">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-grey-500 mb-4">
                     All demos
                   </p>
                 )}
@@ -234,9 +209,9 @@ function EmptyState({
   onClear: () => void;
 }) {
   return (
-    <div className="text-center py-20 md:py-24 border border-dashed border-[#F3F3E9]/10 rounded-2xl">
+    <div className="text-center py-20 md:py-24 border border-dashed border-milk/10 rounded-2xl">
       <div className="text-4xl mb-4 opacity-50">◯</div>
-      <p className="text-sm uppercase tracking-[0.2em] text-[#706A6B] mb-4">
+      <p className="text-sm uppercase tracking-[0.2em] text-grey-500 mb-4">
         {filtersActive ? 'No demos match your filters' : 'No demos available yet'}
       </p>
       {filtersActive && (
@@ -244,20 +219,6 @@ function EmptyState({
           Clear filters
         </button>
       )}
-    </div>
-  );
-}
-
-function ErrorState({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="text-center py-20 md:py-24 border border-dashed border-[#CD3232]/30 rounded-2xl bg-[#CD3232]/5">
-      <div className="text-4xl mb-4 text-[#CD3232]/80">⚠</div>
-      <p className="text-sm uppercase tracking-[0.2em] text-[#CD3232] mb-4">
-        Couldn&apos;t load demos
-      </p>
-      <button onClick={onRetry} className="btn-ghost text-xs">
-        Try again
-      </button>
     </div>
   );
 }

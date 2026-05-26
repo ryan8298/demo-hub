@@ -1,24 +1,30 @@
-'use client';
-
 import { DemoHubLayout } from '@/components/DemoHubLayout';
+import { listDemosForAudience } from '@/lib/demos';
 
-export default function CustomerHub() {
+// Server Component — fetches demos at request time and ships them in the
+// initial HTML. Cached for 60s at the route level (revalidate below).
+export const revalidate = 60;
+
+export default async function CustomerHub() {
+  const demos = await listDemosForAudience('customer');
+
   return (
     <DemoHubLayout
+      initialDemos={demos}
       variant={{
         audience: 'customer',
         navLabel: 'Demo Hub',
         searchPlaceholder: 'Search demos…',
         eyebrow: (
           <>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#7FAC9D] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-sage animate-pulse" />
             Customer Demo Hub
           </>
         ),
         heading: (
           <>
             Solutions built for{' '}
-            <em className="text-[#B2EEDA] not-italic">your</em> business.
+            <em className="text-sea-foam not-italic">your</em> business.
           </>
         ),
         description:

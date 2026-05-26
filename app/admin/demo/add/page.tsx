@@ -125,7 +125,7 @@ export default function AddDemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#F3F3E9]">
+    <div className="min-h-screen bg-black text-milk">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
@@ -141,7 +141,7 @@ export default function AddDemoPage() {
                 router.push('/admin/login');
                 router.refresh();
               }}
-              className="text-[10px] uppercase tracking-[0.25em] text-[#8B8586] hover:text-[#B2EEDA] transition"
+              className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
             >
               Sign out
             </button>
@@ -152,13 +152,13 @@ export default function AddDemoPage() {
       {/* Header */}
       <header className="bg-wave relative pt-32 pb-16 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-8 relative z-10">
-          <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-5">
+          <p className="text-xs uppercase tracking-[0.25em] text-sage mb-5">
             Admin Console
           </p>
-          <h1 className="editorial font-serif text-[clamp(2rem,5vw,4rem)] text-[#F3F3E9] leading-[1.05] mb-4 max-w-3xl">
-            Publish a <em className="text-[#B2EEDA] not-italic">new</em> demo.
+          <h1 className="editorial font-serif text-[clamp(2rem,5vw,4rem)] text-milk leading-[1.05] mb-4 max-w-3xl">
+            Publish a <em className="text-sea-foam not-italic">new</em> demo.
           </h1>
-          <p className="text-base text-[#B2AEAF] max-w-xl">
+          <p className="text-base text-grey-300 max-w-xl">
             Add a new solution to the Echelix Demo Hub. Demos appear immediately on the audiences you select.
           </p>
         </div>
@@ -171,8 +171,8 @@ export default function AddDemoPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Info */}
             <section className="card p-8">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#7FAC9D] mb-1">01</p>
-              <h2 className="font-serif text-2xl text-[#F3F3E9] mb-6">Basic Information</h2>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">01</p>
+              <h2 className="font-serif text-2xl text-milk mb-6">Basic Information</h2>
 
               <div className="space-y-5">
                 <Field label="Demo Title *">
@@ -222,8 +222,8 @@ export default function AddDemoPage() {
 
             {/* Demo Link */}
             <section className="card p-8">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#7FAC9D] mb-1">02</p>
-              <h2 className="font-serif text-2xl text-[#F3F3E9] mb-6">Demo Link & Preview</h2>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">02</p>
+              <h2 className="font-serif text-2xl text-milk mb-6">Demo Link & Preview</h2>
 
               <Field label="Demo URL *" hint='Full URL to the demo. Click "Auto-Fetch Image" to pull the og:image.'>
                 <div className="flex gap-2">
@@ -248,8 +248,8 @@ export default function AddDemoPage() {
               </Field>
 
               {previewImage && (
-                <div className="mt-4 p-4 rounded-lg border border-[#B2EEDA]/25 bg-[#B2EEDA]/5">
-                  <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#B2EEDA] mb-2">
+                <div className="mt-4 p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam mb-2">
                     ✓ Preview Image Fetched
                   </p>
                   <img src={previewImage} alt="Preview" className="w-full h-32 object-cover rounded" />
@@ -261,8 +261,8 @@ export default function AddDemoPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             <section className="card p-6">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#7FAC9D] mb-1">03</p>
-              <h2 className="font-serif text-xl text-[#F3F3E9] mb-4">Industry</h2>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">03</p>
+              <h2 className="font-serif text-xl text-milk mb-4">Industry</h2>
               <select
                 name="industry"
                 value={formData.industry}
@@ -279,8 +279,8 @@ export default function AddDemoPage() {
             </section>
 
             <section className="card p-6">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#7FAC9D] mb-1">04</p>
-              <h2 className="font-serif text-xl text-[#F3F3E9] mb-4">Target Audience *</h2>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">04</p>
+              <h2 className="font-serif text-xl text-milk mb-4">Target Audience *</h2>
               <div className="space-y-2">
                 {[
                   { key: 'customer', label: 'Customers', sub: 'For customer hub' },
@@ -292,19 +292,19 @@ export default function AddDemoPage() {
                       key={a.key}
                       className={`flex items-center p-3 rounded-lg cursor-pointer transition border ${
                         checked
-                          ? 'bg-[#B2EEDA]/8 border-[#B2EEDA]/40'
-                          : 'bg-transparent border-[#F3F3E9]/10 hover:border-[#B2EEDA]/40'
+                          ? 'bg-sea-foam/8 border-sea-foam/40'
+                          : 'bg-transparent border-milk/10 hover:border-sea-foam/40'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={() => handleAudienceChange(a.key)}
-                        className="w-4 h-4 cursor-pointer accent-[#B2EEDA]"
+                        className="w-4 h-4 cursor-pointer accent-sea-foam"
                       />
                       <div className="ml-3">
-                        <div className="font-medium text-sm text-[#F3F3E9]">{a.label}</div>
-                        <div className="text-[10px] uppercase tracking-[0.2em] text-[#706A6B]">
+                        <div className="font-medium text-sm text-milk">{a.label}</div>
+                        <div className="text-[10px] uppercase tracking-[0.2em] text-grey-500">
                           {a.sub}
                         </div>
                       </div>
@@ -313,7 +313,7 @@ export default function AddDemoPage() {
                 })}
               </div>
               {formData.audience.length === 0 && (
-                <p className="text-xs mt-3 text-[#CD3232]">⚠ Select at least one audience</p>
+                <p className="text-xs mt-3 text-error">⚠ Select at least one audience</p>
               )}
             </section>
 
@@ -322,8 +322,8 @@ export default function AddDemoPage() {
                 <div
                   className={`p-3 rounded-lg text-xs mb-4 border ${
                     messageType === 'success'
-                      ? 'bg-[#B2EEDA]/5 text-[#B2EEDA] border-[#B2EEDA]/30'
-                      : 'bg-[#CD3232]/10 text-[#CD3232] border-[#CD3232]/30'
+                      ? 'bg-sea-foam/5 text-sea-foam border-sea-foam/30'
+                      : 'bg-error/10 text-error border-error/30'
                   }`}
                 >
                   {message}
@@ -336,7 +336,7 @@ export default function AddDemoPage() {
               >
                 {loading ? 'Publishing…' : 'Publish Demo →'}
               </button>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-center mt-3 text-[#605A5B]">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-center mt-3 text-grey-600">
                 Live on selected hubs instantly
               </p>
             </section>
@@ -358,11 +358,11 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[10px] font-medium uppercase tracking-[0.25em] mb-2 text-[#B2AEAF]">
+      <label className="block text-[10px] font-medium uppercase tracking-[0.25em] mb-2 text-grey-300">
         {label}
       </label>
       {children}
-      {hint && <p className="text-xs mt-1.5 text-[#605A5B]">{hint}</p>}
+      {hint && <p className="text-xs mt-1.5 text-grey-600">{hint}</p>}
     </div>
   );
 }
