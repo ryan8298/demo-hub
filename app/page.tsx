@@ -64,10 +64,7 @@ export default function Landing() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const base = data.error || 'Verification failed.';
-        // TEMP DEBUG: append raw Supabase error so we can diagnose flow issues
-        const dbg = data.debug ? `\n\nDebug: ${JSON.stringify(data.debug)}` : '';
-        setError(base + dbg);
+        setError(data.error || 'Verification failed.');
         return;
       }
       router.push(data.redirect || '/customer/hub');
@@ -133,7 +130,7 @@ export default function Landing() {
         {/* Wave background image */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/wave-bg.jpg.jpg"
+            src="/wave-bg.jpg"
             alt=""
             className="w-full h-full object-cover opacity-65"
             aria-hidden="true"

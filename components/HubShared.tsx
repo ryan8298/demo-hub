@@ -5,15 +5,15 @@ import { Demo } from '@/lib/types';
 
 export function EchelixLogo({ className = 'h-7' }: { className?: string }) {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/echelix-logo.svg"
+      src="/echelix-logo.png"
       alt="Echelix"
+      width={1200}
+      height={500}
       className={className}
-      onError={(e) => {
-        // Fall back to PNG if SVG is missing
-        const img = e.currentTarget;
-        if (!img.src.endsWith('.png')) img.src = '/echelix-logo.png';
-      }}
+      decoding="async"
+      loading="eager"
     />
   );
 }

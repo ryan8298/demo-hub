@@ -84,23 +84,7 @@ export async function POST(req: NextRequest) {
       userMessage = "That code doesn't match. Double-check the digits or request a new one.";
     }
 
-    // TEMP DEBUG: surface raw Supabase error so we can diagnose. Strip
-    // this `debug` field after the OTP flow is verified working.
-    return NextResponse.json(
-      {
-        error: userMessage,
-        debug: {
-          attempts: attempts.map((a) => ({
-            type: a.type,
-            message: a.message,
-            status: a.status,
-            code: a.code,
-          })),
-          codeLength: code.length,
-        },
-      },
-      { status: httpStatus }
-    );
+    return NextResponse.json({ error: userMessage }, { status: httpStatus });
   }
 
   // Microsoft hub eligibility — production = @microsoft.com only, plus any

@@ -36,11 +36,8 @@ export const metadata: Metadata = {
     "Azure",
   ],
   icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/echelix-logo.svg", type: "image/svg+xml" },
-    ],
-    apple: "/apple-touch-icon.png",
+    // Browsers will fall through this list until one resolves.
+    icon: [{ url: "/echelix-logo.png", type: "image/png" }],
   },
   openGraph: {
     type: "website",
