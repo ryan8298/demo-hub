@@ -43,7 +43,7 @@ export default function Landing() {
         setError(data.error || 'Could not send code.');
         return;
       }
-      setInfo(`A 6-digit code was sent to ${formData.email}.`);
+      setInfo(`A verification code was sent to ${formData.email}.`);
       setStep('code');
     } catch {
       setError('Network error — please try again.');
@@ -261,8 +261,8 @@ export default function Landing() {
             </h2>
             <p className="text-sm text-[#8B8586] mb-6">
               {step === 'profile'
-                ? "Enter your details — we'll send a 6-digit code to verify your email."
-                : `Enter the 6-digit code we sent to ${formData.email}.`}
+                ? "Enter your details — we'll send a verification code to your email."
+                : `Enter the verification code we sent to ${formData.email}.`}
             </p>
 
             {error && (
@@ -331,19 +331,20 @@ export default function Landing() {
                   type="text"
                   inputMode="numeric"
                   autoComplete="one-time-code"
-                  pattern="\d{6}"
-                  maxLength={6}
+                  pattern="\d{4,10}"
+                  maxLength={10}
                   placeholder="••••••"
                   value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  // Strip non-digits and cap at 10 (Supabase OTP can be 6-8 by config).
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   required
                   autoFocus
-                  className="input-field text-center text-2xl tracking-[0.5em] font-mono"
+                  className="input-field text-center text-2xl tracking-[0.4em] font-mono"
                 />
 
                 <button
                   type="submit"
-                  disabled={loading || code.length !== 6}
+                  disabled={loading || code.length < 4}
                   className="btn-pill w-full mt-2"
                 >
                   {loading ? 'Verifying…' : 'Verify & Enter Hub →'}

@@ -4,8 +4,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Step 1 of visitor auth: send a 6-digit one-time passcode to the supplied
- * email address using Supabase Auth.
+ * Step 1 of visitor auth: send a one-time passcode (6-8 digits, configurable
+ * in the Supabase dashboard) to the supplied email address using Supabase Auth.
  *
  * Verification (step 2) is in /api/auth/verify-otp.
  */
@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Supabase Auth sends a 6-digit code by default (email template = "Magic Link",
+  // Supabase Auth sends a 6- or 8-digit code (configurable in dashboard;
+  // email template = "Magic Link",
   // {{ .Token }}). User may also click the magic-link button if the template
   // includes it — verifyOtp will accept either.
   const { error } = await supabaseAdmin.auth.signInWithOtp({
