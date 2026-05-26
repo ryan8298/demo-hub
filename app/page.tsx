@@ -13,22 +13,20 @@ export default function Landing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isMicrosoftEmail, setIsMicrosoftEmail] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       const response = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-
       if (!response.ok) throw new Error('Sign-up failed');
-
       await response.json();
       const isMicrosoft = formData.email.toLowerCase().endsWith('@microsoft.com');
       router.push(isMicrosoft ? '/microsoft/hub' : '/customer/hub');
@@ -46,150 +44,219 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f3] text-[#1a1a1a]">
+    <div className="min-h-screen bg-black text-[#F3F3E9]">
       {/* Top Nav */}
-      <nav className="border-b border-[#e2e0d3] bg-white/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
+        <div className="max-w-[1600px] mx-auto px-8 py-5 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-sm font-bold text-[#F3F3E9]" style={{ fontFamily: 'Fraunces, serif' }}>
               E
             </div>
-            <span className="text-xl font-bold tracking-tight">Echelix</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="text-sm text-[#5c6360] hidden sm:block">Demo Hub</span>
-            <span className="badge">● Live</span>
+            <span className="text-sm font-medium tracking-[0.25em] uppercase text-[#F3F3E9]">
+              Echelix
+            </span>
+          </a>
+          <div className="flex items-center gap-4">
+            <button className="w-9 h-9 rounded-full border border-[#F3F3E9]/20 flex items-center justify-center text-[#F3F3E9]/70 hover:border-[#B2EEDA] hover:text-[#B2EEDA] transition">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
+              </svg>
+            </button>
+            <button onClick={() => setShowForm(true)} className="btn-pill">
+              Menu
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="bg-grid relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left: Heading */}
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e8f5e0] text-[#6a9530] text-xs font-semibold mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7fac3d] animate-pulse" />
-                Interactive Solution Demonstrations
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-[1.05] tracking-tight">
-                Experience the future of <span className="text-[#7fac3d]">agentic</span> enterprise software.
-              </h1>
-              <p className="text-lg md:text-xl text-[#5c6360] mb-8 max-w-xl">
-                Explore hands-on demonstrations of Echelix solutions — purpose-built to modernize operations, accelerate AI adoption, and deliver measurable business value.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-2">
-                <span className="badge">🚀 Live Demos</span>
-                <span className="badge">🏢 Enterprise Ready</span>
-                <span className="badge">🔵 Microsoft Partner</span>
-              </div>
-            </div>
-
-            {/* Right: Form */}
-            <div className="lg:col-span-5">
-              <div className="bg-white rounded-2xl p-8 shadow-[0_8px_32px_-8px_rgba(10,15,13,0.12)] border border-[#e2e0d3]">
-                <h2 className="text-2xl font-bold mb-1">Access the Demo Hub</h2>
-                <p className="text-sm text-[#5c6360] mb-6">
-                  Enter your details to explore live solution demos.
-                </p>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {error && (
-                    <div className="p-3 rounded-lg text-sm bg-[#fde9e9] text-[#cd3232] border-l-4 border-[#cd3232]">
-                      {error}
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="First name"
-                      value={formData.first_name}
-                      onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                      required
-                      className="input-field"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last name"
-                      value={formData.last_name}
-                      onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                      required
-                      className="input-field"
-                    />
-                  </div>
-
-                  <input
-                    type="email"
-                    placeholder="Work email"
-                    value={formData.email}
-                    onChange={handleEmailChange}
-                    required
-                    className="input-field"
-                  />
-
-                  {isMicrosoftEmail && (
-                    <div className="p-3 rounded-lg text-sm bg-[#e8f5e0] text-[#6a9530] flex items-center gap-2 border-l-4 border-[#7fac3d]">
-                      <span>✓</span>
-                      <span>Microsoft account detected — you&apos;ll get the Microsoft Partner hub.</span>
-                    </div>
-                  )}
-
-                  <input
-                    type="text"
-                    placeholder="Company name"
-                    value={formData.company_name}
-                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                    required
-                    className="input-field"
-                  />
-
-                  <button type="submit" disabled={loading} className="btn-primary w-full text-base">
-                    {loading ? 'Signing you in…' : 'Explore Demos →'}
-                  </button>
-                </form>
-
-                <p className="text-center text-xs mt-4 text-[#8a8f8c]">
-                  By accessing demos, you agree to our Terms of Service.
-                </p>
-              </div>
+      <section className="bg-wave relative min-h-screen flex flex-col justify-center pt-24 pb-32">
+        <div className="max-w-[1400px] mx-auto px-8 relative z-10 w-full">
+          <div className="max-w-5xl">
+            <h1 className="editorial font-serif text-[clamp(2.5rem,7vw,6.5rem)] text-[#F3F3E9] mb-8">
+              Experience the future of <em className="text-[#B2EEDA] not-italic">agentic</em> enterprise software.
+            </h1>
+            <p className="text-base md:text-lg text-[#B2AEAF] max-w-2xl mb-10 leading-relaxed">
+              Explore live, interactive demonstrations of Echelix solutions — purpose-built to modernize operations, embed AI, and deliver measurable business value, fast.
+            </p>
+            <div className="flex flex-wrap gap-3 items-center">
+              <button onClick={() => setShowForm(true)} className="btn-pill">
+                Access Demos →
+              </button>
+              <a href="#features" className="btn-ghost">
+                Learn More
+              </a>
             </div>
           </div>
         </div>
+
+        {/* Scroll indicator (left edge) */}
+        <div className="absolute left-8 bottom-12 flex items-center gap-3">
+          <span className="block w-12 h-px bg-[#F3F3E9]/30" />
+          <span className="scroll-indicator">Scroll</span>
+        </div>
+
+        {/* Social icons (right edge) */}
+        <div className="absolute right-8 bottom-12 flex flex-col gap-4 text-[#F3F3E9]/40">
+          <span className="text-xs">X</span>
+          <span className="text-xs">in</span>
+        </div>
       </section>
 
-      {/* Feature Strip */}
-      <section className="bg-[#f3f3e9] border-y border-[#e2e0d3]">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Features */}
+      <section id="features" className="border-t hairline">
+        <div className="max-w-[1400px] mx-auto px-8 py-24">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+            <p className="md:col-span-3 text-xs uppercase tracking-[0.25em] text-[#7FAC9D]">
+              Why Echelix
+            </p>
+            <h2 className="md:col-span-9 font-serif text-3xl md:text-5xl text-[#F3F3E9] leading-tight">
+              Solutions engineered for the next era of enterprise — agentic, integrated, measurable.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#F3F3E9]/10 border hairline">
             {[
-              { icon: '🎯', title: 'Interactive Demos', body: 'Experience live, hands-on demonstrations of every Echelix solution in real time.' },
-              { icon: '🔐', title: 'Secure Access', body: 'Enterprise-grade security with seamless Microsoft Teams integration for partners.' },
-              { icon: '⚡', title: 'Instant Onboarding', body: 'Start exploring in seconds — just your email and company information.' },
+              {
+                num: '01',
+                title: 'Interactive Demos',
+                body: 'Live, hands-on demonstrations of every Echelix solution. No slides, no recordings — just real software in real time.',
+              },
+              {
+                num: '02',
+                title: 'Secure Access',
+                body: 'Enterprise-grade security with seamless Microsoft Teams integration for partners and customers.',
+              },
+              {
+                num: '03',
+                title: 'Instant Onboarding',
+                body: 'Start exploring in seconds — your email and company name are all we need to get you in.',
+              },
             ].map((f) => (
-              <div key={f.title} className="bg-white rounded-xl p-6 border border-[#e2e0d3]">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <h3 className="text-lg font-bold mb-2">{f.title}</h3>
-                <p className="text-sm text-[#5c6360]">{f.body}</p>
+              <div key={f.num} className="bg-black p-10 hover:bg-[#0a0a0a] transition">
+                <div className="text-xs tracking-[0.25em] text-[#7FAC9D] mb-6">{f.num}</div>
+                <h3 className="font-serif text-2xl md:text-3xl text-[#F3F3E9] mb-4">{f.title}</h3>
+                <p className="text-sm text-[#8B8586] leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="border-t hairline">
+        <div className="max-w-[1400px] mx-auto px-8 py-24 text-center">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-6">
+            Ready When You Are
+          </p>
+          <h2 className="font-serif text-4xl md:text-6xl text-[#F3F3E9] mb-8 max-w-3xl mx-auto leading-[1.05]">
+            See what <em className="text-[#B2EEDA] not-italic">agentic</em> looks like in production.
+          </h2>
+          <button onClick={() => setShowForm(true)} className="btn-pill">
+            Access Demos →
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t border-[#e2e0d3] bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold text-xs">E</div>
-            <span className="font-semibold text-sm">Echelix Demo Hub</span>
+      <footer className="border-t hairline">
+        <div className="max-w-[1400px] mx-auto px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-xs font-bold" style={{ fontFamily: 'Fraunces, serif' }}>E</div>
+            <span className="text-xs uppercase tracking-[0.25em] text-[#F3F3E9]/70">Echelix Demo Hub</span>
           </div>
-          <p className="text-xs text-[#8a8f8c]">
+          <p className="text-xs text-[#605A5B]">
             Modernize. Build Agentic Apps. Deliver Business Value.
           </p>
         </div>
       </footer>
+
+      {/* Sign-in Modal */}
+      {showForm && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-black/80 backdrop-blur"
+          onClick={() => setShowForm(false)}
+        >
+          <div
+            className="relative w-full max-w-md bg-[#0a0a0a] border border-[#F3F3E9]/10 rounded-2xl p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#F3F3E9]/15 flex items-center justify-center text-[#F3F3E9]/60 hover:text-[#B2EEDA] hover:border-[#B2EEDA] transition"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-3">Access Demos</p>
+            <h2 className="font-serif text-3xl text-[#F3F3E9] mb-2 leading-tight">
+              Step inside the hub.
+            </h2>
+            <p className="text-sm text-[#8B8586] mb-6">
+              Enter your details and we&apos;ll route you to the right experience.
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-3">
+              {error && (
+                <div className="p-3 rounded-lg text-sm bg-[#CD3232]/10 text-[#CD3232] border border-[#CD3232]/30">
+                  {error}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={formData.first_name}
+                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                  required
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  value={formData.last_name}
+                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                  required
+                  className="input-field"
+                />
+              </div>
+
+              <input
+                type="email"
+                placeholder="Work email"
+                value={formData.email}
+                onChange={handleEmailChange}
+                required
+                className="input-field"
+              />
+
+              {isMicrosoftEmail && (
+                <div className="p-3 rounded-lg text-xs bg-[#B2EEDA]/8 text-[#B2EEDA] border border-[#B2EEDA]/25">
+                  ✓ Microsoft account detected — routing to Partner Hub.
+                </div>
+              )}
+
+              <input
+                type="text"
+                placeholder="Company name"
+                value={formData.company_name}
+                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                required
+                className="input-field"
+              />
+
+              <button type="submit" disabled={loading} className="btn-pill w-full mt-2">
+                {loading ? 'Signing in…' : 'Enter the Hub →'}
+              </button>
+            </form>
+
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] mt-5 text-[#605A5B]">
+              By continuing, you agree to our Terms.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

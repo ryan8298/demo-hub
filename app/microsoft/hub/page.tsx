@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { HubNav, HubFooter, DemoCard } from '@/components/HubShared';
 import { Demo } from '@/lib/types';
 
 export default function MicrosoftHub() {
@@ -40,86 +41,79 @@ export default function MicrosoftHub() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#faf9f3]">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
           <div className="spinner mx-auto" />
-          <p className="mt-4 text-[#5c6360] text-sm">Loading partner solutions…</p>
+          <p className="mt-4 text-[#8B8586] text-xs uppercase tracking-[0.25em]">Loading partner solutions</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f3]">
-      {/* Nav */}
-      <nav className="border-b border-[#e2e0d3] bg-white/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold">E</div>
-            <span className="text-xl font-bold tracking-tight text-[#1a1a1a]">Echelix</span>
-          </a>
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#e6f0fb] text-[#0e5fa6] border border-[#cfe0f3]">
-              <svg viewBox="0 0 23 23" className="w-3 h-3"><rect width="10" height="10" fill="#f25022"/><rect x="11" width="10" height="10" fill="#7fba00"/><rect y="11" width="10" height="10" fill="#00a4ef"/><rect x="11" y="11" width="10" height="10" fill="#ffb900"/></svg>
-              Microsoft Partner
-            </span>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-black text-[#F3F3E9]">
+      <HubNav label="Partner Hub" partner />
 
       {/* Hero */}
-      <header className="bg-grid border-b border-[#e2e0d3]">
-        <div className="max-w-7xl mx-auto px-6 py-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e6f0fb] text-[#0e5fa6] text-xs font-semibold mb-4 border border-[#cfe0f3]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0e5fa6] animate-pulse" />
+      <header className="bg-wave relative pt-32 pb-20 border-b hairline">
+        <div className="max-w-[1400px] mx-auto px-8 relative z-10">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#7FAC9D] mb-6 flex items-center gap-2">
+            <svg viewBox="0 0 23 23" className="w-3 h-3">
+              <rect width="10" height="10" fill="#f25022" />
+              <rect x="11" width="10" height="10" fill="#7fba00" />
+              <rect y="11" width="10" height="10" fill="#00a4ef" />
+              <rect x="11" y="11" width="10" height="10" fill="#ffb900" />
+            </svg>
             Microsoft Partner Hub
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3 text-[#1a1a1a]">
-            Co-sell ready solutions for <span className="text-[#7fac3d]">Microsoft</span> teams.
+          </p>
+          <h1 className="editorial font-serif text-[clamp(2.5rem,6vw,5.5rem)] text-[#F3F3E9] leading-[1.04] mb-6 max-w-4xl">
+            Co-sell ready solutions for <em className="text-[#B2EEDA] not-italic">Microsoft</em> teams.
           </h1>
-          <p className="text-lg text-[#5c6360] max-w-2xl">
+          <p className="text-base md:text-lg text-[#B2AEAF] max-w-2xl leading-relaxed">
             Curated Echelix demonstrations engineered for the Microsoft ecosystem — Azure-native, Teams-integrated, and ready to take to your customers.
           </p>
-
-          {/* Search + Filters */}
-          <div className="mt-8 flex flex-col md:flex-row gap-3 md:items-center">
-            <div className="relative flex-1 max-w-md">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search partner demos…"
-                className="input-field pl-10"
-              />
-              <svg className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a8f8c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
-              </svg>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {industries.map((ind) => (
-                <button
-                  key={ind}
-                  onClick={() => setIndustryFilter(ind)}
-                  className={`text-xs font-semibold px-3 py-2 rounded-full transition border ${
-                    industryFilter === ind
-                      ? 'bg-[#7fac3d] text-white border-[#7fac3d]'
-                      : 'bg-white text-[#5c6360] border-[#e2e0d3] hover:border-[#7fac3d]'
-                  }`}
-                >
-                  {ind}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </header>
 
+      {/* Filters */}
+      <section className="border-b hairline sticky top-[68px] z-40 bg-black/85 backdrop-blur">
+        <div className="max-w-[1400px] mx-auto px-8 py-5 flex flex-col md:flex-row gap-4 md:items-center">
+          <div className="relative flex-1 max-w-md">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search partner demos…"
+              className="input-field pl-10"
+            />
+            <svg className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#706A6B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
+            </svg>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {industries.map((ind) => (
+              <button
+                key={ind}
+                onClick={() => setIndustryFilter(ind)}
+                className={`text-[10px] uppercase tracking-[0.15em] font-medium px-4 py-2 rounded-full transition border ${
+                  industryFilter === ind
+                    ? 'bg-[#B2EEDA] text-black border-[#B2EEDA]'
+                    : 'bg-transparent text-[#B2AEAF] border-[#F3F3E9]/15 hover:border-[#B2EEDA] hover:text-[#B2EEDA]'
+                }`}
+              >
+                {ind}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Grid */}
-      <main className="max-w-7xl mx-auto px-6 py-14">
+      <main className="max-w-[1400px] mx-auto px-8 py-16">
         {filtered.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-[#e2e0d3]">
-            <div className="text-5xl mb-3">🔍</div>
-            <p className="text-[#5c6360]">No partner demos match your filters yet.</p>
+          <div className="text-center py-24 border border-dashed border-[#F3F3E9]/10 rounded-2xl">
+            <div className="text-4xl mb-4 opacity-50">◯</div>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#706A6B]">No partner demos match your filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,6 +122,7 @@ export default function MicrosoftHub() {
                 key={demo.id}
                 demo={demo}
                 expanded={expandedId === demo.id}
+                partner
                 onToggle={() =>
                   setExpandedId(expandedId === demo.id ? null : demo.id)
                 }
@@ -137,132 +132,7 @@ export default function MicrosoftHub() {
         )}
       </main>
 
-      <footer className="border-t border-[#e2e0d3] bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#7fac3d] flex items-center justify-center text-white font-bold text-xs">E</div>
-            <span className="font-semibold text-sm text-[#1a1a1a]">Echelix Demo Hub — Microsoft Partner</span>
-          </div>
-          <p className="text-xs text-[#8a8f8c]">Modernize. Build Agentic Apps. Deliver Business Value.</p>
-        </div>
-      </footer>
+      <HubFooter />
     </div>
-  );
-}
-
-function DemoCard({
-  demo,
-  expanded,
-  onToggle,
-}: {
-  demo: Demo;
-  expanded: boolean;
-  onToggle: () => void;
-}) {
-  const [iframeError, setIframeError] = useState(false);
-
-  return (
-    <article className="bg-white rounded-2xl overflow-hidden border border-[#e2e0d3] card-hover flex flex-col">
-      <div className="relative w-full h-52 bg-gradient-to-br from-[#b2eeda] via-[#d9f0c7] to-[#7fac3d] overflow-hidden">
-        {demo.preview_image_url && !iframeError ? (
-          <img
-            src={demo.preview_image_url}
-            alt={demo.title}
-            className="w-full h-full object-cover"
-            onError={() => setIframeError(true)}
-          />
-        ) : demo.demo_url && !iframeError ? (
-          <>
-            <iframe
-              src={demo.demo_url}
-              className="demo-preview-frame"
-              sandbox="allow-scripts allow-same-origin"
-              loading="lazy"
-              title={`${demo.title} preview`}
-              onError={() => setIframeError(true)}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
-          </>
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-            <div className="text-4xl mb-2">🚀</div>
-            <p className="text-sm font-semibold opacity-90">Demo Preview</p>
-          </div>
-        )}
-        {demo.featured && (
-          <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-white/95 text-[#6a9530] shadow">
-            ★ Featured
-          </span>
-        )}
-        <span className="absolute top-3 right-3 inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-white/95 text-[#0e5fa6] shadow">
-          <svg viewBox="0 0 23 23" className="w-2.5 h-2.5"><rect width="10" height="10" fill="#f25022"/><rect x="11" width="10" height="10" fill="#7fba00"/><rect y="11" width="10" height="10" fill="#00a4ef"/><rect x="11" y="11" width="10" height="10" fill="#ffb900"/></svg>
-          Co-Sell
-        </span>
-      </div>
-
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className={demo.industry ? 'badge' : 'badge badge-muted'}>
-            {demo.industry || 'General'}
-          </span>
-        </div>
-
-        <h3 className="text-lg font-bold leading-snug mb-2 text-[#1a1a1a]">
-          {demo.title}
-        </h3>
-        <p className="text-sm text-[#5c6360] line-clamp-3 mb-5">
-          {demo.description || 'Interactive solution demonstration.'}
-        </p>
-
-        <div className="mt-auto flex items-center gap-3">
-          <a
-            href={demo.demo_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary text-sm flex-1"
-          >
-            Open Demo →
-          </a>
-          <button onClick={onToggle} className="btn-secondary text-sm" aria-expanded={expanded}>
-            {expanded ? 'Hide' : 'Details'}
-          </button>
-        </div>
-
-        {expanded && (
-          <div className="mt-6 pt-6 border-t border-[#e2e0d3] space-y-5">
-            {demo.roi_summary && (
-              <div className="p-4 rounded-lg bg-[#f0f8ed] border border-[#d6ebc4]">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#6a9530] mb-2">
-                  💰 ROI Summary
-                </h4>
-                <p className="text-sm text-[#1a1a1a]">{demo.roi_summary}</p>
-              </div>
-            )}
-
-            {demo.deployment_timeline && demo.deployment_timeline.length > 0 && (
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1a1a1a] mb-3">
-                  📅 Implementation Timeline
-                </h4>
-                <div className="space-y-2">
-                  {demo.deployment_timeline.map((phase, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#7fac3d] mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="font-semibold text-[#1a1a1a]">{phase.phase}</span>
-                        <span className="text-[#5c6360]"> — {phase.duration}</span>
-                        {phase.details && (
-                          <p className="text-xs text-[#8a8f8c] mt-0.5">{phase.details}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </article>
   );
 }
