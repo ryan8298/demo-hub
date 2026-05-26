@@ -33,6 +33,10 @@ export type DemoFormValues = {
   industry: string;
   audience: string[];
   tags: string[];
+  // One-pager content for /demo/[slug]
+  problem_statement: string;
+  target_audience_description: string;
+  architecture_diagram_url: string;
 };
 
 export type Updater = (next: Partial<DemoFormValues>) => void;
@@ -152,13 +156,47 @@ export function DemoLinkCard({
   previewImage,
   onFetchPreview,
   fetching,
+  onPreviewChange,
 }: {
   values: DemoFormValues;
   update: Updater;
   previewImage: string;
   onFetchPreview: () => void;
   fetching: boolean;
+  /** Called after a manual file upload succeeds. Receives the public URL. */
+  onPreviewChange: (url: string) => void;
 }) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('folder', 'previews');
+      const res = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setUploadError(data.error || 'Upload failed.');
+        return;
+      }
+      onPreviewChange(data.url);
+    } catch {
+      setUploadError('Network error during upload.');
+    } finally {
+      setUploading(false);
+      e.target.value = ''; // allow re-selecting the same file
+    }
+  }
+
   return (
     <section className="card p-8">
       <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">02</p>
@@ -166,7 +204,7 @@ export function DemoLinkCard({
 
       <Field
         label="Demo URL *"
-        hint='Full URL to the demo. Click "Auto-Fetch" to pull the og:image from the site.'
+        hint='Full URL to the demo. Click "Auto-Fetch" to try pulling the site’s og:image — or upload a custom screenshot below.'
       >
         <div className="flex gap-2">
           <input
@@ -188,11 +226,54 @@ export function DemoLinkCard({
         </div>
       </Field>
 
-      {previewImage && (
-        <div className="mt-4 p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam mb-2">
-            ✓ Preview Image Fetched
+      {/* Manual upload — fallback for demos that block scraping */}
+      <div className="mt-5">
+        <Field
+          label="Or upload a preview image"
+          hint="PNG, JPG, WebP, GIF, or SVG. Max 5 MB. Use this when Auto-Fetch returns nothing."
+        >
+          <label className="block">
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+              onChange={handleUpload}
+              disabled={uploading}
+              className="block w-full text-sm text-grey-300
+                         file:mr-3 file:py-2 file:px-4
+                         file:rounded-full file:border-0
+                         file:text-xs file:uppercase file:tracking-[0.15em]
+                         file:font-medium
+                         file:bg-sea-foam file:text-black
+                         hover:file:bg-sea-foam/90
+                         file:cursor-pointer cursor-pointer
+                         disabled:opacity-50"
+            />
+          </label>
+        </Field>
+        {uploading && (
+          <p className="text-xs text-grey-400 mt-2">Uploading…</p>
+        )}
+        {uploadError && (
+          <p className="text-xs text-error mt-2" role="alert">
+            {uploadError}
           </p>
+        )}
+      </div>
+
+      {previewImage && (
+        <div className="mt-5 p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam">
+              ✓ Current preview image
+            </p>
+            <button
+              type="button"
+              onClick={() => onPreviewChange('')}
+              className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition"
+            >
+              Remove
+            </button>
+          </div>
           <div className="relative w-full h-32 rounded overflow-hidden">
             <Image
               src={previewImage}
@@ -403,7 +484,146 @@ export function TagsCard({
 }
 
 /* ============================================================
-   06 — Submit card with status banner
+   06 — Detail-page one-pager content
+   Renders on /demo/[slug] as the "what / who / what it solves /
+   architecture" sections.
+   ============================================================ */
+export function DetailPageCard({
+  values,
+  update,
+}: {
+  values: DemoFormValues;
+  update: Updater;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  async function handleArchUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('folder', 'architecture');
+      const res = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setUploadError(data.error || 'Upload failed.');
+        return;
+      }
+      update({ architecture_diagram_url: data.url });
+    } catch {
+      setUploadError('Network error during upload.');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
+
+  return (
+    <section className="card p-8">
+      <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">06</p>
+      <h2 className="font-serif text-2xl text-milk mb-1">Detail Page Content</h2>
+      <p className="text-xs text-grey-500 mb-6">
+        Shown on the public <span className="font-mono">/demo/[slug]</span> page. All optional —
+        sections without content are hidden automatically.
+      </p>
+
+      <div className="space-y-5">
+        <Field
+          label="Who it's for"
+          hint="Plain-English description of the target audience (e.g., 'Mid-market manufacturers running on Azure'). Distinct from the audience checkboxes above, which only control hub routing."
+        >
+          <textarea
+            value={values.target_audience_description}
+            onChange={(e) => update({ target_audience_description: e.target.value })}
+            placeholder="e.g., CIOs and IT leaders at financial services firms with 500+ employees"
+            rows={2}
+            className="input-field resize-none"
+          />
+        </Field>
+
+        <Field
+          label="What it solves"
+          hint="The problem statement — the pain point this demo addresses."
+        >
+          <textarea
+            value={values.problem_statement}
+            onChange={(e) => update({ problem_statement: e.target.value })}
+            placeholder="e.g., Manual compliance reporting consuming 40+ hours per week per analyst"
+            rows={4}
+            className="input-field resize-none"
+          />
+        </Field>
+
+        <Field
+          label="Architecture Diagram"
+          hint="High-level Microsoft-based solution architecture. PNG/JPG/SVG, max 5 MB."
+        >
+          <label className="block">
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              onChange={handleArchUpload}
+              disabled={uploading}
+              className="block w-full text-sm text-grey-300
+                         file:mr-3 file:py-2 file:px-4
+                         file:rounded-full file:border-0
+                         file:text-xs file:uppercase file:tracking-[0.15em]
+                         file:font-medium
+                         file:bg-sea-foam file:text-black
+                         hover:file:bg-sea-foam/90
+                         file:cursor-pointer cursor-pointer
+                         disabled:opacity-50"
+            />
+          </label>
+          {uploading && <p className="text-xs text-grey-400 mt-2">Uploading…</p>}
+          {uploadError && (
+            <p className="text-xs text-error mt-2" role="alert">
+              {uploadError}
+            </p>
+          )}
+        </Field>
+
+        {values.architecture_diagram_url && (
+          <div className="p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam">
+                ✓ Architecture diagram uploaded
+              </p>
+              <button
+                type="button"
+                onClick={() => update({ architecture_diagram_url: '' })}
+                className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition"
+              >
+                Remove
+              </button>
+            </div>
+            <div className="relative w-full h-48 rounded overflow-hidden bg-black/40">
+              <Image
+                src={values.architecture_diagram_url}
+                alt="Architecture diagram"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain"
+                unoptimized={values.architecture_diagram_url.startsWith('http')}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   07 — Submit card with status banner
    ============================================================ */
 export function SubmitCard({
   message,

@@ -35,7 +35,6 @@ export function DemoHubLayout({
   initialDemos: Demo[];
 }) {
   const [demos] = useState<Demo[]>(initialDemos);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [industryFilter, setIndustryFilter] = useState<string>('All');
   const [activeTags, setActiveTags] = useState<string[]>([]);
@@ -207,12 +206,8 @@ export function DemoHubLayout({
                     <DemoCard
                       key={demo.id}
                       demo={demo}
-                      expanded={expandedId === demo.id}
                       partner={variant.partner}
                       featured
-                      onToggle={() =>
-                        setExpandedId(expandedId === demo.id ? null : demo.id)
-                      }
                     />
                   ))}
                 </div>
@@ -231,11 +226,7 @@ export function DemoHubLayout({
                     <DemoCard
                       key={demo.id}
                       demo={demo}
-                      expanded={expandedId === demo.id}
                       partner={variant.partner}
-                      onToggle={() =>
-                        setExpandedId(expandedId === demo.id ? null : demo.id)
-                      }
                     />
                   ))}
                 </div>

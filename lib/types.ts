@@ -23,6 +23,10 @@ export interface Demo {
   tags?: string[];
   view_count?: number;
   click_count?: number;
+  // One-pager fields shown on /demo/[slug]
+  problem_statement?: string;
+  target_audience_description?: string;
+  architecture_diagram_url?: string;
   created_at: string;
   updated_at: string;
 }

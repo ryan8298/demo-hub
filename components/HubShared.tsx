@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Demo } from '@/lib/types';
 import { trackDemoEvent } from '@/lib/track';
 import { rememberDemoView } from '@/lib/recently-viewed';
@@ -73,25 +74,37 @@ function SignOutButton() {
 }
 
 /* ============================================================
-   PUBLIC NAV — no sign-out, used on /demo/[slug] pages
+   PUBLIC NAV — used on /demo/[slug] pages.
+   Adapts based on auth state: signed-in visitors see "Back to demos"
+   pointing at their hub; anonymous visitors see "Sign in".
    ============================================================ */
-export function PublicNav() {
+export function PublicNav({ backHref }: { backHref?: string }) {
+  const signedIn = !!backHref && backHref !== '/';
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-3">
+        <a href={signedIn ? backHref! : '/'} className="flex items-center gap-3">
           <EchelixLogo className="h-8 md:h-9 w-auto" />
         </a>
         <div className="flex items-center gap-3 md:gap-4">
-          <a
-            href="/"
-            className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition hidden md:inline"
-          >
-            All solutions
-          </a>
-          <a href="/" className="btn-pill text-xs">
-            Sign in
-          </a>
+          {signedIn ? (
+            <a href={backHref!} className="btn-ghost text-xs">
+              ← Back to demos
+            </a>
+          ) : (
+            <>
+              <a
+                href="/"
+                className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition hidden md:inline"
+              >
+                All solutions
+              </a>
+              <a href="/" className="btn-pill text-xs">
+                Sign in
+              </a>
+            </>
+          )}
         </div>
       </div>
     </nav>
@@ -161,30 +174,29 @@ export function DemoGridSkeleton({ count = 6 }: { count?: number }) {
    ============================================================ */
 export function DemoCard({
   demo,
-  expanded,
-  onToggle,
   partner = false,
   featured = false,
 }: {
   demo: Demo;
-  expanded: boolean;
-  onToggle: () => void;
   partner?: boolean;
   featured?: boolean;
 }) {
   const [iframeError, setIframeError] = useState(false);
+  const router = useRouter();
+  const detailHref = `/demo/${demo.slug}`;
 
-  // Make the entire tile a click target for expand/collapse, but allow
-  // anchors and explicit buttons inside to fire their own handlers.
+  // Whole-tile click navigates to the detail subpage. Inner <a>/<button>
+  // elements (Open Demo, Details link) have their own handlers — closest()
+  // check makes sure we don't double-fire when those are clicked.
   function handleTileClick(e: React.MouseEvent<HTMLElement>) {
     const target = e.target as HTMLElement;
     if (target.closest('a, button')) return;
-    onToggle();
+    router.push(detailHref);
   }
   function handleTileKey(e: React.KeyboardEvent<HTMLElement>) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onToggle();
+      router.push(detailHref);
     }
   }
 
@@ -195,9 +207,9 @@ export function DemoCard({
       }`}
       onClick={handleTileClick}
       onKeyDown={handleTileKey}
-      role="button"
+      role="link"
       tabIndex={0}
-      aria-expanded={expanded}
+      aria-label={`View details for ${demo.title}`}
     >
       <div
         className={`relative w-full overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-[#020202] ${
@@ -270,6 +282,19 @@ export function DemoCard({
         </p>
 
         <div className="mt-auto flex items-center gap-3">
+          {/* Internal nav — stays in-app, no new tab */}
+          <a
+            href={detailHref}
+            className="btn-ghost text-xs flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Let Next.js handle the navigation; we use <a> for
+              // right-click + middle-click + cmd-click support.
+            }}
+          >
+            Details →
+          </a>
+          {/* External — opens demo in a new tab. Tracked. */}
           <a
             href={demo.demo_url}
             target="_blank"
@@ -283,48 +308,7 @@ export function DemoCard({
           >
             Open Demo →
           </a>
-          <span
-            className="btn-ghost text-xs pointer-events-none select-none"
-            aria-hidden="true"
-          >
-            {expanded ? 'Hide' : 'Details'}
-          </span>
         </div>
-
-        {expanded && (
-          <div className="mt-6 pt-6 border-t hairline space-y-5">
-            {demo.roi_summary && (
-              <div className="p-4 rounded-lg bg-sea-foam/5 border border-sea-foam/15">
-                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam mb-2">
-                  ROI Summary
-                </h4>
-                <p className="text-sm text-milk leading-relaxed">{demo.roi_summary}</p>
-              </div>
-            )}
-
-            {demo.deployment_timeline && demo.deployment_timeline.length > 0 && (
-              <div>
-                <h4 className="text-[10px] font-medium uppercase tracking-[0.25em] text-sage mb-3">
-                  Implementation Timeline
-                </h4>
-                <div className="space-y-3">
-                  {demo.deployment_timeline.map((phase, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sea-foam mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="font-medium text-milk">{phase.phase}</span>
-                        <span className="text-grey-400"> — {phase.duration}</span>
-                        {phase.details && (
-                          <p className="text-xs text-grey-500 mt-1 leading-relaxed">{phase.details}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </article>
   );
@@ -346,7 +330,19 @@ export function Modal({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // ESC to close + body scroll lock + initial focus
+  // Capture the latest onClose in a ref so the effect below can depend
+  // only on `open`. Without this, the parent passes a new arrow function
+  // for onClose on every render — which caused the focus-stealing bug:
+  // every keystroke inside the modal triggered the effect, which yanked
+  // focus back to the first focusable element (the close button).
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // ESC to close + body scroll lock + initial focus.
+  // IMPORTANT: depend only on `open` so this fires exactly twice per
+  // modal lifecycle (mount + unmount), not on every parent re-render.
   useEffect(() => {
     if (!open) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -356,7 +352,7 @@ export function Modal({
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         e.stopPropagation();
-        onClose();
+        onCloseRef.current();
       }
     }
     document.addEventListener('keydown', onKey);
@@ -372,7 +368,7 @@ export function Modal({
       document.removeEventListener('keydown', onKey);
       previouslyFocused?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // Trap focus within the dialog
   function onKeyDown(e: React.KeyboardEvent) {

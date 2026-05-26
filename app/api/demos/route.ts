@@ -54,6 +54,9 @@ export async function POST(request: NextRequest) {
       industry,
       preview_image_url,
       tags,
+      problem_statement,
+      target_audience_description,
+      architecture_diagram_url,
     } = body;
 
     if (!title || !demo_url || !slug || !audience || audience.length === 0) {
@@ -78,6 +81,9 @@ export async function POST(request: NextRequest) {
           industry: industry || null,
           preview_image_url: preview_image_url || null,
           tags: Array.isArray(tags) ? tags : [],
+          problem_statement: problem_statement || null,
+          target_audience_description: target_audience_description || null,
+          architecture_diagram_url: architecture_diagram_url || null,
           featured: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

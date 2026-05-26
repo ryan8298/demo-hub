@@ -8,6 +8,7 @@ import {
   BasicInfoCard,
   DemoFormValues,
   DemoLinkCard,
+  DetailPageCard,
   IndustryCard,
   SubmitCard,
   TagsCard,
@@ -24,6 +25,9 @@ function valuesFromDemo(demo: Demo): DemoFormValues {
     industry: demo.industry || '',
     audience: demo.audience || [],
     tags: demo.tags || [],
+    problem_statement: demo.problem_statement || '',
+    target_audience_description: demo.target_audience_description || '',
+    architecture_diagram_url: demo.architecture_diagram_url || '',
   };
 }
 
@@ -121,7 +125,9 @@ export function DemoEditForm({ demo }: { demo: Demo }) {
           previewImage={previewImage}
           onFetchPreview={fetchPreviewImage}
           fetching={fetchingPreview}
+          onPreviewChange={setPreviewImage}
         />
+        <DetailPageCard values={formData} update={update} />
       </div>
 
       <div className="space-y-6">

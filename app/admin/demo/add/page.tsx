@@ -8,6 +8,7 @@ import {
   BasicInfoCard,
   DemoFormValues,
   DemoLinkCard,
+  DetailPageCard,
   IndustryCard,
   SubmitCard,
   TagsCard,
@@ -23,6 +24,9 @@ const EMPTY_FORM: DemoFormValues = {
   industry: '',
   audience: [],
   tags: [],
+  problem_statement: '',
+  target_audience_description: '',
+  architecture_diagram_url: '',
 };
 
 export default function AddDemoPage() {
@@ -140,7 +144,9 @@ export default function AddDemoPage() {
               previewImage={previewImage}
               onFetchPreview={fetchPreviewImage}
               fetching={fetchingPreview}
+              onPreviewChange={setPreviewImage}
             />
+            <DetailPageCard values={formData} update={update} />
           </div>
 
           <div className="space-y-6">

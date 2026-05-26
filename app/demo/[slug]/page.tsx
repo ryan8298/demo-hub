@@ -1,9 +1,25 @@
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getDemoBySlug, listRelatedDemos } from '@/lib/demos';
 import { PublicNav, HubFooter, MicrosoftSquares } from '@/components/HubShared';
 import { PublicDemoView } from '@/components/PublicDemoView';
+import { verifySession, COOKIE_VISITOR } from '@/lib/session';
+import { isMicrosoftEmail } from '@/lib/microsoft-access';
+
+// Read the visitor cookie to decide which hub to send the user "back" to
+// when they came in via in-app navigation. Anonymous visitors get a public
+// nav with a Sign-in CTA instead.
+async function resolveBackHref(): Promise<string | undefined> {
+  const store = await cookies();
+  const token = store.get(COOKIE_VISITOR)?.value;
+  const session = await verifySession(token);
+  if (!session || session.role !== 'visitor') return undefined;
+  return isMicrosoftEmail(String(session.sub || ''))
+    ? '/microsoft/hub'
+    : '/customer/hub';
+}
 
 // Cache at the edge — same revalidation cadence as the hub pages.
 export const revalidate = 60;
@@ -37,12 +53,15 @@ export default async function PublicDemoPage({
   const demo = await getDemoBySlug(slug);
   if (!demo) notFound();
 
-  const related = await listRelatedDemos(demo, 3);
+  const [related, backHref] = await Promise.all([
+    listRelatedDemos(demo, 3),
+    resolveBackHref(),
+  ]);
   const isPartner = demo.audience.includes('microsoft');
 
   return (
     <div className="min-h-screen bg-black text-milk">
-      <PublicNav />
+      <PublicNav backHref={backHref} />
 
       <header className="pt-32 pb-10 border-b hairline">
         <div className="max-w-[1200px] mx-auto px-6 md:px-8">
@@ -94,10 +113,67 @@ export default async function PublicDemoPage({
       <main className="max-w-[1200px] mx-auto px-6 md:px-8 py-12 md:py-16">
         <PublicDemoView demo={demo} />
 
-        {/* Body — ROI + timeline */}
+        {/* Who it's for / What it solves */}
+        {(demo.target_audience_description || demo.problem_statement) && (
+          <section className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {demo.target_audience_description && (
+              <div className="card p-8">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
+                  Who it&apos;s for
+                </p>
+                <h2 className="font-serif text-2xl text-milk mb-4">
+                  Built for these teams
+                </h2>
+                <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
+                  {demo.target_audience_description}
+                </p>
+              </div>
+            )}
+
+            {demo.problem_statement && (
+              <div className="card p-8">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-3">
+                  What it solves
+                </p>
+                <h2 className="font-serif text-2xl text-milk mb-4">
+                  The problem we tackle
+                </h2>
+                <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
+                  {demo.problem_statement}
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Architecture diagram */}
+        {demo.architecture_diagram_url && (
+          <section className="mt-12">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-3">
+              Solution Architecture
+            </p>
+            <h2 className="font-serif text-2xl md:text-3xl text-milk mb-6">
+              How it fits together
+            </h2>
+            <div className="card p-4 md:p-6">
+              <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden bg-black/40">
+                <Image
+                  src={demo.architecture_diagram_url}
+                  alt={`${demo.title} architecture diagram`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 1200px"
+                  className="object-contain"
+                  unoptimized={demo.architecture_diagram_url.startsWith('http')}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ROI + timeline (unchanged) */}
         {(demo.roi_summary ||
           (demo.deployment_timeline && demo.deployment_timeline.length > 0)) && (
-          <section className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
             {demo.roi_summary && (
               <div className="card p-8">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
