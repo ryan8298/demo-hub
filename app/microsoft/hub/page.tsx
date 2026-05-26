@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Demo } from '@/lib/types';
 
-export default function CustomerHub() {
+export default function MicrosoftHub() {
   const [demos, setDemos] = useState<Demo[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/demos?audience=customer')
+    fetch('/api/demos?audience=microsoft')
       .then(res => res.json())
       .then(data => {
         setDemos(data);
@@ -66,7 +66,7 @@ export default function CustomerHub() {
                       </div>
                     )}
 
-                    <a
+                    
                       href={demo.demo_url}
                       target="_blank"
                       rel="noopener noreferrer"
