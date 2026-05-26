@@ -1,22 +1,25 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Demo } from '@/lib/types';
 
 /* ============================================================
    ECHELIX LOGO
+   Source is a 1200×500 PNG. next/image auto-generates AVIF/WebP
+   variants and serves whatever the visiting browser supports. We
+   give it priority because the logo is above the fold on every page.
    ============================================================ */
 export function EchelixLogo({ className = 'h-7' }: { className?: string }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src="/echelix-logo.png"
       alt="Echelix"
       width={1200}
       height={500}
+      priority
       className={className}
-      decoding="async"
-      loading="eager"
+      sizes="(max-width: 768px) 120px, 200px"
     />
   );
 }
@@ -174,12 +177,13 @@ export function DemoCard({
         }`}
       >
         {demo.preview_image_url && !iframeError ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={demo.preview_image_url}
             alt={demo.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
+            fill
+            sizes={featured ? '(max-width: 1024px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
+            className="object-cover"
+            unoptimized={demo.preview_image_url.startsWith('http')}
             onError={() => setIframeError(true)}
           />
         ) : demo.demo_url && !iframeError ? (

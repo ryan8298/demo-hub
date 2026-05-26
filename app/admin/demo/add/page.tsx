@@ -2,60 +2,38 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EchelixLogo } from '@/components/HubShared';
+import { AdminNav } from '@/components/admin/AdminNav';
+import {
+  AudienceCard,
+  BasicInfoCard,
+  DemoFormValues,
+  DemoLinkCard,
+  IndustryCard,
+  SubmitCard,
+  Updater,
+} from '@/components/admin/DemoFormCards';
 
-const INDUSTRIES = [
-  'Finance & Banking',
-  'Healthcare',
-  'Retail & E-Commerce',
-  'Manufacturing',
-  'Technology',
-  'Government',
-  'Education',
-  'Enterprise',
-  'Other',
-];
+const EMPTY_FORM: DemoFormValues = {
+  title: '',
+  description: '',
+  demo_url: '',
+  slug: '',
+  roi_summary: '',
+  industry: '',
+  audience: [],
+};
 
 export default function AddDemoPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    demo_url: '',
-    slug: '',
-    roi_summary: '',
-    industry: '',
-    audience: [] as string[],
-  });
+  const [formData, setFormData] = useState<DemoFormValues>(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [previewImage, setPreviewImage] = useState('');
   const [fetchingPreview, setFetchingPreview] = useState(false);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAudienceChange = (audience: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      audience: prev.audience.includes(audience)
-        ? prev.audience.filter((a) => a !== audience)
-        : [...prev.audience, audience],
-    }));
-  };
-
-  const generateSlug = (title: string) =>
-    title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChange(e);
-    setFormData((prev) => ({ ...prev, slug: generateSlug(e.target.value) }));
-  };
+  const update: Updater = (next) =>
+    setFormData((prev) => ({ ...prev, ...next }));
 
   const fetchPreviewImage = async () => {
     if (!formData.demo_url) {
@@ -97,12 +75,14 @@ export default function AddDemoPage() {
       const response = await fetch('/api/demos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin', // ensures the admin session cookie is sent
-        body: JSON.stringify({ ...formData, preview_image_url: previewImage || undefined }),
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          ...formData,
+          preview_image_url: previewImage || undefined,
+        }),
       });
       const data = await response.json();
       if (response.status === 401) {
-        // Session expired or was revoked — bounce to login
         router.push('/admin/login?next=/admin/demo/add');
         return;
       }
@@ -113,7 +93,7 @@ export default function AddDemoPage() {
       }
       setMessageType('success');
       setMessage('✓ Demo published successfully');
-      setFormData({ title: '', description: '', demo_url: '', slug: '', roi_summary: '', industry: '', audience: [] });
+      setFormData(EMPTY_FORM);
       setPreviewImage('');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
@@ -126,32 +106,11 @@ export default function AddDemoPage() {
 
   return (
     <div className="min-h-screen bg-black text-milk">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-3">
-            <EchelixLogo className="h-7 md:h-8 w-auto" />
-          </a>
-          <div className="flex items-center gap-3">
-            <span className="badge">Admin</span>
-            <button
-              type="button"
-              onClick={async () => {
-                await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
-                router.push('/admin/login');
-                router.refresh();
-              }}
-              className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </nav>
+      <AdminNav current="add" />
 
       {/* Header */}
       <header className="bg-wave relative pt-32 pb-16 border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-8 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
           <p className="text-xs uppercase tracking-[0.25em] text-sage mb-5">
             Admin Console
           </p>
@@ -159,210 +118,44 @@ export default function AddDemoPage() {
             Publish a <em className="text-sea-foam not-italic">new</em> demo.
           </h1>
           <p className="text-base text-grey-300 max-w-xl">
-            Add a new solution to the Echelix Demo Hub. Demos appear immediately on the audiences you select.
+            Add a new solution to the Echelix Demo Hub. Demos appear immediately
+            on the audiences you select.
           </p>
         </div>
       </header>
 
       {/* Form */}
-      <main className="max-w-[1400px] mx-auto px-8 py-16">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main column */}
+      <main className="max-w-[1400px] mx-auto px-6 md:px-8 py-12 md:py-16">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+        >
           <div className="lg:col-span-2 space-y-6">
-            {/* Basic Info */}
-            <section className="card p-8">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">01</p>
-              <h2 className="font-serif text-2xl text-milk mb-6">Basic Information</h2>
-
-              <div className="space-y-5">
-                <Field label="Demo Title *">
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleTitleChange}
-                    required
-                    placeholder="e.g., Enterprise Security Dashboard"
-                    className="input-field"
-                  />
-                </Field>
-                <Field label="URL Slug *" hint="Unique identifier (auto-generated from title).">
-                  <input
-                    type="text"
-                    name="slug"
-                    value={formData.slug}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="auto-generated from title"
-                    className="input-field"
-                  />
-                </Field>
-                <Field label="Description">
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Brief overview of what this demo showcases"
-                    rows={3}
-                    className="input-field resize-none"
-                  />
-                </Field>
-                <Field label="ROI Summary">
-                  <textarea
-                    name="roi_summary"
-                    value={formData.roi_summary}
-                    onChange={handleInputChange}
-                    placeholder="e.g., Reduce operational costs by 30%, improve efficiency by 40%"
-                    rows={2}
-                    className="input-field resize-none"
-                  />
-                </Field>
-              </div>
-            </section>
-
-            {/* Demo Link */}
-            <section className="card p-8">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">02</p>
-              <h2 className="font-serif text-2xl text-milk mb-6">Demo Link & Preview</h2>
-
-              <Field label="Demo URL *" hint='Full URL to the demo. Click "Auto-Fetch Image" to pull the og:image.'>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    name="demo_url"
-                    value={formData.demo_url}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="https://example.com/demo"
-                    className="input-field"
-                  />
-                  <button
-                    type="button"
-                    onClick={fetchPreviewImage}
-                    disabled={fetchingPreview || !formData.demo_url}
-                    className="btn-ghost whitespace-nowrap"
-                  >
-                    {fetchingPreview ? 'Fetching…' : 'Auto-Fetch'}
-                  </button>
-                </div>
-              </Field>
-
-              {previewImage && (
-                <div className="mt-4 p-4 rounded-lg border border-sea-foam/25 bg-sea-foam/5">
-                  <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-sea-foam mb-2">
-                    ✓ Preview Image Fetched
-                  </p>
-                  <img src={previewImage} alt="Preview" className="w-full h-32 object-cover rounded" />
-                </div>
-              )}
-            </section>
+            <BasicInfoCard values={formData} update={update} autoSlug />
+            <DemoLinkCard
+              values={formData}
+              update={update}
+              previewImage={previewImage}
+              onFetchPreview={fetchPreviewImage}
+              fetching={fetchingPreview}
+            />
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            <section className="card p-6">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">03</p>
-              <h2 className="font-serif text-xl text-milk mb-4">Industry</h2>
-              <select
-                name="industry"
-                value={formData.industry}
-                onChange={handleInputChange}
-                className="input-field"
-              >
-                <option value="">Select an industry…</option>
-                {INDUSTRIES.map((ind) => (
-                  <option key={ind} value={ind}>
-                    {ind}
-                  </option>
-                ))}
-              </select>
-            </section>
-
-            <section className="card p-6">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">04</p>
-              <h2 className="font-serif text-xl text-milk mb-4">Target Audience *</h2>
-              <div className="space-y-2">
-                {[
-                  { key: 'customer', label: 'Customers', sub: 'For customer hub' },
-                  { key: 'microsoft', label: 'Microsoft Teams', sub: 'For partner hub' },
-                ].map((a) => {
-                  const checked = formData.audience.includes(a.key);
-                  return (
-                    <label
-                      key={a.key}
-                      className={`flex items-center p-3 rounded-lg cursor-pointer transition border ${
-                        checked
-                          ? 'bg-sea-foam/8 border-sea-foam/40'
-                          : 'bg-transparent border-milk/10 hover:border-sea-foam/40'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => handleAudienceChange(a.key)}
-                        className="w-4 h-4 cursor-pointer accent-sea-foam"
-                      />
-                      <div className="ml-3">
-                        <div className="font-medium text-sm text-milk">{a.label}</div>
-                        <div className="text-[10px] uppercase tracking-[0.2em] text-grey-500">
-                          {a.sub}
-                        </div>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-              {formData.audience.length === 0 && (
-                <p className="text-xs mt-3 text-error">⚠ Select at least one audience</p>
-              )}
-            </section>
-
-            <section className="card p-6">
-              {message && (
-                <div
-                  className={`p-3 rounded-lg text-xs mb-4 border ${
-                    messageType === 'success'
-                      ? 'bg-sea-foam/5 text-sea-foam border-sea-foam/30'
-                      : 'bg-error/10 text-error border-error/30'
-                  }`}
-                >
-                  {message}
-                </div>
-              )}
-              <button
-                type="submit"
-                disabled={loading || formData.audience.length === 0}
-                className="btn-pill w-full"
-              >
-                {loading ? 'Publishing…' : 'Publish Demo →'}
-              </button>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-center mt-3 text-grey-600">
-                Live on selected hubs instantly
-              </p>
-            </section>
+            <IndustryCard value={formData.industry} update={update} />
+            <AudienceCard value={formData.audience} update={update} />
+            <SubmitCard
+              message={message}
+              messageType={messageType}
+              loading={loading}
+              disabled={formData.audience.length === 0}
+              submitLabel="Publish Demo →"
+              loadingLabel="Publishing…"
+              footnote="Live on selected hubs instantly"
+            />
           </div>
         </form>
       </main>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="block text-[10px] font-medium uppercase tracking-[0.25em] mb-2 text-grey-300">
-        {label}
-      </label>
-      {children}
-      {hint && <p className="text-xs mt-1.5 text-grey-600">{hint}</p>}
     </div>
   );
 }

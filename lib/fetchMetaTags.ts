@@ -1,45 +1,67 @@
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 
-interface MetaData {
+export interface MetaData {
   title: string;
   description: string;
   image: string;
 }
 
+const DEFAULT_META: MetaData = {
+  title: "Demo",
+  description: "Interactive demo",
+  image: "",
+};
+
+/**
+ * Fetch a URL and extract Open Graph metadata. Uses native fetch with an
+ * AbortController-backed timeout — no axios.
+ *
+ * Some demo hosts block scrapers and will return non-OK or hang. We bail
+ * out at 5s and return defaults rather than propagate the error, so the
+ * admin "Auto-Fetch Image" button gracefully shows a fallback message.
+ */
 export async function fetchMetaTags(url: string): Promise<MetaData> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5_000);
+
   try {
-    const response = await axios.get(url, {
+    const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        "User-Agent":
+          "Mozilla/5.0 (compatible; Echelix-DemoHub/1.0; +https://echelix.app)",
+        Accept: "text/html,application/xhtml+xml",
       },
-      timeout: 5000
+      signal: controller.signal,
+      redirect: "follow",
     });
 
-    const $ = cheerio.load(response.data);
+    if (!response.ok) return DEFAULT_META;
 
-    const title = 
-      $('meta[property="og:title"]').attr('content') ||
-      $('title').text() ||
-      'Demo';
+    const html = await response.text();
+    const $ = cheerio.load(html);
 
-    const description =
-      $('meta[property="og:description"]').attr('content') ||
-      $('meta[name="description"]').attr('content') ||
-      'Interactive demo';
-
-    const image =
-      $('meta[property="og:image"]').attr('content') ||
-      $('meta[name="image"]').attr('content') ||
-      '';
-
-    return { title, description, image };
-  } catch (error) {
-    console.error('Error fetching meta tags:', error);
     return {
-      title: 'Demo',
-      description: 'Interactive demo',
-      image: ''
+      title:
+        $('meta[property="og:title"]').attr("content") ||
+        $("title").text().trim() ||
+        DEFAULT_META.title,
+      description:
+        $('meta[property="og:description"]').attr("content") ||
+        $('meta[name="description"]').attr("content") ||
+        DEFAULT_META.description,
+      image:
+        $('meta[property="og:image"]').attr("content") ||
+        $('meta[name="image"]').attr("content") ||
+        DEFAULT_META.image,
     };
+  } catch (err) {
+    // Timeouts surface as AbortError. Network errors / DNS failures also
+    // land here. Either way we silently degrade — this is best-effort.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("fetchMetaTags failed:", err);
+    }
+    return DEFAULT_META;
+  } finally {
+    clearTimeout(timeout);
   }
 }

@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
 function AdminLoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/admin/demo/add';
+  const next = searchParams.get('next') || '/admin';
 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

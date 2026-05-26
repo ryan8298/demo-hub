@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo, Modal } from '@/components/HubShared';
 
@@ -137,14 +138,19 @@ export default function Landing() {
       {/* Hero — wave bg anchored to bottom so it always sits behind the headline */}
       <section className="relative min-h-screen flex flex-col justify-center pt-24 pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          {/* Wave anchored bottom, never stretched — keeps the sea-foam curve visible at any viewport height */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/wave-bg.jpg"
-            alt=""
-            className="absolute inset-x-0 bottom-0 w-full h-[70vh] min-h-[420px] object-cover object-bottom opacity-70"
-            aria-hidden="true"
-          />
+          {/* Wave anchored bottom. next/image picks the best format
+              (AVIF on modern browsers) — ~6× smaller than the source JPG. */}
+          <div className="absolute inset-x-0 bottom-0 h-[70vh] min-h-[420px]">
+            <Image
+              src="/wave-bg.jpg"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-bottom opacity-70"
+              aria-hidden="true"
+            />
+          </div>
           {/* Gradient overlays for legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/30 to-black" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/40" />
