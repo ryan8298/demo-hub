@@ -3,20 +3,27 @@
 import { useState } from 'react';
 import { Demo } from '@/lib/types';
 
+export function EchelixLogo({ className = 'h-7' }: { className?: string }) {
+  return (
+    <img
+      src="/echelix-logo.svg"
+      alt="Echelix"
+      className={className}
+      onError={(e) => {
+        // Fall back to PNG if SVG is missing
+        const img = e.currentTarget;
+        if (!img.src.endsWith('.png')) img.src = '/echelix-logo.png';
+      }}
+    />
+  );
+}
+
 export function HubNav({ label, partner }: { label: string; partner?: boolean }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-8 py-5 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-sm font-bold text-[#F3F3E9]"
-            style={{ fontFamily: 'Fraunces, serif' }}
-          >
-            E
-          </div>
-          <span className="text-sm font-medium tracking-[0.25em] uppercase text-[#F3F3E9]">
-            Echelix
-          </span>
+          <EchelixLogo className="h-7 md:h-8 w-auto" />
         </a>
         <div className="flex items-center gap-4">
           <span className="text-[10px] uppercase tracking-[0.25em] text-[#706A6B] hidden md:block">
@@ -44,15 +51,7 @@ export function HubFooter() {
     <footer className="border-t hairline">
       <div className="max-w-[1400px] mx-auto px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div
-            className="w-7 h-7 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-xs font-bold"
-            style={{ fontFamily: 'Fraunces, serif' }}
-          >
-            E
-          </div>
-          <span className="text-xs uppercase tracking-[0.25em] text-[#F3F3E9]/70">
-            Echelix Demo Hub
-          </span>
+          <EchelixLogo className="h-5 w-auto opacity-80" />
         </div>
         <p className="text-xs text-[#605A5B]">
           Modernize. Build Agentic Apps. Deliver Business Value.

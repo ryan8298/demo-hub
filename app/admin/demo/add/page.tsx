@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { EchelixLogo } from '@/components/HubShared';
 
 const INDUSTRIES = [
   'Finance & Banking',
@@ -124,15 +125,7 @@ export default function AddDemoPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-sm font-bold text-[#F3F3E9]"
-              style={{ fontFamily: 'Fraunces, serif' }}
-            >
-              E
-            </div>
-            <span className="text-sm font-medium tracking-[0.25em] uppercase text-[#F3F3E9]">
-              Echelix
-            </span>
+            <EchelixLogo className="h-7 md:h-8 w-auto" />
           </a>
           <span className="badge">Admin</span>
         </div>

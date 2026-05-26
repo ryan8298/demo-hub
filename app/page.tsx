@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { EchelixLogo } from '@/components/HubShared';
 
 export default function Landing() {
   const [formData, setFormData] = useState({
@@ -49,12 +50,7 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1600px] mx-auto px-8 py-5 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-sm font-bold text-[#F3F3E9]" style={{ fontFamily: 'Fraunces, serif' }}>
-              E
-            </div>
-            <span className="text-sm font-medium tracking-[0.25em] uppercase text-[#F3F3E9]">
-              Echelix
-            </span>
+            <EchelixLogo className="h-7 md:h-8 w-auto" />
           </a>
           <div className="flex items-center gap-4">
             <button className="w-9 h-9 rounded-full border border-[#F3F3E9]/20 flex items-center justify-center text-[#F3F3E9]/70 hover:border-[#B2EEDA] hover:text-[#B2EEDA] transition">
@@ -70,7 +66,19 @@ export default function Landing() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-wave relative min-h-screen flex flex-col justify-center pt-24 pb-32">
+      <section className="relative min-h-screen flex flex-col justify-center pt-24 pb-32 overflow-hidden">
+        {/* Wave background image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/wave-bg.jpg"
+            alt=""
+            className="w-full h-full object-cover opacity-65"
+            aria-hidden="true"
+          />
+          {/* Gradient overlays to fade wave into black at top/bottom and keep text legible */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/50" />
+        </div>
         <div className="max-w-[1400px] mx-auto px-8 relative z-10 w-full">
           <div className="max-w-5xl">
             <h1 className="editorial font-serif text-[clamp(2.5rem,7vw,6.5rem)] text-[#F3F3E9] mb-8">
@@ -161,10 +169,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded border border-[#F3F3E9]/30 flex items-center justify-center text-xs font-bold" style={{ fontFamily: 'Fraunces, serif' }}>E</div>
-            <span className="text-xs uppercase tracking-[0.25em] text-[#F3F3E9]/70">Echelix Demo Hub</span>
-          </div>
+          <EchelixLogo className="h-5 w-auto opacity-80" />
           <p className="text-xs text-[#605A5B]">
             Modernize. Build Agentic Apps. Deliver Business Value.
           </p>
