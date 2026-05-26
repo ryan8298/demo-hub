@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifySession, COOKIE_ADMIN, COOKIE_VISITOR } from "@/lib/session";
 
 /**
- * Edge middleware — protects /admin/* routes and the visitor hubs.
+ * Next.js 16 Proxy (formerly Middleware) — runs at the edge before
+ * routes render. Protects /admin/* routes and the visitor hubs.
  *
  * - /admin/login is always accessible
  * - /admin/* requires a valid admin session cookie
@@ -10,7 +11,7 @@ import { verifySession, COOKIE_ADMIN, COOKIE_VISITOR } from "@/lib/session";
  *   (Microsoft hub additionally requires the email to be @microsoft.com)
  * - /api/admin/* is enforced separately at the route level (uses same helpers)
  */
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // ---- Admin gate ----

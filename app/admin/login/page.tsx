@@ -1,10 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { EchelixLogo } from '@/components/HubShared';
 
+// Wrapping component because useSearchParams() bails out of static
+// generation unless it's inside a Suspense boundary (Next 16 strict mode).
 export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="spinner" />
+        </div>
+      }
+    >
+      <AdminLoginInner />
+    </Suspense>
+  );
+}
+
+function AdminLoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/admin/demo/add';

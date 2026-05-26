@@ -1,9 +1,9 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
 
 /* ============================================
    ECHELIX BRAND TOKENS
    Matches echelix.com design system
+   Fonts loaded via next/font in app/layout.tsx
    ============================================ */
 :root {
   /* Brand colors (from brand guide) */
@@ -44,8 +44,8 @@
   --color-black: #020202;
   --color-milk: #F3F3E9;
   --color-sea-foam: #B2EEDA;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-serif: 'Fraunces', 'Times New Roman', serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), 'Times New Roman', serif;
 }
 
 * { box-sizing: border-box; }
@@ -56,7 +56,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   background: var(--black);
   color: var(--milk);
   line-height: 1.6;
@@ -68,21 +68,21 @@ body {
 .font-serif,
 h1.editorial,
 h2.editorial {
-  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-family: var(--font-fraunces), 'Times New Roman', serif;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.04;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-family: var(--font-fraunces), 'Times New Roman', serif;
   font-weight: 400;
   letter-spacing: -0.015em;
   color: var(--milk);
 }
 
 p, span, a, button, input, textarea, select, label, li {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -237,7 +237,7 @@ a:hover { color: var(--sage); }
   border-radius: 0.5rem;
   color: var(--milk);
   font-size: 0.95rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 .input-field:focus {
