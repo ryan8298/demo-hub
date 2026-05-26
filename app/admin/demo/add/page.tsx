@@ -10,6 +10,7 @@ import {
   DemoLinkCard,
   IndustryCard,
   SubmitCard,
+  TagsCard,
   Updater,
 } from '@/components/admin/DemoFormCards';
 
@@ -21,6 +22,7 @@ const EMPTY_FORM: DemoFormValues = {
   roi_summary: '',
   industry: '',
   audience: [],
+  tags: [],
 };
 
 export default function AddDemoPage() {
@@ -144,6 +146,7 @@ export default function AddDemoPage() {
           <div className="space-y-6">
             <IndustryCard value={formData.industry} update={update} />
             <AudienceCard value={formData.audience} update={update} />
+            <TagsCard value={formData.tags} update={update} />
             <SubmitCard
               message={message}
               messageType={messageType}

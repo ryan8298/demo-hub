@@ -9,6 +9,7 @@
  * trivially reusable between the add and edit flows.
  */
 
+import { useState } from 'react';
 import Image from 'next/image';
 
 const INDUSTRIES = [
@@ -31,6 +32,7 @@ export type DemoFormValues = {
   roi_summary: string;
   industry: string;
   audience: string[];
+  tags: string[];
 };
 
 export type Updater = (next: Partial<DemoFormValues>) => void;
@@ -299,7 +301,109 @@ export function AudienceCard({
 }
 
 /* ============================================================
-   05 — Submit card with status banner
+   05 — Tags / collections (free-form labels for cross-cutting groups)
+   ============================================================ */
+const SUGGESTED_TAGS = [
+  'AI-first',
+  'Azure',
+  'Microsoft 365',
+  'Cost reduction',
+  'Customer experience',
+  'Compliance',
+  'Automation',
+  'Data & Analytics',
+  'Security',
+];
+
+export function TagsCard({
+  value,
+  update,
+}: {
+  value: string[];
+  update: Updater;
+}) {
+  const [draft, setDraft] = useState('');
+
+  function addTag(tag: string) {
+    const clean = tag.trim();
+    if (!clean) return;
+    if (value.includes(clean)) return;
+    update({ tags: [...value, clean] });
+    setDraft('');
+  }
+
+  function removeTag(tag: string) {
+    update({ tags: value.filter((t) => t !== tag) });
+  }
+
+  function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(draft);
+    } else if (e.key === 'Backspace' && draft === '' && value.length > 0) {
+      // Quick remove of last tag when input is empty
+      removeTag(value[value.length - 1]);
+    }
+  }
+
+  const unusedSuggestions = SUGGESTED_TAGS.filter((s) => !value.includes(s));
+
+  return (
+    <section className="card p-6">
+      <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">05</p>
+      <h2 className="font-serif text-xl text-milk mb-4">Tags</h2>
+
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {value.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => removeTag(tag)}
+              className="badge badge-sage hover:bg-error/15 hover:text-error hover:border-error/30 transition"
+              title="Click to remove"
+            >
+              {tag} ✕
+            </button>
+          ))}
+        </div>
+      )}
+
+      <input
+        type="text"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={handleKey}
+        onBlur={() => addTag(draft)}
+        placeholder="Add a tag and press Enter…"
+        className="input-field text-sm"
+      />
+
+      {unusedSuggestions.length > 0 && (
+        <div className="mt-3">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-grey-500 mb-2">
+            Suggestions
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {unusedSuggestions.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => addTag(s)}
+                className="text-[10px] uppercase tracking-[0.15em] font-medium px-2.5 py-1 rounded-full border border-milk/15 text-grey-300 hover:border-sea-foam hover:text-sea-foam transition"
+              >
+                + {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ============================================================
+   06 — Submit card with status banner
    ============================================================ */
 export function SubmitCard({
   message,

@@ -20,6 +20,9 @@ export interface Demo {
   slug: string;
   featured: boolean;
   industry?: string;
+  tags?: string[];
+  view_count?: number;
+  click_count?: number;
   created_at: string;
   updated_at: string;
 }

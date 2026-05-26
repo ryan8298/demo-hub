@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Demo } from '@/lib/types';
+import { trackDemoEvent } from '@/lib/track';
+import { rememberDemoView } from '@/lib/recently-viewed';
 
 /* ============================================================
    ECHELIX LOGO
@@ -67,6 +69,32 @@ function SignOutButton() {
     >
       Sign out
     </button>
+  );
+}
+
+/* ============================================================
+   PUBLIC NAV — no sign-out, used on /demo/[slug] pages
+   ============================================================ */
+export function PublicNav() {
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
+        <a href="/" className="flex items-center gap-3">
+          <EchelixLogo className="h-8 md:h-9 w-auto" />
+        </a>
+        <div className="flex items-center gap-3 md:gap-4">
+          <a
+            href="/"
+            className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition hidden md:inline"
+          >
+            All solutions
+          </a>
+          <a href="/" className="btn-pill text-xs">
+            Sign in
+          </a>
+        </div>
+      </div>
+    </nav>
   );
 }
 
@@ -247,7 +275,11 @@ export function DemoCard({
             target="_blank"
             rel="noopener noreferrer"
             className="btn-pill text-xs flex-1"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              trackDemoEvent(demo.id, 'click');
+              rememberDemoView(demo);
+            }}
           >
             Open Demo →
           </a>

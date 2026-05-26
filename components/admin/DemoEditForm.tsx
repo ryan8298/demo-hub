@@ -10,6 +10,7 @@ import {
   DemoLinkCard,
   IndustryCard,
   SubmitCard,
+  TagsCard,
   Updater,
 } from '@/components/admin/DemoFormCards';
 
@@ -22,6 +23,7 @@ function valuesFromDemo(demo: Demo): DemoFormValues {
     roi_summary: demo.roi_summary || '',
     industry: demo.industry || '',
     audience: demo.audience || [],
+    tags: demo.tags || [],
   };
 }
 
@@ -125,6 +127,7 @@ export function DemoEditForm({ demo }: { demo: Demo }) {
       <div className="space-y-6">
         <IndustryCard value={formData.industry} update={update} />
         <AudienceCard value={formData.audience} update={update} />
+        <TagsCard value={formData.tags} update={update} />
         <SubmitCard
           message={message}
           messageType={messageType}

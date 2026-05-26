@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
       roi_summary,
       industry,
       preview_image_url,
+      tags,
     } = body;
 
     if (!title || !demo_url || !slug || !audience || audience.length === 0) {
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
           roi_summary: roi_summary || null,
           industry: industry || null,
           preview_image_url: preview_image_url || null,
+          tags: Array.isArray(tags) ? tags : [],
           featured: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

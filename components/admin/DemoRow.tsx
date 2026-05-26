@@ -103,6 +103,18 @@ export function DemoRow({ demo }: { demo: Demo }) {
         </div>
       </td>
 
+      {/* Metrics */}
+      <td className="py-4 px-2 md:px-4 hidden xl:table-cell whitespace-nowrap">
+        <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.15em] text-grey-400">
+          <span title="Detail-page views">
+            <span className="text-milk font-mono">{demo.view_count ?? 0}</span> views
+          </span>
+          <span title="Open Demo clicks">
+            <span className="text-sea-foam font-mono">{demo.click_count ?? 0}</span> opens
+          </span>
+        </div>
+      </td>
+
       {/* Actions */}
       <td className="py-4 pl-2 pr-4 md:pr-6 text-right whitespace-nowrap">
         <a

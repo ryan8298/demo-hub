@@ -8,6 +8,7 @@ import {
   DemoCard,
   MicrosoftSquares,
 } from '@/components/HubShared';
+import { RecentlyViewedRow } from '@/components/RecentlyViewedRow';
 
 /**
  * Shared hub layout used by both /customer/hub and /microsoft/hub.
@@ -37,12 +38,25 @@ export function DemoHubLayout({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [industryFilter, setIndustryFilter] = useState<string>('All');
+  const [activeTags, setActiveTags] = useState<string[]>([]);
 
   const industries = useMemo(() => {
     const set = new Set<string>();
     demos.forEach((d) => d.industry && set.add(d.industry));
     return ['All', ...Array.from(set).sort()];
   }, [demos]);
+
+  const allTags = useMemo(() => {
+    const set = new Set<string>();
+    demos.forEach((d) => (d.tags || []).forEach((t) => set.add(t)));
+    return Array.from(set).sort();
+  }, [demos]);
+
+  function toggleTag(tag: string) {
+    setActiveTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }
 
   const filtered = useMemo(() => {
     return demos.filter((d) => {
@@ -52,19 +66,25 @@ export function DemoHubLayout({
         (d.description || '').toLowerCase().includes(search.toLowerCase());
       const matchesIndustry =
         industryFilter === 'All' || d.industry === industryFilter;
-      return matchesSearch && matchesIndustry;
+      // ALL selected tags must be present on the demo (AND semantics).
+      const matchesTags =
+        activeTags.length === 0 ||
+        activeTags.every((t) => (d.tags || []).includes(t));
+      return matchesSearch && matchesIndustry && matchesTags;
     });
-  }, [demos, search, industryFilter]);
+  }, [demos, search, industryFilter, activeTags]);
 
   // Pull featured demos to the top — but only when no filters are active
   // (otherwise it's confusing why a "featured" demo isn't matching the search).
-  const filtersActive = search.trim().length > 0 || industryFilter !== 'All';
+  const filtersActive =
+    search.trim().length > 0 || industryFilter !== 'All' || activeTags.length > 0;
   const featured = filtersActive ? [] : filtered.filter((d) => d.featured);
   const regular = filtersActive ? filtered : filtered.filter((d) => !d.featured);
 
   const clearFilters = () => {
     setSearch('');
     setIndustryFilter('All');
+    setActiveTags([]);
   };
 
   return (
@@ -137,6 +157,32 @@ export function DemoHubLayout({
             })}
           </div>
         </div>
+        {/* Tag row — secondary filter dimension, AND'd with industry */}
+        {allTags.length > 0 && (
+          <div className="max-w-[1400px] mx-auto px-6 md:px-8 pb-4 md:pb-5 flex items-center gap-3">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-grey-500 whitespace-nowrap hidden md:block">
+              Tags
+            </span>
+            <div className="flex gap-2 flex-wrap overflow-x-auto -mx-1 px-1">
+              {allTags.map((tag) => {
+                const active = activeTags.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`text-[10px] uppercase tracking-[0.15em] font-medium px-3 py-1.5 rounded-full transition border whitespace-nowrap ${
+                      active
+                        ? 'bg-sage text-black border-sage'
+                        : 'bg-transparent text-grey-400 border-milk/10 hover:border-sage hover:text-sage'
+                    }`}
+                  >
+                    #{tag}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Grid */}
@@ -148,6 +194,9 @@ export function DemoHubLayout({
           />
         ) : (
           <>
+            {/* Continue exploring — only renders when localStorage has entries */}
+            {!filtersActive && <RecentlyViewedRow demos={demos} />}
+
             {featured.length > 0 && (
               <section className="mb-12">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-4">

@@ -76,6 +76,9 @@ export default async function AdminIndex() {
                   <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden lg:table-cell">
                     Audiences
                   </th>
+                  <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden xl:table-cell">
+                    Engagement
+                  </th>
                   <th className="py-4 pl-2 pr-4 md:pr-6 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium text-right">
                     Actions
                   </th>
