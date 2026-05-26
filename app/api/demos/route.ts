@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/require-admin";
 
@@ -92,6 +93,13 @@ export async function POST(request: NextRequest) {
       .select();
 
     if (error) throw error;
+
+    // Bust the ISR caches so the new demo shows on its target hubs
+    // immediately instead of waiting up to 60s for revalidation.
+    revalidatePath("/customer/hub");
+    revalidatePath("/microsoft/hub");
+    if (data?.[0]?.slug) revalidatePath(`/demo/${data[0].slug}`);
+
     return NextResponse.json({ success: true, data });
   } catch (error) {
     // Supabase's PostgrestError carries message + code + hint + details
