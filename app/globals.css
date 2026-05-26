@@ -349,3 +349,46 @@ select.input-field option {
 .hairline {
   border-color: rgba(243, 243, 233, 0.08);
 }
+
+/* ============================================
+   ECHELIX BACKGROUND — promotional-card mirror
+   Used by <EchelixBackground /> on the landing page.
+   ============================================ */
+.echelix-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(0, 255, 220, 0.12), transparent 28%),
+    radial-gradient(circle at 15% 80%, rgba(0, 199, 178, 0.16), transparent 32%),
+    linear-gradient(180deg, #020606 0%, #050b0b 45%, #000000 100%);
+}
+
+.echelix-wave {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -6%;
+  height: 42%;
+  background-image: radial-gradient(circle, rgba(0, 255, 220, 0.8) 1px, transparent 1.5px);
+  background-size: 14px 14px;
+  opacity: 0.45;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 220, 0.35));
+  transform: perspective(700px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 35%, transparent 100%);
+  animation: echelix-wave-glow 8s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes echelix-wave-glow {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.62; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .echelix-wave { animation: none; }
+}

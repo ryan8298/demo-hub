@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo, Modal } from '@/components/HubShared';
+import { EchelixBackground } from '@/components/EchelixBackground';
 
 export default function Landing() {
   const [formData, setFormData] = useState({
@@ -106,7 +106,10 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk relative">
+      {/* Fixed full-viewport background matching the Echelix promo card */}
+      <EchelixBackground />
+
       {/* Top Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
@@ -135,25 +138,8 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero — echelix.com mirror: centered, pure-white, vivid wave */}
+      {/* Hero — content only. Background is provided by <EchelixBackground />. */}
       <section className="relative min-h-screen flex flex-col justify-center pt-24 pb-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          {/* Wave anchored bottom, bumped to full opacity to match echelix.com */}
-          <div className="absolute inset-x-0 bottom-0 h-[75vh] min-h-[480px]">
-            <Image
-              src="/wave-bg.jpg"
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-bottom opacity-95"
-              aria-hidden="true"
-            />
-          </div>
-          {/* Top fade only — keep the wave visible below the headline */}
-          <div className="absolute inset-x-0 top-0 h-[40vh] bg-gradient-to-b from-black via-black/80 to-transparent" />
-        </div>
-
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10 w-full">
           <div className="text-center max-w-[1100px] mx-auto">
             <h1 className="font-serif text-[clamp(2.75rem,8vw,7rem)] text-white leading-[1.04] tracking-[-0.02em] mb-8">
