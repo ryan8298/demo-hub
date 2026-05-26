@@ -35,11 +35,32 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    console.error("OTP send error:", error.message);
-    return NextResponse.json(
-      { error: "Couldn't send code. Please try again in a minute." },
-      { status: 500 }
-    );
+    // Full detail in server logs (Vercel → Logs)
+    console.error("Supabase signInWithOtp failed:", {
+      message: error.message,
+      status: error.status,
+      code: error.code,
+    });
+
+    // Map Supabase's most common failure modes to user-friendly messages.
+    const msg = error.message?.toLowerCase() ?? "";
+    let userMessage = "We couldn't send the code. Please try again in a minute.";
+    let httpStatus = 500;
+
+    if (msg.includes("rate") || msg.includes("limit") || error.status === 429) {
+      userMessage =
+        "Too many code requests right now. Please wait a few minutes before trying again.";
+      httpStatus = 429;
+    } else if (msg.includes("smtp") || msg.includes("send")) {
+      userMessage =
+        "Email delivery is temporarily unavailable. Please try again shortly.";
+      httpStatus = 503;
+    } else if (msg.includes("invalid") && msg.includes("email")) {
+      userMessage = "That email doesn't look valid. Please double-check it.";
+      httpStatus = 400;
+    }
+
+    return NextResponse.json({ error: userMessage }, { status: httpStatus });
   }
 
   return NextResponse.json({ success: true });
