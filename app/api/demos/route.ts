@@ -34,9 +34,17 @@ export async function POST(request: NextRequest) {
     // Validate admin API key
     const adminKey = request.headers.get('X-Admin-Key');
     const expectedKey = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_API_KEY;
+
+    console.log('Admin Key Check:', {
+      received: adminKey,
+      expected: expectedKey,
+      adminKeyEmpty: !adminKey,
+      expectedKeyEmpty: !expectedKey,
+    });
+
     if (adminKey !== expectedKey) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized', debug: { received: adminKey?.substring(0, 10), expected: expectedKey?.substring(0, 10) } },
         { status: 401 }
       );
     }
