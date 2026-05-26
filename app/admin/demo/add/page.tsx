@@ -30,7 +30,7 @@ export default function AddDemoPage() {
   const [previewImage, setPreviewImage] = useState('');
   const [fetchingPreview, setFetchingPreview] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
