@@ -95,17 +95,29 @@ export default function MicrosoftHub() {
                     {demo.description}
                   </p>
 
-                  {/* Industry/Vertical Badge - placeholder for future metadata */}
+                  {/* Industry/Vertical Badge */}
                   <div className="flex gap-2 mb-4 flex-wrap">
-                    <span
-                      className="text-xs font-semibold px-3 py-1 rounded-full"
-                      style={{
-                        background: '#e8f5e0',
-                        color: '#7fac3d',
-                      }}
-                    >
-                      Microsoft
-                    </span>
+                    {demo.industry ? (
+                      <span
+                        className="text-xs font-semibold px-3 py-1 rounded-full"
+                        style={{
+                          background: '#e8f5e0',
+                          color: '#7fac3d',
+                        }}
+                      >
+                        {demo.industry}
+                      </span>
+                    ) : (
+                      <span
+                        className="text-xs font-semibold px-3 py-1 rounded-full"
+                        style={{
+                          background: '#f0f0f0',
+                          color: '#999999',
+                        }}
+                      >
+                        General
+                      </span>
+                    )}
                   </div>
 
                   {/* Expand Button */}

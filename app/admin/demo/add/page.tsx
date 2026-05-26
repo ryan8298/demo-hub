@@ -2,6 +2,18 @@
 
 import { useState } from 'react';
 
+const INDUSTRIES = [
+  'Finance & Banking',
+  'Healthcare',
+  'Retail & E-Commerce',
+  'Manufacturing',
+  'Technology',
+  'Government',
+  'Education',
+  'Enterprise',
+  'Other',
+];
+
 export default function AddDemoPage() {
   const [formData, setFormData] = useState({
     title: '',
@@ -9,11 +21,14 @@ export default function AddDemoPage() {
     demo_url: '',
     slug: '',
     roi_summary: '',
+    industry: '',
     audience: [] as string[],
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [previewImage, setPreviewImage] = useState('');
+  const [fetchingPreview, setFetchingPreview] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -60,8 +75,10 @@ export default function AddDemoPage() {
         demo_url: '',
         slug: '',
         roi_summary: '',
+        industry: '',
         audience: [],
       });
+      setPreviewImage('');
 
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
@@ -84,6 +101,41 @@ export default function AddDemoPage() {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChange(e);
     setFormData(prev => ({ ...prev, slug: generateSlug(e.target.value) }));
+  };
+
+  const fetchPreviewImage = async () => {
+    if (!formData.demo_url) {
+      setMessage('Please enter a demo URL first');
+      setMessageType('error');
+      return;
+    }
+
+    setFetchingPreview(true);
+    try {
+      const response = await fetch('/api/demo/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ demo_url: formData.demo_url }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch preview');
+
+      const data = await response.json();
+      if (data.image) {
+        setPreviewImage(data.image);
+        setMessage('✓ Preview image fetched successfully');
+        setMessageType('success');
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage('⚠️ No preview image found for this URL');
+        setMessageType('error');
+      }
+    } catch (error) {
+      setMessage('⚠️ Could not auto-fetch preview (some sites block scraping)');
+      setMessageType('error');
+    } finally {
+      setFetchingPreview(false);
+    }
   };
 
   return (
@@ -228,20 +280,91 @@ export default function AddDemoPage() {
           {/* Demo URL Section */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>
-              Demo Link
+              Demo Link & Preview
             </h2>
 
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: '#1a1a1a' }}>
                 Demo URL *
               </label>
-              <input
-                type="url"
-                name="demo_url"
-                value={formData.demo_url}
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  name="demo_url"
+                  value={formData.demo_url}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="https://example.com/demo"
+                  className="flex-1 px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
+                  style={{
+                    background: '#f3f3e9',
+                    borderColor: '#e0dfd5',
+                    color: '#1a1a1a',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#7fac3d';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0dfd5';
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={fetchPreviewImage}
+                  disabled={fetchingPreview || !formData.demo_url}
+                  className="px-4 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                  style={{
+                    background: '#7fac3d',
+                    color: '#f3f3e9',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!fetchingPreview && formData.demo_url) {
+                      e.currentTarget.style.background = '#6a9530';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#7fac3d';
+                  }}
+                >
+                  {fetchingPreview ? 'Fetching...' : 'Auto-Fetch Image'}
+                </button>
+              </div>
+              <p className="text-xs mt-2" style={{ color: '#999999' }}>
+                Full URL to the demo. Click "Auto-Fetch Image" to pull og:image from the site.
+              </p>
+            </div>
+
+            {previewImage && (
+              <div className="p-4 rounded-lg border-2" style={{ borderColor: '#b2eeda', background: '#f0f8ed' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: '#7fac3d' }}>
+                  ✓ Preview Image Fetched
+                </p>
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  className="w-full h-32 object-cover rounded"
+                />
+                <p className="text-xs mt-2" style={{ color: '#999999' }}>
+                  Image will be displayed in demo tiles
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Industry Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>
+              Industry & Vertical
+            </h2>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: '#1a1a1a' }}>
+                Industry/Vertical
+              </label>
+              <select
+                name="industry"
+                value={formData.industry}
                 onChange={handleInputChange}
-                required
-                placeholder="https://example.com/demo"
                 className="w-full px-4 py-3 rounded-lg border transition focus:outline-none focus:ring-2"
                 style={{
                   background: '#f3f3e9',
@@ -254,10 +377,12 @@ export default function AddDemoPage() {
                 onBlur={(e) => {
                   e.target.style.borderColor = '#e0dfd5';
                 }}
-              />
-              <p className="text-xs mt-2" style={{ color: '#999999' }}>
-                Full URL to the live demo application
-              </p>
+              >
+                <option value="">Select an industry...</option>
+                {INDUSTRIES.map(ind => (
+                  <option key={ind} value={ind}>{ind}</option>
+                ))}
+              </select>
             </div>
           </div>
 

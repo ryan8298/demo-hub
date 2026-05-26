@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, demo_url, slug, audience, roi_summary } = body;
+    const { title, description, demo_url, slug, audience, roi_summary, industry } = body;
 
     // Validate required fields
     if (!title || !demo_url || !slug || !audience || audience.length === 0) {
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
           slug,
           audience: audience,
           roi_summary: roi_summary || null,
+          industry: industry || null,
           featured: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
