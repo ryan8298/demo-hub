@@ -45,10 +45,11 @@ export function DemoRow({ demo }: { demo: Demo }) {
 
   return (
     <tr className="border-t hairline hover:bg-milk/[0.02] transition">
-      {/* Thumbnail */}
+      {/* Thumbnail — falls back to the demo's first letter so admins can
+          tell at a glance which demos need a preview image set */}
       <td className="py-4 pl-4 md:pl-6 pr-2 w-16 md:w-20">
-        <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-md overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-black">
-          {demo.preview_image_url && (
+        <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-md overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-black flex items-center justify-center">
+          {demo.preview_image_url ? (
             <Image
               src={demo.preview_image_url}
               alt=""
@@ -57,6 +58,14 @@ export function DemoRow({ demo }: { demo: Demo }) {
               className="object-cover"
               unoptimized={demo.preview_image_url.startsWith('http')}
             />
+          ) : (
+            <span
+              className="font-serif text-xl md:text-2xl text-milk/80 select-none"
+              aria-hidden="true"
+              title="No preview image set"
+            >
+              {(demo.title?.[0] || '·').toUpperCase()}
+            </span>
           )}
         </div>
       </td>
