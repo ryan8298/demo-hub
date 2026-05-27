@@ -37,6 +37,9 @@ export type DemoFormValues = {
   problem_statement: string;
   target_audience_description: string;
   architecture_diagram_url: string;
+  // Force live iframe preview on the hub demo card (skip the
+  // preview_image_url even if one is set)
+  prefer_live_preview: boolean;
 };
 
 export type Updater = (next: Partial<DemoFormValues>) => void;
@@ -289,6 +292,35 @@ export function DemoLinkCard({
           </div>
         </div>
       )}
+
+      {/* Live-preview override — for demos hosted on platforms that allow
+          being embedded in iframes (Lovable, frameable Vercel apps, etc.) */}
+      <label
+        className={`mt-5 flex items-start gap-3 p-3 rounded-lg cursor-pointer transition border ${
+          values.prefer_live_preview
+            ? 'bg-sea-foam/10 border-sea-foam/40'
+            : 'bg-transparent border-milk/10 hover:border-sea-foam/40'
+        }`}
+      >
+        <input
+          type="checkbox"
+          checked={values.prefer_live_preview}
+          onChange={(e) => update({ prefer_live_preview: e.target.checked })}
+          className="mt-0.5 w-4 h-4 accent-sea-foam cursor-pointer"
+        />
+        <div>
+          <div className="font-medium text-sm text-milk">
+            Use live iframe preview instead of image
+          </div>
+          <p className="text-xs text-grey-400 mt-1 leading-relaxed">
+            When enabled, the demo card renders the live site as a scaled
+            iframe instead of the preview image. Only works for sites that
+            allow being framed — e.g. Lovable previews, or Vercel apps with
+            permissive <code className="text-grey-300">frame-ancestors</code>.
+            Leave off if you&apos;re not sure.
+          </p>
+        </div>
+      </label>
     </section>
   );
 }

@@ -185,6 +185,23 @@ export function DemoCard({
   const router = useRouter();
   const detailHref = `/demo/${demo.slug}`;
 
+  // Decide what to render in the preview tile.
+  // Priority:
+  //   1. If admin opted into prefer_live_preview AND we have a demo_url → iframe
+  //   2. Else if preview_image_url is set → static image
+  //   3. Else if demo_url is set → iframe (best-effort fallback)
+  //   4. Else placeholder
+  // The iframeError flag flips the iframe paths off if the iframe failed
+  // to load — which we can only sometimes detect (browsers don't fire
+  // onError for X-Frame-Options blocks), but worth handling for the
+  // network-failure case.
+  const wantsLiveFrame = !!demo.prefer_live_preview && !!demo.demo_url;
+  const showLiveFrame = wantsLiveFrame && !iframeError;
+  const showImage =
+    !showLiveFrame && !!demo.preview_image_url && !iframeError;
+  const showFallbackFrame =
+    !showLiveFrame && !showImage && !!demo.demo_url && !iframeError;
+
   // Whole-tile click navigates to the detail subpage. Inner <a>/<button>
   // elements (Open Demo, Details link) have their own handlers — closest()
   // check makes sure we don't double-fire when those are clicked.
@@ -216,17 +233,17 @@ export function DemoCard({
           featured ? 'h-72' : 'h-56'
         }`}
       >
-        {demo.preview_image_url && !iframeError ? (
+        {showImage ? (
           <Image
-            src={demo.preview_image_url}
+            src={demo.preview_image_url!}
             alt={demo.title}
             fill
             sizes={featured ? '(max-width: 1024px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
             className="object-cover"
-            unoptimized={demo.preview_image_url.startsWith('http')}
+            unoptimized={demo.preview_image_url!.startsWith('http')}
             onError={() => setIframeError(true)}
           />
-        ) : demo.demo_url && !iframeError ? (
+        ) : showLiveFrame || showFallbackFrame ? (
           <>
             <iframe
               src={demo.demo_url}

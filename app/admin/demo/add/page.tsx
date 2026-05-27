@@ -27,6 +27,7 @@ const EMPTY_FORM: DemoFormValues = {
   problem_statement: '',
   target_audience_description: '',
   architecture_diagram_url: '',
+  prefer_live_preview: false,
 };
 
 export default function AddDemoPage() {

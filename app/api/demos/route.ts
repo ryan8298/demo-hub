@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
       problem_statement,
       target_audience_description,
       architecture_diagram_url,
+      prefer_live_preview,
     } = body;
 
     if (!title || !demo_url || !slug || !audience || audience.length === 0) {
@@ -85,6 +86,7 @@ export async function POST(request: NextRequest) {
           problem_statement: problem_statement || null,
           target_audience_description: target_audience_description || null,
           architecture_diagram_url: architecture_diagram_url || null,
+          prefer_live_preview: !!prefer_live_preview,
           featured: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

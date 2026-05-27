@@ -28,6 +28,7 @@ function valuesFromDemo(demo: Demo): DemoFormValues {
     problem_statement: demo.problem_statement || '',
     target_audience_description: demo.target_audience_description || '',
     architecture_diagram_url: demo.architecture_diagram_url || '',
+    prefer_live_preview: !!demo.prefer_live_preview,
   };
 }
 
