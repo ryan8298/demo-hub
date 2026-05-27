@@ -31,9 +31,29 @@ export interface Demo {
    *  instead of `preview_image_url`. Only set true for sites you know
    *  allow framing. */
   prefer_live_preview?: boolean;
+  // -----------------------------------------------------------------
+  // Structured enterprise storytelling fields — render on /demo/[slug]
+  // as premium components instead of paragraph blocks. All optional.
+  // -----------------------------------------------------------------
+  kpi_metrics?: KpiMetric[];
+  challenge_points?: string[];
+  business_outcomes?: BusinessOutcome[];
+  ai_capabilities?: AiCapability[];
+  tech_stack?: string[];
+  agent_timeline?: AgentEvent[];
+  architecture_flow?: ArchitectureStep[];
+  operational_stats?: OperationalStat[];
   created_at: string;
   updated_at: string;
 }
+
+export type KpiMetric = { label: string; value: string };
+export type BusinessOutcome = { label: string; value?: string; description?: string };
+export type AiCapability = { label: string; description?: string };
+export type AgentEventStatus = 'pending' | 'in_progress' | 'completed' | 'alert';
+export type AgentEvent = { timestamp?: string; event: string; status?: AgentEventStatus };
+export type ArchitectureStep = { step: string; description?: string };
+export type OperationalStat = { label: string; value: string };
 
 export interface VisitorSession {
   id: string;

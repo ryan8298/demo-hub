@@ -9,6 +9,7 @@ import {
   DemoFormValues,
   DemoLinkCard,
   DetailPageCard,
+  EnterpriseStorytellingCard,
   IndustryCard,
   SubmitCard,
   TagsCard,
@@ -29,6 +30,14 @@ function valuesFromDemo(demo: Demo): DemoFormValues {
     target_audience_description: demo.target_audience_description || '',
     architecture_diagram_url: demo.architecture_diagram_url || '',
     prefer_live_preview: !!demo.prefer_live_preview,
+    kpi_metrics: demo.kpi_metrics || [],
+    challenge_points: demo.challenge_points || [],
+    business_outcomes: demo.business_outcomes || [],
+    ai_capabilities: demo.ai_capabilities || [],
+    tech_stack: demo.tech_stack || [],
+    agent_timeline: demo.agent_timeline || [],
+    architecture_flow: demo.architecture_flow || [],
+    operational_stats: demo.operational_stats || [],
   };
 }
 
@@ -129,6 +138,7 @@ export function DemoEditForm({ demo }: { demo: Demo }) {
           onPreviewChange={setPreviewImage}
         />
         <DetailPageCard values={formData} update={update} />
+        <EnterpriseStorytellingCard values={formData} update={update} />
       </div>
 
       <div className="space-y-6">

@@ -9,6 +9,7 @@ import {
   DemoFormValues,
   DemoLinkCard,
   DetailPageCard,
+  EnterpriseStorytellingCard,
   IndustryCard,
   SubmitCard,
   TagsCard,
@@ -28,6 +29,14 @@ const EMPTY_FORM: DemoFormValues = {
   target_audience_description: '',
   architecture_diagram_url: '',
   prefer_live_preview: false,
+  kpi_metrics: [],
+  challenge_points: [],
+  business_outcomes: [],
+  ai_capabilities: [],
+  tech_stack: [],
+  agent_timeline: [],
+  architecture_flow: [],
+  operational_stats: [],
 };
 
 export default function AddDemoPage() {
@@ -153,6 +162,7 @@ export default function AddDemoPage() {
               onPreviewChange={setPreviewImage}
             />
             <DetailPageCard values={formData} update={update} />
+            <EnterpriseStorytellingCard values={formData} update={update} />
           </div>
 
           <div className="space-y-6">

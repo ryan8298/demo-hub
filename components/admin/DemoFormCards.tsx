@@ -11,8 +11,20 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import type {
+  KpiMetric,
+  BusinessOutcome,
+  AiCapability,
+  AgentEvent,
+  AgentEventStatus,
+  ArchitectureStep,
+  OperationalStat,
+} from '@/lib/types';
 
 const INDUSTRIES = [
+  'Energy',
+  'Oil & Gas',
+  'Utilities',
   'Finance & Banking',
   'Healthcare',
   'Retail & E-Commerce',
@@ -40,6 +52,16 @@ export type DemoFormValues = {
   // Force live iframe preview on the hub demo card (skip the
   // preview_image_url even if one is set)
   prefer_live_preview: boolean;
+  // Structured enterprise storytelling — render as rich components
+  // on /demo/[slug] instead of paragraph blocks.
+  kpi_metrics: KpiMetric[];
+  challenge_points: string[];
+  business_outcomes: BusinessOutcome[];
+  ai_capabilities: AiCapability[];
+  tech_stack: string[];
+  agent_timeline: AgentEvent[];
+  architecture_flow: ArchitectureStep[];
+  operational_stats: OperationalStat[];
 };
 
 export type Updater = (next: Partial<DemoFormValues>) => void;
@@ -743,5 +765,520 @@ export function SubmitCard({
         </p>
       )}
     </section>
+  );
+}
+
+/* ============================================================
+   07 — Enterprise Storytelling
+   Structured arrays that render as premium components on
+   /demo/[slug]. Each editor below mutates one slice of the form
+   via the shared `update()` callback.
+   ============================================================ */
+export function EnterpriseStorytellingCard({
+  values,
+  update,
+}: {
+  values: DemoFormValues;
+  update: Updater;
+}) {
+  return (
+    <section className="card p-8">
+      <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">07</p>
+      <h2 className="font-serif text-2xl text-milk mb-1">Enterprise Storytelling</h2>
+      <p className="text-xs text-grey-500 mb-6">
+        Optional structured content. Anything you fill in renders as a
+        premium component on the detail page. Empty sections are hidden.
+      </p>
+
+      <div className="space-y-8">
+        <KpiMetricsEditor
+          value={values.kpi_metrics}
+          onChange={(kpi_metrics) => update({ kpi_metrics })}
+        />
+        <AiCapabilitiesEditor
+          value={values.ai_capabilities}
+          onChange={(ai_capabilities) => update({ ai_capabilities })}
+        />
+        <ChallengePointsEditor
+          value={values.challenge_points}
+          onChange={(challenge_points) => update({ challenge_points })}
+        />
+        <ArchitectureFlowEditor
+          value={values.architecture_flow}
+          onChange={(architecture_flow) => update({ architecture_flow })}
+        />
+        <AgentTimelineEditor
+          value={values.agent_timeline}
+          onChange={(agent_timeline) => update({ agent_timeline })}
+        />
+        <BusinessOutcomesEditor
+          value={values.business_outcomes}
+          onChange={(business_outcomes) => update({ business_outcomes })}
+        />
+        <TechStackEditor
+          value={values.tech_stack}
+          onChange={(tech_stack) => update({ tech_stack })}
+        />
+        <OperationalStatsEditor
+          value={values.operational_stats}
+          onChange={(operational_stats) => update({ operational_stats })}
+        />
+      </div>
+    </section>
+  );
+}
+
+/* -------- shared editor primitives -------- */
+
+function EditorBlock({
+  label,
+  hint,
+  children,
+  onAdd,
+  addLabel,
+  empty,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+  onAdd: () => void;
+  addLabel: string;
+  empty?: boolean;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <label className="block text-[10px] font-medium uppercase tracking-[0.25em] text-grey-300">
+          {label}
+        </label>
+        <button
+          type="button"
+          onClick={onAdd}
+          className="text-[10px] uppercase tracking-[0.2em] text-sea-foam hover:text-sea-foam-dark transition"
+        >
+          + {addLabel}
+        </button>
+      </div>
+      {hint && (
+        <p className="text-xs text-grey-500 mb-3 leading-relaxed">{hint}</p>
+      )}
+      {empty ? (
+        <p className="text-xs text-grey-600 italic">No entries yet.</p>
+      ) : (
+        <div className="space-y-2">{children}</div>
+      )}
+    </div>
+  );
+}
+
+function RowShell({
+  index,
+  onRemove,
+  children,
+}: {
+  index: number;
+  onRemove: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-2 p-3 rounded-lg border border-milk/10 bg-black/30">
+      <span className="text-[10px] font-mono text-grey-500 mt-2.5 w-6 tabular-nums">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      <div className="flex-1 space-y-2">{children}</div>
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label="Remove"
+        className="w-6 h-6 rounded text-grey-500 hover:text-error hover:bg-error/10 transition flex items-center justify-center text-sm"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+function MiniInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className={`w-full px-3 py-2 bg-black/40 border border-milk/10 rounded text-sm text-milk placeholder:text-grey-600 focus:outline-none focus:border-sea-foam/50 ${
+        props.className ?? ''
+      }`}
+    />
+  );
+}
+
+function MiniTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <textarea
+      {...props}
+      className={`w-full px-3 py-2 bg-black/40 border border-milk/10 rounded text-sm text-milk placeholder:text-grey-600 focus:outline-none focus:border-sea-foam/50 resize-none ${
+        props.className ?? ''
+      }`}
+    />
+  );
+}
+
+/* -------- editors for arrays-of-objects -------- */
+
+function KpiMetricsEditor({
+  value,
+  onChange,
+}: {
+  value: KpiMetric[];
+  onChange: (v: KpiMetric[]) => void;
+}) {
+  const update = (i: number, patch: Partial<KpiMetric>) =>
+    onChange(value.map((m, j) => (i === j ? { ...m, ...patch } : m)));
+  return (
+    <EditorBlock
+      label="KPI Metrics"
+      hint="Floating headline numbers shown right under the hero. 2–4 reads best."
+      onAdd={() => onChange([...value, { label: '', value: '' }])}
+      addLabel="Add KPI"
+      empty={value.length === 0}
+    >
+      {value.map((m, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <div className="grid grid-cols-2 gap-2">
+            <MiniInput
+              placeholder="Value (e.g., 82%)"
+              value={m.value}
+              onChange={(e) => update(i, { value: e.target.value })}
+            />
+            <MiniInput
+              placeholder="Label (e.g., MTTR reduction)"
+              value={m.label}
+              onChange={(e) => update(i, { label: e.target.value })}
+            />
+          </div>
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+function AiCapabilitiesEditor({
+  value,
+  onChange,
+}: {
+  value: AiCapability[];
+  onChange: (v: AiCapability[]) => void;
+}) {
+  const update = (i: number, patch: Partial<AiCapability>) =>
+    onChange(value.map((c, j) => (i === j ? { ...c, ...patch } : c)));
+  return (
+    <EditorBlock
+      label="AI Capabilities"
+      hint="What the agent actually does. Each becomes a card in a 2–3 col grid."
+      onAdd={() => onChange([...value, { label: '', description: '' }])}
+      addLabel="Add Capability"
+      empty={value.length === 0}
+    >
+      {value.map((c, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <MiniInput
+            placeholder="Label (e.g., Predictive failure detection)"
+            value={c.label}
+            onChange={(e) => update(i, { label: e.target.value })}
+          />
+          <MiniTextarea
+            placeholder="Optional description"
+            rows={2}
+            value={c.description ?? ''}
+            onChange={(e) => update(i, { description: e.target.value })}
+          />
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+function ChallengePointsEditor({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
+  return (
+    <EditorBlock
+      label="Challenge Points"
+      hint="Short bullet insights on the operational pain you address."
+      onAdd={() => onChange([...value, ''])}
+      addLabel="Add Point"
+      empty={value.length === 0}
+    >
+      {value.map((p, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <MiniInput
+            placeholder="e.g., Maintenance teams react instead of predict"
+            value={p}
+            onChange={(e) =>
+              onChange(value.map((x, j) => (i === j ? e.target.value : x)))
+            }
+          />
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+function ArchitectureFlowEditor({
+  value,
+  onChange,
+}: {
+  value: ArchitectureStep[];
+  onChange: (v: ArchitectureStep[]) => void;
+}) {
+  const update = (i: number, patch: Partial<ArchitectureStep>) =>
+    onChange(value.map((s, j) => (i === j ? { ...s, ...patch } : s)));
+  return (
+    <EditorBlock
+      label="Architecture Flow"
+      hint="Ordered system steps. Renders as a connected horizontal flow (or vertical on mobile)."
+      onAdd={() => onChange([...value, { step: '', description: '' }])}
+      addLabel="Add Step"
+      empty={value.length === 0}
+    >
+      {value.map((s, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <MiniInput
+            placeholder="Step name (e.g., Ingest)"
+            value={s.step}
+            onChange={(e) => update(i, { step: e.target.value })}
+          />
+          <MiniInput
+            placeholder="Optional one-line description"
+            value={s.description ?? ''}
+            onChange={(e) => update(i, { description: e.target.value })}
+          />
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+const STATUS_OPTIONS: AgentEventStatus[] = ['pending', 'in_progress', 'completed', 'alert'];
+
+function AgentTimelineEditor({
+  value,
+  onChange,
+}: {
+  value: AgentEvent[];
+  onChange: (v: AgentEvent[]) => void;
+}) {
+  const update = (i: number, patch: Partial<AgentEvent>) =>
+    onChange(value.map((e, j) => (i === j ? { ...e, ...patch } : e)));
+  return (
+    <EditorBlock
+      label="Agent Timeline"
+      hint="Ordered operational events. Status drives the dot color (alert = red pulse, in_progress = teal pulse, completed = sage, pending = grey)."
+      onAdd={() =>
+        onChange([...value, { timestamp: '', event: '', status: 'completed' }])
+      }
+      addLabel="Add Event"
+      empty={value.length === 0}
+    >
+      {value.map((ev, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <div className="grid grid-cols-[100px_1fr_140px] gap-2">
+            <MiniInput
+              placeholder="09:24"
+              value={ev.timestamp ?? ''}
+              onChange={(e) => update(i, { timestamp: e.target.value })}
+            />
+            <MiniInput
+              placeholder="Event description"
+              value={ev.event}
+              onChange={(e) => update(i, { event: e.target.value })}
+            />
+            <select
+              value={ev.status ?? 'completed'}
+              onChange={(e) =>
+                update(i, { status: e.target.value as AgentEventStatus })
+              }
+              className="w-full px-3 py-2 bg-black/40 border border-milk/10 rounded text-sm text-milk focus:outline-none focus:border-sea-foam/50"
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s.replace('_', ' ')}
+                </option>
+              ))}
+            </select>
+          </div>
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+function BusinessOutcomesEditor({
+  value,
+  onChange,
+}: {
+  value: BusinessOutcome[];
+  onChange: (v: BusinessOutcome[]) => void;
+}) {
+  const update = (i: number, patch: Partial<BusinessOutcome>) =>
+    onChange(value.map((o, j) => (i === j ? { ...o, ...patch } : o)));
+  return (
+    <EditorBlock
+      label="Business Outcomes"
+      hint="Measurable results. Big number + label + optional context. 2–3 reads best."
+      onAdd={() =>
+        onChange([...value, { label: '', value: '', description: '' }])
+      }
+      addLabel="Add Outcome"
+      empty={value.length === 0}
+    >
+      {value.map((o, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <div className="grid grid-cols-[120px_1fr] gap-2">
+            <MiniInput
+              placeholder="$8.4M"
+              value={o.value ?? ''}
+              onChange={(e) => update(i, { value: e.target.value })}
+            />
+            <MiniInput
+              placeholder="Label (e.g., Annual value protected)"
+              value={o.label}
+              onChange={(e) => update(i, { label: e.target.value })}
+            />
+          </div>
+          <MiniTextarea
+            placeholder="Optional context"
+            rows={2}
+            value={o.description ?? ''}
+            onChange={(e) => update(i, { description: e.target.value })}
+          />
+        </RowShell>
+      ))}
+    </EditorBlock>
+  );
+}
+
+function TechStackEditor({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
+  const [draft, setDraft] = useState('');
+
+  const add = (t: string) => {
+    const v = t.trim();
+    if (!v || value.includes(v)) return;
+    onChange([...value, v]);
+    setDraft('');
+  };
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <label className="block text-[10px] font-medium uppercase tracking-[0.25em] text-grey-300">
+          Tech Stack
+        </label>
+      </div>
+      <p className="text-xs text-grey-500 mb-3">
+        Microsoft / Azure platform components. Press Enter to add.
+      </p>
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {value.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onChange(value.filter((x) => x !== s))}
+              className="text-[10px] uppercase tracking-[0.15em] font-medium px-3 py-1.5 rounded-full border border-sea-foam/25 bg-sea-foam/5 text-sea-foam hover:bg-error/15 hover:border-error/40 hover:text-error transition"
+              title="Click to remove"
+            >
+              {s} ✕
+            </button>
+          ))}
+        </div>
+      )}
+      <MiniInput
+        placeholder="e.g., Azure Fabric RTI"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            add(draft);
+          } else if (e.key === 'Backspace' && draft === '' && value.length > 0) {
+            onChange(value.slice(0, -1));
+          }
+        }}
+        onBlur={() => add(draft)}
+      />
+    </div>
+  );
+}
+
+function OperationalStatsEditor({
+  value,
+  onChange,
+}: {
+  value: OperationalStat[];
+  onChange: (v: OperationalStat[]) => void;
+}) {
+  const update = (i: number, patch: Partial<OperationalStat>) =>
+    onChange(value.map((s, j) => (i === j ? { ...s, ...patch } : s)));
+  return (
+    <EditorBlock
+      label="Operational Telemetry"
+      hint="Small live-feeling indicators. 3–6 reads best. Renders compact below the rest."
+      onAdd={() => onChange([...value, { label: '', value: '' }])}
+      addLabel="Add Stat"
+      empty={value.length === 0}
+    >
+      {value.map((s, i) => (
+        <RowShell
+          key={i}
+          index={i}
+          onRemove={() => onChange(value.filter((_, j) => j !== i))}
+        >
+          <div className="grid grid-cols-2 gap-2">
+            <MiniInput
+              placeholder="Value (e.g., 247)"
+              value={s.value}
+              onChange={(e) => update(i, { value: e.target.value })}
+            />
+            <MiniInput
+              placeholder="Label (e.g., Anomalies / min)"
+              value={s.label}
+              onChange={(e) => update(i, { label: e.target.value })}
+            />
+          </div>
+        </RowShell>
+      ))}
+    </EditorBlock>
   );
 }

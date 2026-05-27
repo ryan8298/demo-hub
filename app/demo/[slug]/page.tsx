@@ -7,6 +7,16 @@ import { PublicNav, HubFooter, MicrosoftSquares } from '@/components/HubShared';
 import { PublicDemoView } from '@/components/PublicDemoView';
 import { verifySession, COOKIE_VISITOR } from '@/lib/session';
 import { isMicrosoftEmail } from '@/lib/microsoft-access';
+import {
+  MetricStrip,
+  CapabilityGrid,
+  ChallengeInsights,
+  ArchitectureFlow,
+  AgentTimeline,
+  BusinessOutcomeCards,
+  OperationalTelemetry,
+  TechStackChips,
+} from '@/components/demo-sections';
 
 // Read the visitor cookie to decide which hub to send the user "back" to
 // when they came in via in-app navigation. Anonymous visitors get a public
@@ -111,47 +121,29 @@ export default async function PublicDemoPage({
       </header>
 
       <main className="max-w-[1200px] mx-auto px-6 md:px-8 py-12 md:py-16">
+        {/* 2. KPI Strip — floating headline numbers */}
+        <MetricStrip metrics={demo.kpi_metrics ?? []} />
+
+        {/* 3. Demo Preview — iframe or image (respects prefer_live_preview) */}
         <PublicDemoView demo={demo} />
 
-        {/* Who it's for / What it solves */}
-        {(demo.target_audience_description || demo.problem_statement) && (
-          <section className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {demo.target_audience_description && (
-              <div className="card p-8">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
-                  Who it&apos;s for
-                </p>
-                <h2 className="font-serif text-2xl text-milk mb-4">
-                  Built for these teams
-                </h2>
-                <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
-                  {demo.target_audience_description}
-                </p>
-              </div>
-            )}
+        {/* 4. AI Capabilities */}
+        <CapabilityGrid items={demo.ai_capabilities ?? []} />
 
-            {demo.problem_statement && (
-              <div className="card p-8">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-3">
-                  What it solves
-                </p>
-                <h2 className="font-serif text-2xl text-milk mb-4">
-                  The problem we tackle
-                </h2>
-                <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
-                  {demo.problem_statement}
-                </p>
-              </div>
-            )}
-          </section>
-        )}
+        {/* 5. Operational Challenge — structured points + fallback to legacy problem_statement */}
+        <ChallengeInsights
+          points={demo.challenge_points ?? []}
+          problemStatement={demo.problem_statement}
+        />
 
-        {/* Architecture diagram — image or PDF */}
+        {/* 6. Architecture Flow — structured steps first, then the diagram image/PDF */}
+        <ArchitectureFlow steps={demo.architecture_flow ?? []} />
+
         {demo.architecture_diagram_url && (
-          <section className="mt-12">
+          <section className="mt-10">
             <div className="flex items-center justify-between mb-3">
               <p className="text-[10px] uppercase tracking-[0.25em] text-sage">
-                Solution Architecture
+                Solution Architecture · Diagram
               </p>
               <a
                 href={demo.architecture_diagram_url}
@@ -162,9 +154,6 @@ export default async function PublicDemoPage({
                 Open ↗
               </a>
             </div>
-            <h2 className="font-serif text-2xl md:text-3xl text-milk mb-6">
-              How it fits together
-            </h2>
             <div className="card p-4 md:p-6">
               {/\.pdf(\?|$)/i.test(demo.architecture_diagram_url) ? (
                 <iframe
@@ -188,25 +177,20 @@ export default async function PublicDemoPage({
           </section>
         )}
 
-        {/* ROI + timeline (unchanged) */}
-        {(demo.roi_summary ||
-          (demo.deployment_timeline && demo.deployment_timeline.length > 0)) && (
-          <section className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {demo.roi_summary && (
-              <div className="card p-8">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
-                  ROI Summary
-                </p>
-                <h2 className="font-serif text-2xl text-milk mb-4">
-                  Why it matters
-                </h2>
-                <p className="text-sm text-grey-300 leading-relaxed">
-                  {demo.roi_summary}
-                </p>
-              </div>
-            )}
+        {/* 7. Agent Timeline */}
+        <AgentTimeline events={demo.agent_timeline ?? []} />
 
-            {demo.deployment_timeline && demo.deployment_timeline.length > 0 && (
+        {/* 8. Business Outcomes — structured first, legacy roi_summary as fallback panel */}
+        <BusinessOutcomeCards
+          outcomes={demo.business_outcomes ?? []}
+          roiSummary={demo.roi_summary}
+        />
+
+        {/* Legacy deployment_timeline — only render if no structured fields above filled in */}
+        {demo.deployment_timeline &&
+          demo.deployment_timeline.length > 0 &&
+          (!demo.agent_timeline || demo.agent_timeline.length === 0) && (
+            <section className="mt-12">
               <div className="card p-8">
                 <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-3">
                   Implementation
@@ -231,11 +215,28 @@ export default async function PublicDemoPage({
                   ))}
                 </div>
               </div>
-            )}
+            </section>
+          )}
+
+        {/* Tech stack chips */}
+        <TechStackChips stack={demo.tech_stack ?? []} />
+
+        {/* Operational telemetry — small live stats footer */}
+        <OperationalTelemetry stats={demo.operational_stats ?? []} />
+
+        {/* Audience description — if legacy field is set (renders as small block) */}
+        {demo.target_audience_description && (
+          <section className="mt-12 card p-8">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
+              Who it&apos;s for
+            </p>
+            <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
+              {demo.target_audience_description}
+            </p>
           </section>
         )}
 
-        {/* Related */}
+        {/* 9. Related */}
         {related.length > 0 && (
           <section className="mt-20">
             <p className="text-[10px] uppercase tracking-[0.25em] text-grey-500 mb-6">
