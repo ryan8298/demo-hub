@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo, Modal } from '@/components/HubShared';
+import { getBypassLogin } from '@/lib/bypass-logins';
 
 export default function Landing() {
   const [formData, setFormData] = useState({
@@ -28,11 +29,34 @@ export default function Landing() {
     setShowForm(true);
   }
 
-  async function handleSendOtp(e: React.FormEvent) {
+  /** Detect the magic demo emails up-front so the UI can reshape itself. */
+  const bypass = getBypassLogin(formData.email);
+
+  async function handleProfileSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
+      // ---- Bypass branch ----------------------------------------------
+      // client@/microsoft@/admin@echelix.com → skip OTP entirely, get the
+      // cookie set server-side, and bounce straight to the destination.
+      if (bypass) {
+        const res = await fetch('/api/auth/bypass-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ email: formData.email }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || 'Could not sign in.');
+          return;
+        }
+        router.push(data.redirect || '/customer/hub');
+        return;
+      }
+
+      // ---- Standard OTP branch ----------------------------------------
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -282,31 +306,36 @@ export default function Landing() {
         )}
 
         {step === 'profile' ? (
-          <form onSubmit={handleSendOtp} className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="text"
-                placeholder="First name"
-                value={formData.first_name}
-                onChange={(e) =>
-                  setFormData({ ...formData, first_name: e.target.value })
-                }
-                required
-                autoComplete="given-name"
-                className="input-field"
-              />
-              <input
-                type="text"
-                placeholder="Last name"
-                value={formData.last_name}
-                onChange={(e) =>
-                  setFormData({ ...formData, last_name: e.target.value })
-                }
-                required
-                autoComplete="family-name"
-                className="input-field"
-              />
-            </div>
+          <form onSubmit={handleProfileSubmit} className="space-y-3">
+            {/* Name fields are only shown for the standard OTP flow.
+                Bypass logins (client@/microsoft@/admin@echelix.com) just
+                need the email. */}
+            {!bypass && (
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={formData.first_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, first_name: e.target.value })
+                  }
+                  required
+                  autoComplete="given-name"
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  value={formData.last_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, last_name: e.target.value })
+                  }
+                  required
+                  autoComplete="family-name"
+                  className="input-field"
+                />
+              </div>
+            )}
 
             <input
               type="email"
@@ -318,26 +347,41 @@ export default function Landing() {
               className="input-field"
             />
 
-            {isMicrosoftEmail && (
+            {bypass && (
+              <div className="p-3 rounded-lg text-xs bg-sage/15 text-sage border border-sage/40">
+                ✓ Demo bypass — no verification needed. You&apos;ll go straight to the{' '}
+                <span className="font-medium">{bypass.label}</span>.
+              </div>
+            )}
+
+            {!bypass && isMicrosoftEmail && (
               <div className="p-3 rounded-lg text-xs bg-sea-foam/8 text-sea-foam border border-sea-foam/25">
                 ✓ Microsoft account detected — you&apos;ll be routed to the Partner Hub.
               </div>
             )}
 
-            <input
-              type="text"
-              placeholder="Company name"
-              value={formData.company_name}
-              onChange={(e) =>
-                setFormData({ ...formData, company_name: e.target.value })
-              }
-              required
-              autoComplete="organization"
-              className="input-field"
-            />
+            {!bypass && (
+              <input
+                type="text"
+                placeholder="Company name"
+                value={formData.company_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, company_name: e.target.value })
+                }
+                required
+                autoComplete="organization"
+                className="input-field"
+              />
+            )}
 
             <button type="submit" disabled={loading} className="btn-pill w-full mt-2">
-              {loading ? 'Sending code…' : 'Send Verification Code →'}
+              {loading
+                ? bypass
+                  ? 'Signing in…'
+                  : 'Sending code…'
+                : bypass
+                  ? 'Sign In →'
+                  : 'Send Verification Code →'}
             </button>
           </form>
         ) : (

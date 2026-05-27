@@ -1,20 +1,27 @@
+import { getBypassLogin } from "@/lib/bypass-logins";
+
 /**
  * Decides whether an email address is allowed into the Microsoft Partner hub.
  *
- * In production, this is just `@microsoft.com`. For testing, set the
- * MICROSOFT_TEST_EMAILS env var to a comma-separated list of:
- *
- *   • exact emails:  `ryan@echelix.app,partner@example.com`
- *   • whole domains: `@echelix.app,@partner.test`
- *   • mixed:         `@echelix.app,bob@another.com`
- *
- * Empty / unset env var = no override, production behavior.
+ * Rules, in order:
+ *   1. Hardcoded bypass map (lib/bypass-logins.ts) — e.g.
+ *      microsoft@echelix.com is always treated as Microsoft.
+ *   2. Production rule: ends with @microsoft.com
+ *   3. MICROSOFT_TEST_EMAILS env var, comma-separated list of:
+ *        • exact emails:  `ryan@echelix.app,partner@example.com`
+ *        • whole domains: `@echelix.app,@partner.test`
+ *        • mixed:         `@echelix.app,bob@another.com`
+ *      Empty / unset env var = no override.
  *
  * Edge-runtime compatible (only reads process.env, no fs/network).
  */
 export function isMicrosoftEmail(email: string): boolean {
   const normalized = String(email || "").trim().toLowerCase();
   if (!normalized.includes("@")) return false;
+
+  // Bypass map (covers microsoft@echelix.com for live demos)
+  const bypass = getBypassLogin(normalized);
+  if (bypass?.is_microsoft) return true;
 
   // Production rule
   if (normalized.endsWith("@microsoft.com")) return true;
