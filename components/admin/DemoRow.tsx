@@ -82,29 +82,13 @@ export function DemoRow({ demo }: { demo: Demo }) {
 
   return (
     <tr className="border-t hairline hover:bg-milk/[0.02] transition">
-      {/* Thumbnail — falls back to the demo's first letter so admins can
-          tell at a glance which demos need a preview image set */}
+      {/* Thumbnail — matches the public DemoCard logic:
+           1. preview_image_url (or prefer_live_preview short-circuit → iframe)
+           2. iframe of demo_url (skipped for placeholder URLs)
+           3. First-letter fallback so admins can spot demos needing work
+         */}
       <td className="py-4 pl-4 md:pl-6 pr-2 w-16 md:w-20">
-        <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-md overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-black flex items-center justify-center">
-          {demo.preview_image_url ? (
-            <Image
-              src={demo.preview_image_url}
-              alt=""
-              fill
-              sizes="64px"
-              className="object-cover"
-              unoptimized={demo.preview_image_url.startsWith('http')}
-            />
-          ) : (
-            <span
-              className="font-serif text-xl md:text-2xl text-milk/80 select-none"
-              aria-hidden="true"
-              title="No preview image set"
-            >
-              {(demo.title?.[0] || '·').toUpperCase()}
-            </span>
-          )}
-        </div>
+        <ThumbnailCell demo={demo} />
       </td>
 
       {/* Title + slug */}
@@ -205,5 +189,73 @@ export function DemoRow({ demo }: { demo: Demo }) {
         </button>
       </td>
     </tr>
+  );
+}
+
+/**
+ * Thumbnail with three render paths matching the public DemoCard
+ * logic. Lives at the bottom of this file because it's only used here.
+ */
+function ThumbnailCell({ demo }: { demo: Demo }) {
+  const [iframeError, setIframeError] = useState(false);
+
+  // Placeholder URLs from the bulk-seed don't render anything useful in
+  // an iframe — show the letter fallback instead until the admin sets
+  // the real demo_url.
+  const isPlaceholder =
+    !!demo.demo_url && demo.demo_url.startsWith('https://placeholder.echelix.app');
+
+  const wantsLive =
+    !!demo.prefer_live_preview && !!demo.demo_url && !isPlaceholder;
+  const showLiveFrame = wantsLive && !iframeError;
+  const showImage =
+    !showLiveFrame && !!demo.preview_image_url && !iframeError;
+  const showFallbackFrame =
+    !showLiveFrame &&
+    !showImage &&
+    !!demo.demo_url &&
+    !isPlaceholder &&
+    !iframeError;
+
+  return (
+    <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-md overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-black flex items-center justify-center">
+      {showImage ? (
+        <Image
+          src={demo.preview_image_url!}
+          alt=""
+          fill
+          sizes="64px"
+          className="object-cover"
+          unoptimized={demo.preview_image_url!.startsWith('http')}
+          onError={() => setIframeError(true)}
+        />
+      ) : showLiveFrame || showFallbackFrame ? (
+        // Heavy scale so the iframe content shrinks into the tiny
+        // thumbnail. pointer-events:none so clicks pass through to the
+        // row's other controls.
+        <iframe
+          src={demo.demo_url}
+          title=""
+          loading="lazy"
+          sandbox="allow-scripts"
+          onError={() => setIframeError(true)}
+          className="absolute top-0 left-0 border-0 pointer-events-none"
+          style={{
+            width: '400%',
+            height: '400%',
+            transform: 'scale(0.25)',
+            transformOrigin: 'top left',
+          }}
+        />
+      ) : (
+        <span
+          className="font-serif text-xl md:text-2xl text-milk/80 select-none"
+          aria-hidden="true"
+          title="No preview image set"
+        >
+          {(demo.title?.[0] || '·').toUpperCase()}
+        </span>
+      )}
+    </div>
   );
 }

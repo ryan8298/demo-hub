@@ -1,13 +1,57 @@
 import { listAllDemos } from '@/lib/admin-demos';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { DemoRow } from '@/components/admin/DemoRow';
+import { SortControl, type SortKey } from '@/components/admin/SortControl';
+import type { Demo } from '@/lib/types';
 
 // Always re-fetch on each visit — admin needs to see fresh state, especially
 // right after editing or deleting a demo. Middleware already gates access.
 export const dynamic = 'force-dynamic';
 
-export default async function AdminIndex() {
+const SORT_KEYS: SortKey[] = [
+  'title-asc',
+  'title-desc',
+  'newest',
+  'oldest',
+  'featured',
+];
+
+function applySort(demos: Demo[], sort: SortKey): Demo[] {
+  const arr = [...demos];
+  switch (sort) {
+    case 'title-desc':
+      return arr.sort((a, b) => b.title.localeCompare(a.title));
+    case 'newest':
+      return arr.sort((a, b) =>
+        (b.created_at ?? '').localeCompare(a.created_at ?? '')
+      );
+    case 'oldest':
+      return arr.sort((a, b) =>
+        (a.created_at ?? '').localeCompare(b.created_at ?? '')
+      );
+    case 'featured':
+      return arr.sort(
+        (a, b) =>
+          Number(!!b.featured) - Number(!!a.featured) ||
+          a.title.localeCompare(b.title)
+      );
+    case 'title-asc':
+    default:
+      return arr.sort((a, b) => a.title.localeCompare(b.title));
+  }
+}
+
+export default async function AdminIndex({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
+  const { sort: sortParam } = await searchParams;
+  const sort: SortKey =
+    SORT_KEYS.includes(sortParam as SortKey) ? (sortParam as SortKey) : 'title-asc';
+
   const demos = await listAllDemos();
+  const sorted = applySort(demos, sort);
 
   const stats = {
     total: demos.length,
@@ -60,37 +104,47 @@ export default async function AdminIndex() {
             </a>
           </div>
         ) : (
-          <div className="card overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left">
-                  <th className="py-4 pl-4 md:pl-6 pr-2 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium w-16 md:w-20">
-                    {/* thumbnail column */}
-                  </th>
-                  <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium">
-                    Demo
-                  </th>
-                  <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden md:table-cell">
-                    Industry
-                  </th>
-                  <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden lg:table-cell">
-                    Audiences
-                  </th>
-                  <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden xl:table-cell">
-                    Engagement
-                  </th>
-                  <th className="py-4 pl-2 pr-4 md:pr-6 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium text-right">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {demos.map((demo) => (
-                  <DemoRow key={demo.id} demo={demo} />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Toolbar above the table */}
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-grey-500">
+                {sorted.length} {sorted.length === 1 ? 'demo' : 'demos'}
+              </p>
+              <SortControl current={sort} />
+            </div>
+
+            <div className="card overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left">
+                    <th className="py-4 pl-4 md:pl-6 pr-2 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium w-16 md:w-20">
+                      {/* thumbnail column */}
+                    </th>
+                    <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium">
+                      Demo
+                    </th>
+                    <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden md:table-cell">
+                      Industry
+                    </th>
+                    <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden lg:table-cell">
+                      Audiences
+                    </th>
+                    <th className="py-4 px-2 md:px-4 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium hidden xl:table-cell">
+                      Engagement
+                    </th>
+                    <th className="py-4 pl-2 pr-4 md:pr-6 text-[10px] uppercase tracking-[0.2em] text-grey-500 font-medium text-right">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((demo) => (
+                    <DemoRow key={demo.id} demo={demo} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </main>
     </div>
