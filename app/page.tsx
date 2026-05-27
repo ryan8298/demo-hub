@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo, Modal } from '@/components/HubShared';
-import { EchelixBackground } from '@/components/EchelixBackground';
 
 export default function Landing() {
   const [formData, setFormData] = useState({
@@ -107,14 +106,13 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen text-milk relative">
-      {/* Fixed full-viewport background matching the Echelix promo card */}
-      <EchelixBackground />
+      {/* Global background lives in app/layout.tsx — no per-page bg needed */}
 
       {/* Top Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
-            <EchelixLogo className="h-8 md:h-9 w-auto" />
+            <EchelixLogo className="h-24 md:h-28 w-auto" />
           </a>
           <div className="flex items-center gap-3 md:gap-4">
             <button
@@ -146,9 +144,16 @@ export default function Landing() {
               Experience the future of{' '}
               <em className="text-sea-foam not-italic">agentic</em> enterprise software.
             </h1>
-            <p className="text-base md:text-lg text-grey-200 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Explore live, interactive demonstrations of Echelix solutions — purpose-built
-              to modernize operations, embed AI, and deliver measurable business value, fast.
+            <p className="text-base md:text-lg text-grey-200 max-w-2xl mx-auto mb-4 leading-relaxed">
+              Hands-on demonstrations of Echelix agentic solutions — built on
+              Microsoft Azure, integrated with Microsoft 365, and engineered for
+              the enterprise.
+            </p>
+            <p className="text-base md:text-lg text-grey-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Every tile opens to a one-pager covering the business problem
+              it solves, the audience it serves, a solution architecture
+              diagram, and ROI. Sign in with your work email to browse the
+              full catalog.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center">
               <button onClick={openModal} className="btn-pill">
@@ -232,7 +237,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <EchelixLogo className="h-6 w-auto opacity-80" />
+          <EchelixLogo className="h-16 w-auto opacity-80" />
           <p className="text-xs text-grey-600">
             Modernize. Build Agentic Apps. Deliver Business Value.
           </p>

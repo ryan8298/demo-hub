@@ -87,11 +87,11 @@ export function DemoHubLayout({
   };
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <HubNav label={variant.navLabel} partner={variant.partner} />
 
       {/* Hero */}
-      <header className="bg-wave relative pt-32 pb-20 border-b hairline">
+      <header className="bg-wave relative pt-44 pb-20 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
           <p className="text-xs uppercase tracking-[0.25em] text-sage mb-6 flex items-center gap-2">
             {variant.eyebrow}
@@ -106,7 +106,7 @@ export function DemoHubLayout({
       </header>
 
       {/* Filters — not sticky on mobile to avoid overlapping the nav */}
-      <section className="border-b hairline md:sticky md:top-[76px] z-40 bg-black/85 backdrop-blur">
+      <section className="border-b hairline md:sticky md:top-[140px] z-40 bg-black/85 backdrop-blur">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 md:py-5 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
           <div className="relative flex-1 md:max-w-md">
             <input

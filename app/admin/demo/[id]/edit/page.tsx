@@ -15,10 +15,10 @@ export default async function EditDemoPage({
   if (!demo) notFound();
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <AdminNav current="edit" />
 
-      <header className="bg-wave relative pt-32 pb-12 border-b hairline">
+      <header className="bg-wave relative pt-44 pb-12 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
           <div className="flex items-center gap-3 mb-5">
             <a

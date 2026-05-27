@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center">
           <div className="spinner" />
         </div>
       }
@@ -54,12 +54,12 @@ function AdminLoginInner() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-milk flex flex-col">
+    <div className="min-h-screen text-milk flex flex-col">
       {/* Minimal top bar */}
       <nav className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
-            <EchelixLogo className="h-7 md:h-8 w-auto" />
+            <EchelixLogo className="h-20 md:h-24 w-auto" />
           </a>
           <span className="badge badge-muted">Admin</span>
         </div>

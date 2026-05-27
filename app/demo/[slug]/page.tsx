@@ -60,10 +60,10 @@ export default async function PublicDemoPage({
   const isPartner = demo.audience.includes('microsoft');
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <PublicNav backHref={backHref} />
 
-      <header className="pt-32 pb-10 border-b hairline">
+      <header className="pt-44 pb-10 border-b hairline">
         <div className="max-w-[1200px] mx-auto px-6 md:px-8">
           <div className="flex items-center gap-3 flex-wrap mb-6">
             <a
@@ -234,23 +234,6 @@ export default async function PublicDemoPage({
             )}
           </section>
         )}
-
-        {/* Sign-in CTA */}
-        <section className="mt-16 card p-10 md:p-14 text-center">
-          <p className="text-xs uppercase tracking-[0.25em] text-sage mb-4">
-            Explore the full hub
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl text-milk mb-4 leading-tight">
-            See <em className="text-sea-foam not-italic">every</em> Echelix solution.
-          </h2>
-          <p className="text-sm md:text-base text-grey-400 max-w-xl mx-auto mb-8">
-            Get instant access to the full catalog of interactive demonstrations.
-            Free, no credit card — just your work email.
-          </p>
-          <a href="/" className="btn-pill">
-            Access the Demo Hub →
-          </a>
-        </section>
 
         {/* Related */}
         {related.length > 0 && (

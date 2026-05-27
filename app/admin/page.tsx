@@ -17,11 +17,11 @@ export default async function AdminIndex() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <AdminNav current="index" />
 
       {/* Header */}
-      <header className="bg-wave relative pt-32 pb-12 border-b hairline">
+      <header className="bg-wave relative pt-44 pb-12 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>

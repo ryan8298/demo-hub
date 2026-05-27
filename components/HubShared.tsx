@@ -35,7 +35,7 @@ export function HubNav({ label, partner }: { label: string; partner?: boolean })
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3">
-          <EchelixLogo className="h-8 md:h-9 w-auto" />
+          <EchelixLogo className="h-24 md:h-28 w-auto" />
         </a>
         <div className="flex items-center gap-4">
           <span className="text-[10px] uppercase tracking-[0.25em] text-grey-500 hidden md:block">
@@ -85,7 +85,7 @@ export function PublicNav({ backHref }: { backHref?: string }) {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
         <a href={signedIn ? backHref! : '/'} className="flex items-center gap-3">
-          <EchelixLogo className="h-8 md:h-9 w-auto" />
+          <EchelixLogo className="h-24 md:h-28 w-auto" />
         </a>
         <div className="flex items-center gap-3 md:gap-4">
           {signedIn ? (
@@ -118,7 +118,7 @@ export function HubFooter() {
   return (
     <footer className="border-t hairline">
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-        <EchelixLogo className="h-6 w-auto opacity-80" />
+        <EchelixLogo className="h-16 w-auto opacity-80" />
         <p className="text-xs text-grey-600">
           Modernize. Build Agentic Apps. Deliver Business Value.
         </p>

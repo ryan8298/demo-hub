@@ -18,9 +18,9 @@ export default function MicrosoftHubError({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <HubNav label="Partner Hub" partner />
-      <main className="max-w-[1400px] mx-auto px-6 md:px-8 pt-32 pb-20">
+      <main className="max-w-[1400px] mx-auto px-6 md:px-8 pt-44 pb-20">
         <div className="text-center py-24 border border-dashed border-error/30 rounded-2xl bg-error/5">
           <p className="text-xs uppercase tracking-[0.25em] text-error mb-3">
             Couldn&apos;t load partner demos

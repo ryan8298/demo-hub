@@ -116,11 +116,11 @@ export default function AddDemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-milk">
+    <div className="min-h-screen text-milk">
       <AdminNav current="add" />
 
       {/* Header */}
-      <header className="bg-wave relative pt-32 pb-16 border-b hairline">
+      <header className="bg-wave relative pt-44 pb-16 border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10">
           <p className="text-xs uppercase tracking-[0.25em] text-sage mb-5">
             Admin Console

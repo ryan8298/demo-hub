@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { EchelixAtmosphere } from "@/components/EchelixAtmosphere";
 import "./globals.css";
 
 const inter = Inter({
@@ -79,6 +80,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
       <body>
+        {/* Global background — renders behind everything via position: fixed
+            + z-index: -10. Applies to every route in the app. */}
+        <EchelixAtmosphere />
         {children}
         {/* Vercel observability — free, no PII, no setup beyond enabling in dashboard */}
         <Analytics />
