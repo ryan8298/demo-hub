@@ -124,8 +124,24 @@ export default async function PublicDemoPage({
         {/* 2. KPI Strip — floating headline numbers */}
         <MetricStrip metrics={demo.kpi_metrics ?? []} />
 
+        {/* 2b. Who it's for — context block right under the KPI numbers so
+             visitors can immediately self-qualify before engaging with the
+             preview. Optional — only renders if set. */}
+        {demo.target_audience_description && (
+          <section className="mt-8 card p-6 md:p-8 border-l-2 border-sea-foam/40">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
+              Who it&apos;s for
+            </p>
+            <p className="text-sm md:text-base text-grey-200 leading-relaxed whitespace-pre-wrap">
+              {demo.target_audience_description}
+            </p>
+          </section>
+        )}
+
         {/* 3. Demo Preview — iframe or image (respects prefer_live_preview) */}
-        <PublicDemoView demo={demo} />
+        <div className="mt-12">
+          <PublicDemoView demo={demo} />
+        </div>
 
         {/* 4. AI Capabilities */}
         <CapabilityGrid items={demo.ai_capabilities ?? []} />
@@ -224,17 +240,7 @@ export default async function PublicDemoPage({
         {/* Operational telemetry — small live stats footer */}
         <OperationalTelemetry stats={demo.operational_stats ?? []} />
 
-        {/* Audience description — if legacy field is set (renders as small block) */}
-        {demo.target_audience_description && (
-          <section className="mt-12 card p-8">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam mb-3">
-              Who it&apos;s for
-            </p>
-            <p className="text-sm text-grey-300 leading-relaxed whitespace-pre-wrap">
-              {demo.target_audience_description}
-            </p>
-          </section>
-        )}
+        {/* (Who it's for moved to the top — under the KPI strip) */}
 
         {/* 9. Related */}
         {related.length > 0 && (
