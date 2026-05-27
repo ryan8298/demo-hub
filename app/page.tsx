@@ -110,7 +110,7 @@ export default function Landing() {
 
       {/* Top Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
+        <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-1 md:py-1 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-24 md:h-28 w-auto" />
           </a>
@@ -166,17 +166,6 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Scroll indicator (left edge) — matches echelix.com */}
-        <div className="absolute left-6 md:left-8 bottom-12 flex items-center gap-3 z-10">
-          <span className="block w-12 h-px bg-white/40" />
-          <span className="scroll-indicator">Scroll</span>
-        </div>
-
-        {/* Social icons (right edge) — matches echelix.com */}
-        <div className="absolute right-6 md:right-8 bottom-12 flex flex-col gap-3 z-10 text-white/60">
-          <a href="#" aria-label="X" className="text-xs hover:text-sea-foam transition">𝕏</a>
-          <a href="#" aria-label="LinkedIn" className="text-xs hover:text-sea-foam transition">in</a>
-        </div>
       </section>
 
       {/* Features */}

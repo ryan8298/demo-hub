@@ -114,7 +114,11 @@ export function DemoHubLayout({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={variant.searchPlaceholder}
-              className="input-field pl-10"
+              className="input-field"
+              // Inline padding-left overrides .input-field's 1rem default,
+              // which Tailwind's pl-* utilities can't beat here due to
+              // CSS source-order. Inline style always wins.
+              style={{ paddingLeft: '2.75rem' }}
               aria-label="Search demos"
             />
             <svg
