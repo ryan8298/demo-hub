@@ -106,7 +106,7 @@ export function DemoHubLayout({
       </header>
 
       {/* Filters — not sticky on mobile to avoid overlapping the nav */}
-      <section className="border-b hairline md:sticky md:top-[140px] z-40 bg-black/85 backdrop-blur">
+      <section className="border-b hairline md:sticky md:top-[120px] z-40 bg-black/85 backdrop-blur">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 md:py-5 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
           <div className="relative flex-1 md:max-w-md">
             <input
