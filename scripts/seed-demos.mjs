@@ -588,6 +588,79 @@ const DEMOS = [
       { label: 'Open actions', value: '23' },
     ],
   }),
+
+  // ============================================================
+  // 10. RateCase Navigator — Customer + Partner
+  // ============================================================
+  ...buildPair({
+    customer_title: 'RateCase Navigator · Regulatory Affairs Intelligence',
+    partner_title:  'RateCase Navigator · Regulatory Affairs Intelligence',
+    base_slug: 'ratecase-navigator',
+    industry: 'Enterprise',
+    tags: ['AI-First', 'Microsoft 365', 'Compliance', 'Governance', 'Automation'],
+    description:
+      'An agentic regulatory affairs coordination platform for utilities — orchestrating discovery requests, commitments, filings, audit trails, and executive reporting across the entire rate case lifecycle.',
+    customer_roi:
+      'Reduce average discovery response time from 9.8 days to 4.2 days through AI-assisted coordination and document intelligence. Eliminate missed filing deadlines and undocumented commitments that create regulatory exposure and disallowed cost recovery risk. Reduce outside counsel and filing coordination costs by an estimated $2.5M–$4.1M per rate case for large investor-owned utilities. Capture and track 4× more commitments across meetings, Teams, email, and SharePoint activity. Typical ROI achieved within a single filing cycle.',
+    partner_roi:
+      'Discovery response cycle time reduced from 9.8 days to 4.2 days through AI-assisted filing coordination and semantic document retrieval. Eliminates missed filing deadlines and undocumented commitments that create regulatory and financial exposure. Estimated filing cost reduction of $2.5M–$4.1M per major rate case through reduced outside counsel utilization, accelerated drafting workflows, improved procedural compliance, and centralized regulatory coordination. Azure ACR baseline: $185K–$285K annually per deployment driven by Microsoft Graph ingestion, Azure OpenAI inference workloads, Azure AI Search indexing, Purview governance, Teams transcript processing, Power BI reporting, Dynamics 365 task orchestration, and long-retention regulatory document storage. Microsoft co-sell eligible · Utility Regulatory AI + M365 Copilot activation motion.',
+    azure_acr: '$185K–$285K / yr',
+    target_audience_description:
+      'VP Regulatory Affairs leaders coordinating multi-year general rate case proceedings with hundreds of discovery requests and cross-functional stakeholders; Regulatory Case Managers responsible for filing defensibility, procedural compliance, and deadline execution; Legal and Compliance teams managing privileged communications, audit trails, and evidentiary documentation; and Utility CIOs modernizing regulatory operations around Microsoft 365, Purview governance, and AI-enabled coordination. Target: Investor-owned electric, gas, and water utilities managing complex state or federal regulatory proceedings.',
+    problem_statement:
+      'Modern rate cases are operationally chaotic. Utilities coordinate thousands of filing documents, discovery requests, commitments, Teams conversations, email chains, testimony drafts, and regulatory deadlines across dozens of stakeholders over 12–18 month proceedings. Most utilities still manage this work manually using disconnected SharePoint folders, spreadsheets, Teams chats, and Outlook threads. Discovery requests are duplicated, commitments are lost, procedural deadlines are missed, and institutional context disappears across siloed systems. A single undocumented commitment or missed response deadline can result in millions in disallowed cost recovery. RateCase Navigator creates a centralized orchestration layer across regulatory operations — continuously coordinating filings, surfacing obligations, tracking commitments, assembling discovery responses, preserving audit defensibility, and generating executive visibility across the entire proceeding lifecycle.',
+    customer_kpis: [
+      { label: 'Discovery response',     value: '4.2 days' },
+      { label: 'Filing cost reduction',  value: '$2.5M–$4.1M' },
+      { label: 'Commitments captured',   value: '4×' },
+      { label: 'Payback',                value: '1 cycle' },
+    ],
+    challenge_points: [
+      '12–18 month proceedings produce thousands of filings, discovery requests, commitments, and deadlines across dozens of stakeholders',
+      'Most utilities still manage this manually across SharePoint folders, spreadsheets, Teams chats, and Outlook threads',
+      'Discovery requests duplicated, commitments lost, procedural deadlines missed — context disappears across siloed systems',
+      'A single undocumented commitment or missed response deadline can result in millions in disallowed cost recovery',
+    ],
+    business_outcomes: [
+      { value: '57%',          label: 'Discovery cycle reduction',     description: '9.8-day manual baseline → 4.2-day AI-assisted' },
+      { value: '$2.5M–$4.1M',  label: 'Filing cost reduction per case', description: 'Outside counsel + coordination overhead' },
+      { value: '4×',           label: 'Commitment capture',             description: 'Across meetings, Teams, email, SharePoint' },
+    ],
+    ai_capabilities: [
+      { label: 'Discovery response orchestration', description: 'Semantic retrieval across the regulatory corpus + automated response packet assembly' },
+      { label: 'Commitment tracking',              description: 'Continuous extraction of obligations from Teams, email, meetings, and SharePoint activity' },
+      { label: 'Filing deadline intelligence',     description: 'Proactive surfacing of upcoming procedural deadlines + dependency mapping' },
+      { label: 'Audit-defensible governance',      description: 'Purview-backed chain-of-custody + privileged-communication classification' },
+    ],
+    tech_stack: [
+      'Microsoft 365',
+      'Microsoft Graph',
+      'SharePoint Online',
+      'Microsoft Teams',
+      'Azure OpenAI',
+      'Azure AI Search',
+      'Microsoft Purview',
+      'Dynamics 365 Project Operations',
+      'Power BI',
+      'Azure Service Bus',
+    ],
+    architecture_flow: [
+      { step: 'Ingest',      description: 'Microsoft Graph pulls M365 + SharePoint + Teams + Outlook content into the case workspace' },
+      { step: 'Index',       description: 'Azure AI Search builds a semantic index across the long-retention regulatory corpus' },
+      { step: 'Orchestrate', description: 'Azure OpenAI agents track commitments, deadlines, and discovery obligations' },
+      { step: 'Govern',      description: 'Microsoft Purview enforces audit trails + privileged-content classification' },
+      { step: 'Coordinate',  description: 'D365 Project Operations routes tasks across legal, regulatory, and operations stakeholders' },
+      { step: 'Report',      description: 'Power BI executive dashboards + Teams briefings on proceeding status' },
+    ],
+    operational_stats: [
+      { label: 'Active proceedings',   value: '3' },
+      { label: 'Documents indexed',    value: '12,400+' },
+      { label: 'Commitments tracked',  value: '247' },
+      { label: 'Open discovery',       value: '18' },
+    ],
+    partner_acr_breakdown:
+      'Sized for an investor-owned utility running 1–3 concurrent rate case proceedings (12–18 months each). Dominant Azure consumption: Microsoft Graph ingestion across M365 + SharePoint + Teams + Outlook (high data volume — thousands of documents, conversations, and emails per case), Azure OpenAI for commitment extraction + discovery response drafting + obligation surfacing, Azure AI Search semantic index across long-retention regulatory corpus (~50K+ documents per case), Microsoft Purview for audit-defensible governance + privileged-content classification, Dynamics 365 Project Operations for cross-functional task orchestration, Power BI Premium for executive proceeding dashboards, Teams transcript processing, Service Bus event-driven workflows, and multi-year regulatory document storage. Higher end of the portfolio because long-retention archival + continuous Graph ingestion across the full M365 surface area are persistent cost drivers — not bursty workloads.',
+  }),
 ];
 
 /* eslint-enable max-len */
@@ -637,6 +710,7 @@ function buildPair(uc) {
       { label: 'Azure ACR', value: uc.azure_acr },
       ...uc.customer_kpis,
     ].slice(0, 4), // cap at 4 so the strip stays readable
+    acr_breakdown: uc.partner_acr_breakdown ?? null,
   };
 
   return [customer, partner];
