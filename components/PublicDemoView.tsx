@@ -16,6 +16,17 @@ export function PublicDemoView({ demo }: { demo: Demo }) {
   const [iframeError, setIframeError] = useState(false);
   const [shared, setShared] = useState(false);
 
+  // Same rendering priority as <DemoCard>:
+  //   1. prefer_live_preview + demo_url  → iframe (admin opt-in)
+  //   2. preview_image_url               → static image
+  //   3. demo_url                        → iframe (best-effort fallback)
+  //   4. nothing                         → placeholder
+  const wantsLiveFrame = !!demo.prefer_live_preview && !!demo.demo_url;
+  const showLiveFrame = wantsLiveFrame && !iframeError;
+  const showImage = !showLiveFrame && !!demo.preview_image_url && !iframeError;
+  const showFallbackFrame =
+    !showLiveFrame && !showImage && !!demo.demo_url && !iframeError;
+
   useEffect(() => {
     trackDemoEvent(demo.id, 'view');
     rememberDemoView(demo);
@@ -37,18 +48,18 @@ export function PublicDemoView({ demo }: { demo: Demo }) {
     <>
       {/* Preview — large hero embed */}
       <div className="relative w-full h-[420px] md:h-[560px] rounded-2xl overflow-hidden bg-gradient-to-br from-sage via-sage-dark to-black border hairline">
-        {demo.preview_image_url && !iframeError ? (
+        {showImage ? (
           <Image
-            src={demo.preview_image_url}
+            src={demo.preview_image_url!}
             alt={demo.title}
             fill
             sizes="(max-width: 1024px) 100vw, 1200px"
             priority
             className="object-cover"
-            unoptimized={demo.preview_image_url.startsWith('http')}
+            unoptimized={demo.preview_image_url!.startsWith('http')}
             onError={() => setIframeError(true)}
           />
-        ) : demo.demo_url && !iframeError ? (
+        ) : showLiveFrame || showFallbackFrame ? (
           <>
             <iframe
               src={demo.demo_url}
