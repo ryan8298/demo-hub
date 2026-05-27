@@ -13,6 +13,43 @@ export function DemoRow({ demo }: { demo: Demo }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+  // Optimistic local state for the featured toggle so the star flips
+  // instantly on click; reverts on server failure.
+  const [featured, setFeatured] = useState<boolean>(!!demo.featured);
+  const [togglingFeatured, setTogglingFeatured] = useState(false);
+
+  async function handleToggleFeatured() {
+    if (togglingFeatured) return;
+    const next = !featured;
+    setFeatured(next); // optimistic
+    setTogglingFeatured(true);
+    setError('');
+    try {
+      const res = await fetch(`/api/demo/${demo.id}`, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: next }),
+      });
+      if (res.status === 401) {
+        router.push('/admin/login?next=/admin');
+        return;
+      }
+      if (!res.ok) {
+        setFeatured(!next); // revert
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Could not update featured state');
+        return;
+      }
+      // Refresh the SSR page so the stats strip at the top updates too.
+      router.refresh();
+    } catch {
+      setFeatured(!next);
+      setError('Network error');
+    } finally {
+      setTogglingFeatured(false);
+    }
+  }
 
   async function handleDelete() {
     const ok = window.confirm(
@@ -73,7 +110,7 @@ export function DemoRow({ demo }: { demo: Demo }) {
       {/* Title + slug */}
       <td className="py-4 px-2 md:px-4 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          {demo.featured && (
+          {featured && (
             <span className="text-sea-foam text-[10px]" aria-label="Featured">
               ★
             </span>
@@ -126,9 +163,35 @@ export function DemoRow({ demo }: { demo: Demo }) {
 
       {/* Actions */}
       <td className="py-4 pl-2 pr-4 md:pr-6 text-right whitespace-nowrap">
+        <button
+          type="button"
+          onClick={handleToggleFeatured}
+          disabled={togglingFeatured}
+          aria-pressed={featured}
+          aria-label={featured ? 'Unfeature this demo' : 'Feature this demo'}
+          title={featured ? 'Featured — click to unfeature' : 'Not featured — click to feature'}
+          className={`inline-flex items-center justify-center w-7 h-7 align-middle mr-3 rounded transition disabled:opacity-50 ${
+            featured
+              ? 'text-sea-foam hover:text-sea-foam-dark'
+              : 'text-grey-500 hover:text-sea-foam'
+          }`}
+        >
+          {/* Star icon — fills when featured, outline when not */}
+          <svg
+            viewBox="0 0 24 24"
+            className="w-4 h-4"
+            fill={featured ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            strokeWidth={featured ? 0 : 1.8}
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 2.6l2.95 5.98 6.6.96-4.78 4.66 1.13 6.58L12 17.7l-5.9 3.1 1.13-6.58L2.45 9.54l6.6-.96L12 2.6z" />
+          </svg>
+        </button>
         <a
           href={`/admin/demo/${demo.id}/edit`}
-          className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-sea-foam transition mr-4"
+          className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-sea-foam transition mr-4 align-middle"
         >
           Edit
         </a>
@@ -136,7 +199,7 @@ export function DemoRow({ demo }: { demo: Demo }) {
           type="button"
           onClick={handleDelete}
           disabled={deleting}
-          className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition disabled:opacity-50"
+          className="text-[10px] uppercase tracking-[0.2em] text-grey-400 hover:text-error transition disabled:opacity-50 align-middle"
         >
           {deleting ? 'Deleting…' : 'Delete'}
         </button>
