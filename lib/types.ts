@@ -27,6 +27,10 @@ export interface Demo {
   problem_statement?: string;
   target_audience_description?: string;
   architecture_diagram_url?: string;
+  /** Free-text rationale shown on partner tiles directly under the KPI
+   *  strip. Explains where the Azure ACR figure comes from. Optional —
+   *  empty/null hides the section entirely. */
+  acr_breakdown?: string;
   /** When true, hub demo cards render `demo_url` as a scaled iframe
    *  instead of `preview_image_url`. Only set true for sites you know
    *  allow framing. */

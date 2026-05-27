@@ -29,6 +29,7 @@ function valuesFromDemo(demo: Demo): DemoFormValues {
     problem_statement: demo.problem_statement || '',
     target_audience_description: demo.target_audience_description || '',
     architecture_diagram_url: demo.architecture_diagram_url || '',
+    acr_breakdown: demo.acr_breakdown || '',
     prefer_live_preview: !!demo.prefer_live_preview,
     kpi_metrics: demo.kpi_metrics || [],
     challenge_points: demo.challenge_points || [],

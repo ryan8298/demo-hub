@@ -28,6 +28,7 @@ const EMPTY_FORM: DemoFormValues = {
   problem_statement: '',
   target_audience_description: '',
   architecture_diagram_url: '',
+  acr_breakdown: '',
   prefer_live_preview: false,
   kpi_metrics: [],
   challenge_points: [],

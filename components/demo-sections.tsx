@@ -386,6 +386,32 @@ export function OperationalTelemetry({ stats }: { stats: OperationalStat[] }) {
 }
 
 /* ============================================================
+   ACR Sizing Rationale — partner-tile callout under the KPI strip.
+   Explains where the Azure ACR figure comes from. Renders only when
+   the admin populates the field.
+   ============================================================ */
+export function AcrBreakdownPanel({ breakdown }: { breakdown?: string }) {
+  if (!breakdown?.trim()) return null;
+  return (
+    <section className="mt-8">
+      <div className="card p-6 md:p-8 border-l-2 border-sea-foam/40">
+        <div className="flex items-baseline justify-between gap-4 mb-3 flex-wrap">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-sea-foam">
+            How we sized the Azure ACR
+          </p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-grey-500">
+            For Microsoft co-sell
+          </p>
+        </div>
+        <p className="text-sm md:text-base text-grey-200 leading-relaxed whitespace-pre-wrap">
+          {breakdown}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    Bonus: TechStack chips — small, used after Architecture Flow
    ============================================================ */
 export function TechStackChips({ stack }: { stack: string[] }) {

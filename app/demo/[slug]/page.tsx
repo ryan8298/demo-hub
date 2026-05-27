@@ -16,6 +16,7 @@ import {
   BusinessOutcomeCards,
   OperationalTelemetry,
   TechStackChips,
+  AcrBreakdownPanel,
 } from '@/components/demo-sections';
 
 // Read the visitor cookie to decide which hub to send the user "back" to
@@ -123,6 +124,11 @@ export default async function PublicDemoPage({
       <main className="max-w-[1200px] mx-auto px-6 md:px-8 py-12 md:py-16">
         {/* 2. KPI Strip — floating headline numbers */}
         <MetricStrip metrics={demo.kpi_metrics ?? []} />
+
+        {/* 2a. ACR sizing rationale — sits right under the KPI strip so the
+             ACR pill (leftmost on partner tiles) and its explanation read
+             together. Hidden when empty. */}
+        <AcrBreakdownPanel breakdown={demo.acr_breakdown} />
 
         {/* 2b. Who it's for — context block right under the KPI numbers so
              visitors can immediately self-qualify before engaging with the

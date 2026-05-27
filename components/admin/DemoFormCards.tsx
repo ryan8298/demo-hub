@@ -49,6 +49,7 @@ export type DemoFormValues = {
   problem_statement: string;
   target_audience_description: string;
   architecture_diagram_url: string;
+  acr_breakdown: string;
   // Force live iframe preview on the hub demo card (skip the
   // preview_image_url even if one is set)
   prefer_live_preview: boolean;
@@ -657,6 +658,19 @@ export function DetailPageCard({
             onRemove={() => update({ architecture_diagram_url: '' })}
           />
         )}
+
+        <Field
+          label="ACR Sizing Rationale (Microsoft Partner)"
+          hint="Optional. How the Azure ACR figure was estimated — services driving the spend, scale assumptions, and what's excluded. Shows as a small panel under the KPI strip on partner tiles. Leave blank on customer-facing tiles."
+        >
+          <textarea
+            value={values.acr_breakdown}
+            onChange={(e) => update({ acr_breakdown: e.target.value })}
+            placeholder="e.g., Sized for a midstream operator monitoring ~47 assets at 1,247 events/sec, 24/7. Dominant Azure consumption: IoT Hub Standard S2 (~$30K/yr), Microsoft Fabric RTI F32–F64 (~$60–120K/yr), Azure AI Foundry anomaly models. Excludes pre-existing M365/D365 base licensing."
+            rows={4}
+            className="input-field resize-none"
+          />
+        </Field>
       </div>
     </section>
   );
