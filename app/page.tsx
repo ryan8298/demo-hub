@@ -136,8 +136,10 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero — content only. Background is provided by <EchelixBackground />. */}
-      <section className="relative min-h-screen flex flex-col justify-center pt-24 pb-32 overflow-hidden">
+      {/* Hero — content only. Background is provided by EchelixAtmosphere
+          in the root layout. pt > pb so justify-center settles the
+          content slightly below true vertical center for a more grounded feel. */}
+      <section className="relative min-h-screen flex flex-col justify-center pt-40 pb-16 overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 relative z-10 w-full">
           <div className="text-center max-w-[1100px] mx-auto">
             <h1 className="font-serif text-[clamp(2.75rem,8vw,7rem)] text-white leading-[1.04] tracking-[-0.02em] mb-8">
