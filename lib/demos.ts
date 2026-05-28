@@ -13,8 +13,7 @@ export async function listDemosForAudience(
     .from("demos")
     .select("*")
     .contains("audience", [audience])
-    .order("featured", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("title", { ascending: true });
 
   if (error) {
     console.error("listDemosForAudience failed:", error.message);
