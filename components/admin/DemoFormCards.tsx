@@ -29,6 +29,7 @@ const INDUSTRIES = [
   'Healthcare',
   'Retail & E-Commerce',
   'Manufacturing',
+  'Professional Services',
   'Technology',
   'Government',
   'Education',
