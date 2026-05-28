@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getDemoBySlug, listRelatedDemos } from '@/lib/demos';
 import { PublicNav, HubFooter, MicrosoftSquares } from '@/components/HubShared';
 import { PublicDemoView } from '@/components/PublicDemoView';
-import { verifySession, COOKIE_VISITOR } from '@/lib/session';
+import { verifySession, COOKIE_VISITOR, COOKIE_ADMIN } from '@/lib/session';
 import { isMicrosoftEmail } from '@/lib/microsoft-access';
 import {
   MetricStrip,
@@ -19,17 +19,42 @@ import {
   AcrBreakdownPanel,
 } from '@/components/demo-sections';
 
-// Read the visitor cookie to decide which hub to send the user "back" to
-// when they came in via in-app navigation. Anonymous visitors get a public
-// nav with a Sign-in CTA instead.
+// Resolve which hub to send the user "back" to. Checks both auth modes:
+//   - Visitor cookie  → /customer/hub or /microsoft/hub based on email
+//   - Admin cookie    → infer from Referer (admin can preview both hubs);
+//                       fall back to /customer/hub
+//   - Neither         → undefined (PublicNav shows a "Sign in" CTA)
+//
+// The admin branch is the bug fix: previously this only checked the visitor
+// cookie, so admins viewing /demo/[slug] saw "Sign in" in the nav and got
+// bounced to the landing page on click — even though their session was
+// still valid.
 async function resolveBackHref(): Promise<string | undefined> {
   const store = await cookies();
-  const token = store.get(COOKIE_VISITOR)?.value;
-  const session = await verifySession(token);
-  if (!session || session.role !== 'visitor') return undefined;
-  return isMicrosoftEmail(String(session.sub || ''))
-    ? '/microsoft/hub'
-    : '/customer/hub';
+
+  // 1. Visitor session takes precedence — it carries the email we route on.
+  const visitorToken = store.get(COOKIE_VISITOR)?.value;
+  const visitorSession = await verifySession(visitorToken);
+  if (visitorSession && visitorSession.role === 'visitor') {
+    return isMicrosoftEmail(String(visitorSession.sub || ''))
+      ? '/microsoft/hub'
+      : '/customer/hub';
+  }
+
+  // 2. Admin session — admin can preview either hub, so infer from Referer.
+  //    If the admin landed here via /microsoft/hub, send them back there.
+  //    Otherwise default to /customer/hub.
+  const adminToken = store.get(COOKIE_ADMIN)?.value;
+  const adminSession = await verifySession(adminToken);
+  if (adminSession && adminSession.role === 'admin') {
+    const h = await headers();
+    const referer = h.get('referer') || '';
+    if (/\/microsoft\/hub(\?|$|\/)/.test(referer)) return '/microsoft/hub';
+    return '/customer/hub';
+  }
+
+  // 3. Anonymous visitor — show the "Sign in" CTA via undefined backHref.
+  return undefined;
 }
 
 // Cache at the edge — same revalidation cadence as the hub pages.
