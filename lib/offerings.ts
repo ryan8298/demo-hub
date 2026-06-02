@@ -24,6 +24,9 @@ export interface Offering {
   featured?: boolean;
   /** Optional extra CTA beyond the shared Book-a-call / Sign-in. */
   cta?: { label: string; href: string };
+  /** Small availability badge, e.g. "Included with the Embedded Agent Pilot"
+   *  or "Optional add-on". */
+  availability?: string;
 }
 
 export const OFFERINGS: Offering[] = [
@@ -52,10 +55,11 @@ export const OFFERINGS: Offering[] = [
   {
     slug: 'echelix-lattice',
     name: 'Echelix Lattice',
+    availability: 'Included with the Embedded Agent Pilot',
     tagline:
       'Bicep infrastructure-as-code that provisions a private, secure Azure environment with AI-agent coordination built in from day one.',
-    price: 'Custom',
-    priceNote: 'scoped per environment',
+    price: 'Included',
+    priceNote: 'with every pilot',
     bullets: [
       'Private VNet, AKS, Azure OpenAI + AI Search, Service Bus messaging',
       'Security, identity, and monitoring wired in by default',
@@ -66,29 +70,16 @@ export const OFFERINGS: Offering[] = [
   {
     slug: 'echelix-cortex',
     name: 'Echelix Cortex',
+    availability: 'Optional add-on',
     tagline:
       'The agent orchestration and API layer that runs on top of Lattice — the brain that powers every Echelix solution.',
-    price: 'Custom',
-    priceNote: 'per solution',
+    price: 'Add-on',
+    priceNote: 'scoped per solution',
     bullets: [
       'Multi-agent workflows with consensus and handoff',
       'Retrieval over your knowledge, documents, and systems',
       'Governed, auditable, human-in-the-loop by design',
       'Integrates with Dynamics 365, M365, and line-of-business apps',
-    ],
-  },
-  {
-    slug: 'production-solution-build',
-    name: 'Production Solution Build',
-    tagline:
-      'Take any Echelix demo from prototype to a fully deployed, integrated production solution on your own tenant.',
-    price: 'Custom',
-    priceNote: 'fixed-scope engagement',
-    bullets: [
-      'Hardening, integration, and change management',
-      'Deployed on your Azure tenant via Lattice',
-      'Knowledge transfer and managed-support options',
-      'Built on the same architecture you see in the demos',
     ],
   },
 ];

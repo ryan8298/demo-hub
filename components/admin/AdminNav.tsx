@@ -10,7 +10,7 @@ import { EchelixLogo } from '@/components/HubShared';
 export function AdminNav({
   current,
 }: {
-  current: 'index' | 'add' | 'edit' | 'submissions';
+  current: 'index' | 'add' | 'edit' | 'submissions' | 'downloads';
 }) {
   const router = useRouter();
 
@@ -43,6 +43,9 @@ export function AdminNav({
           </a>
           <a href="/admin/submissions" className={linkClass(current === 'submissions')}>
             Submissions
+          </a>
+          <a href="/admin/downloads" className={linkClass(current === 'downloads')}>
+            Downloads
           </a>
 
           {/* Preview links — open hubs in a new tab without logging out

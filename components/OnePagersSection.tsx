@@ -1,4 +1,5 @@
 import { ONE_PAGERS, ONE_PAGER_SUMMARY } from '@/lib/one-pagers';
+import { PdfDownloadLink } from '@/components/PdfDownloadLink';
 
 /**
  * "Industry one-pagers" — a grid of downloadable Embedded Agent Pilot PDFs,
@@ -34,16 +35,16 @@ export function OnePagersSection({
           </div>
           <div className="flex flex-wrap gap-2">
             {ONE_PAGERS.map((op) => (
-              <a
+              <PdfDownloadLink
                 key={op.slug}
-                href={op.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-grey-200 px-3 py-2 rounded-full border border-milk/15 hover:border-sea-foam hover:text-sea-foam transition whitespace-nowrap"
+                pdfKey={op.slug}
+                pdfLabel={op.industry}
+                pdfUrl={op.pdfUrl}
+                className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-grey-200 px-3 py-2 rounded-full border border-milk/15 hover:border-sea-foam hover:text-sea-foam transition whitespace-nowrap cursor-pointer"
               >
                 {op.industry}
                 <span aria-hidden className="text-sea-foam">↓ PDF</span>
-              </a>
+              </PdfDownloadLink>
             ))}
           </div>
         </div>
@@ -89,14 +90,14 @@ export function OnePagersSection({
               ))}
             </ul>
 
-            <a
-              href={op.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-pill text-xs mt-auto self-start"
+            <PdfDownloadLink
+              pdfKey={op.slug}
+              pdfLabel={op.industry}
+              pdfUrl={op.pdfUrl}
+              className="btn-pill text-xs mt-auto self-start cursor-pointer"
             >
               View one-pager (PDF) →
-            </a>
+            </PdfDownloadLink>
           </article>
         ))}
       </div>

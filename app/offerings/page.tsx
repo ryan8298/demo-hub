@@ -49,8 +49,8 @@ export default function OfferingsPage() {
           <FeaturedOfferingCard key={o.slug} offering={o} />
         ))}
 
-        {/* The rest */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* The rest — two wider cards (Lattice + Cortex) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {rest.map((o) => (
             <OfferingCard key={o.slug} offering={o} />
           ))}
@@ -167,12 +167,19 @@ function FeaturedOfferingCard({ offering }: { offering: Offering }) {
 
 function OfferingCard({ offering }: { offering: Offering }) {
   return (
-    <article className="card p-6 md:p-7 flex flex-col">
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <h3 className="font-serif text-2xl text-milk leading-tight">{offering.name}</h3>
+    <article className="card p-6 md:p-8 flex flex-col">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div>
+          {offering.availability && (
+            <span className="inline-block text-[9px] uppercase tracking-[0.2em] text-sea-foam border border-sea-foam/30 rounded-full px-2.5 py-1 mb-3">
+              {offering.availability}
+            </span>
+          )}
+          <h3 className="font-serif text-2xl md:text-3xl text-milk leading-tight">{offering.name}</h3>
+        </div>
         <PriceTag offering={offering} />
       </div>
-      <p className="text-sm text-grey-400 leading-relaxed mb-5">{offering.tagline}</p>
+      <p className="text-sm md:text-[15px] text-grey-400 leading-relaxed mb-5">{offering.tagline}</p>
       <ul className="space-y-2.5 mb-2">
         {offering.bullets.map((b) => (
           <li key={b} className="flex items-start gap-2.5 text-sm text-grey-300 leading-relaxed">
