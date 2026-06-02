@@ -32,8 +32,8 @@ export const OFFERINGS: Offering[] = [
     name: 'Embedded Agent Pilot',
     tagline:
       'A working, production-grade agentic solution embedded in your environment — in weeks, not quarters. One workflow, measured end to end.',
-    price: '$75K',
-    priceNote: 'fixed-fee pilot',
+    price: '$75K–$150K',
+    priceNote: 'fixed-price pilot',
     featured: true,
     bullets: [
       'Map your highest-value workflow and baseline the KPI',

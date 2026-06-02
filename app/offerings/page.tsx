@@ -5,6 +5,7 @@ import { MarketingNav } from '@/components/MarketingNav';
 import { SignInModal } from '@/components/SignInModal';
 import { SiteFooter } from '@/components/SiteFooter';
 import { BookCallButton } from '@/components/BookCall';
+import { OnePagersSection } from '@/components/OnePagersSection';
 import { OFFERINGS, type Offering } from '@/lib/offerings';
 
 export default function OfferingsPage() {
@@ -54,6 +55,9 @@ export default function OfferingsPage() {
             <OfferingCard key={o.slug} offering={o} />
           ))}
         </div>
+
+        {/* Industry one-pagers — downloadable PDFs */}
+        <OnePagersSection className="pt-6" />
 
         {/* Closing CTA */}
         <section className="mt-10">

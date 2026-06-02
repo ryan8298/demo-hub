@@ -8,6 +8,7 @@ import {
   MicrosoftSquares,
 } from '@/components/HubShared';
 import { SiteFooter } from '@/components/SiteFooter';
+import { OnePagersSection } from '@/components/OnePagersSection';
 import { RecentlyViewedRow } from '@/components/RecentlyViewedRow';
 
 /**
@@ -237,6 +238,12 @@ export function DemoHubLayout({
               </section>
             )}
           </>
+        )}
+
+        {/* Industry one-pagers — downloadable Embedded Agent Pilot PDFs.
+            Hidden while filtering so it doesn't interrupt search results. */}
+        {!filtersActive && (
+          <OnePagersSection className="mt-20 pt-12 border-t hairline" />
         )}
       </main>
 
