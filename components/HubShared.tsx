@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Demo } from '@/lib/types';
 import { trackDemoEvent } from '@/lib/track';
 import { rememberDemoView } from '@/lib/recently-viewed';
+import { BookCallButton } from '@/components/BookCall';
 
 /* ============================================================
    ECHELIX LOGO
@@ -38,8 +39,25 @@ export function HubNav({ label, partner }: { label: string; partner?: boolean })
         <a href="/" className="flex items-center gap-3">
           <EchelixLogo className="h-24 md:h-28 w-auto" />
         </a>
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-grey-500 hidden md:block">
+        <div className="flex items-center gap-4 md:gap-5">
+          {/* Marketing tabs — mirror the landing/offerings nav so hub
+              visitors can reach offerings, the pilot form, and booking
+              without leaving. */}
+          <a
+            href="/offerings"
+            className="text-[11px] uppercase tracking-[0.2em] text-grey-300 hover:text-sea-foam transition hidden sm:inline"
+          >
+            Offerings
+          </a>
+          <a
+            href="/pilot"
+            className="text-[11px] uppercase tracking-[0.2em] text-grey-300 hover:text-sea-foam transition hidden sm:inline"
+          >
+            Submit a use case
+          </a>
+          <BookCallButton label="Book a call" variant="link" className="hidden md:inline" />
+          <span className="hidden md:inline-block w-px h-3 bg-milk/15" />
+          <span className="text-[10px] uppercase tracking-[0.25em] text-grey-500 hidden lg:block">
             {label}
           </span>
           {partner && (
