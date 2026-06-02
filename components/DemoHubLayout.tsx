@@ -39,6 +39,8 @@ export function DemoHubLayout({
   const [search, setSearch] = useState('');
   const [industryFilter, setIndustryFilter] = useState<string>('All');
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  // Tag cloud is collapsed by default so it doesn't bloat the sticky bar.
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   const industries = useMemo(() => {
     const set = new Set<string>();
@@ -46,10 +48,20 @@ export function DemoHubLayout({
     return ['All', ...Array.from(set).sort()];
   }, [demos]);
 
+  // Dedupe tags case-insensitively (the data has variants like "AI-first" /
+  // "AI-First" that otherwise render as duplicate chips). Keep the first
+  // spelling we see as the display label.
   const allTags = useMemo(() => {
-    const set = new Set<string>();
-    demos.forEach((d) => (d.tags || []).forEach((t) => set.add(t)));
-    return Array.from(set).sort();
+    const map = new Map<string, string>();
+    demos.forEach((d) =>
+      (d.tags || []).forEach((t) => {
+        const key = t.trim().toLowerCase();
+        if (key && !map.has(key)) map.set(key, t.trim());
+      })
+    );
+    return Array.from(map.values()).sort((a, b) =>
+      a.toLowerCase().localeCompare(b.toLowerCase())
+    );
   }, [demos]);
 
   function toggleTag(tag: string) {
@@ -67,9 +79,12 @@ export function DemoHubLayout({
       const matchesIndustry =
         industryFilter === 'All' || d.industry === industryFilter;
       // ALL selected tags must be present on the demo (AND semantics).
+      // Compare case-insensitively so a demo tagged "AI-First" still matches
+      // an active "AI-first" chip.
+      const demoTags = (d.tags || []).map((t) => t.toLowerCase());
       const matchesTags =
         activeTags.length === 0 ||
-        activeTags.every((t) => (d.tags || []).includes(t));
+        activeTags.every((t) => demoTags.includes(t.toLowerCase()));
       return matchesSearch && matchesIndustry && matchesTags;
     });
   }, [demos, search, industryFilter, activeTags]);
@@ -106,10 +121,12 @@ export function DemoHubLayout({
         </div>
       </header>
 
-      {/* Filters — not sticky on mobile to avoid overlapping the nav */}
-      <section className="border-b hairline md:sticky md:top-[120px] z-40 bg-black/85 backdrop-blur">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 md:py-5 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
-          <div className="relative flex-1 md:max-w-md">
+      {/* Filters — compact single sticky row (search + industries + a Tags
+          toggle). The tag cloud is collapsible so it never bloats the sticky
+          header. Not sticky on mobile to avoid overlapping the nav. */}
+      <section className="border-b hairline md:sticky md:top-[88px] z-40 bg-black/85 backdrop-blur">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-3 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
+          <div className="relative flex-1 md:max-w-xs">
             <input
               type="text"
               value={search}
@@ -137,7 +154,7 @@ export function DemoHubLayout({
               />
             </svg>
           </div>
-          <div className="flex gap-2 flex-wrap overflow-x-auto -mx-1 px-1 pb-1 md:pb-0">
+          <div className="flex gap-2 overflow-x-auto -mx-1 px-1 flex-1 md:justify-start">
             {industries.map((ind) => {
               const count =
                 ind === 'All' ? demos.length : demos.filter((d) => d.industry === ind).length;
@@ -160,14 +177,31 @@ export function DemoHubLayout({
               );
             })}
           </div>
-        </div>
-        {/* Tag row — secondary filter dimension, AND'd with industry */}
-        {allTags.length > 0 && (
-          <div className="max-w-[1400px] mx-auto px-6 md:px-8 pb-4 md:pb-5 flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-grey-500 whitespace-nowrap hidden md:block">
+          {/* Tags toggle — opens the collapsible cloud below */}
+          {allTags.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setTagsOpen((o) => !o)}
+              aria-expanded={tagsOpen}
+              className={`shrink-0 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] font-medium px-3 md:px-4 py-2 rounded-full transition border whitespace-nowrap ${
+                activeTags.length > 0
+                  ? 'bg-sage text-black border-sage'
+                  : 'bg-transparent text-grey-300 border-milk/15 hover:border-sage hover:text-sage'
+              }`}
+            >
               Tags
-            </span>
-            <div className="flex gap-2 flex-wrap overflow-x-auto -mx-1 px-1">
+              {activeTags.length > 0 && (
+                <span className="opacity-70">· {activeTags.length}</span>
+              )}
+              <span className="text-[8px]">{tagsOpen ? '▲' : '▼'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Collapsible tag cloud — only takes vertical space when opened. */}
+        {tagsOpen && allTags.length > 0 && (
+          <div className="border-t hairline">
+            <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 flex flex-wrap gap-2 max-h-[38vh] overflow-y-auto">
               {allTags.map((tag) => {
                 const active = activeTags.includes(tag);
                 return (
@@ -184,6 +218,14 @@ export function DemoHubLayout({
                   </button>
                 );
               })}
+              {activeTags.length > 0 && (
+                <button
+                  onClick={() => setActiveTags([])}
+                  className="text-[10px] uppercase tracking-[0.15em] text-grey-500 hover:text-sea-foam transition px-3 py-1.5"
+                >
+                  Clear tags
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -240,10 +282,10 @@ export function DemoHubLayout({
           </>
         )}
 
-        {/* Industry one-pagers — downloadable Embedded Agent Pilot PDFs.
-            Hidden while filtering so it doesn't interrupt search results. */}
+        {/* Industry one-pagers — compact download strip. Full 5-tile section
+            lives on /offerings. Hidden while filtering. */}
         {!filtersActive && (
-          <OnePagersSection className="mt-20 pt-12 border-t hairline" />
+          <OnePagersSection compact className="mt-16 pt-10 border-t hairline" />
         )}
       </main>
 

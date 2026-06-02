@@ -11,11 +11,46 @@ export function OnePagersSection({
   heading = 'Industry one-pagers',
   intro = 'The Embedded Agent Pilot, tailored by industry. Download the full one-pager.',
   className = '',
+  compact = false,
 }: {
   heading?: string;
   intro?: string;
   className?: string;
+  /** Slim one-row strip of download links (used in the hubs). The full
+   *  tile grid lives on the Offerings page. */
+  compact?: boolean;
 }) {
+  if (compact) {
+    return (
+      <section className={className}>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.25em] text-sage mb-1">
+              {heading}
+            </p>
+            <p className="text-sm text-grey-400">
+              Embedded Agent Pilot, by industry · {ONE_PAGER_SUMMARY}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ONE_PAGERS.map((op) => (
+              <a
+                key={op.slug}
+                href={op.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-grey-200 px-3 py-2 rounded-full border border-milk/15 hover:border-sea-foam hover:text-sea-foam transition whitespace-nowrap"
+              >
+                {op.industry}
+                <span aria-hidden className="text-sea-foam">↓ PDF</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={className}>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">

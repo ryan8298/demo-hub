@@ -37,7 +37,7 @@ export function HubNav({ label, partner }: { label: string; partner?: boolean })
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-1 md:py-1 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3">
-          <EchelixLogo className="h-24 md:h-28 w-auto" />
+          <EchelixLogo className="h-16 md:h-20 w-auto" />
         </a>
         <div className="flex items-center gap-4 md:gap-5">
           {/* Marketing tabs — mirror the landing/offerings nav so hub
