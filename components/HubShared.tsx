@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Demo } from '@/lib/types';
@@ -339,11 +340,20 @@ export function Modal({
   onClose,
   children,
   labelledBy,
+  size = 'md',
+  fill = false,
 }: {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
   labelledBy?: string;
+  /** Max width of the dialog card. */
+  size?: 'md' | 'lg' | 'xl';
+  /** When true, the card is a flex column and children manage their own
+   *  padding/scroll — used for the booking modal so an embedded iframe can
+   *  flex to fill the available height and the whole dialog stays centered
+   *  within the viewport (never runs off the bottom). */
+  fill?: boolean;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -405,24 +415,39 @@ export function Modal({
     }
   }
 
-  if (!open) return null;
+  // Guard SSR — these modals start closed, so the server render returns null
+  // and there is no hydration content to mismatch.
+  if (!open || typeof document === 'undefined') return null;
 
-  return (
+  const sizeClass =
+    size === 'xl' ? 'max-w-4xl' : size === 'lg' ? 'max-w-2xl' : 'max-w-md';
+
+  // Portal to <body> so the overlay always sizes to the viewport. Rendering
+  // inline would trap `position: fixed` inside any ancestor that establishes
+  // a containing block — e.g. a nav with `backdrop-filter` (backdrop-blur),
+  // which Chrome treats as a containing block for fixed descendants. That was
+  // pinning the dialog to the nav's height instead of the full viewport.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
-      className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-black/80 backdrop-blur"
+      // p-4 gives the card guaranteed top/bottom breathing room so, combined
+      // with max-h-[92vh], it always sits fully inside the viewport.
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:px-6 bg-black/80 backdrop-blur"
       onClick={onClose}
       onKeyDown={onKeyDown}
     >
       <div
         ref={dialogRef}
-        className="relative w-full max-w-md bg-[#0a0a0a] border border-milk/10 rounded-2xl p-8 max-h-[90vh] overflow-y-auto"
+        className={`relative w-full ${sizeClass} bg-[#0a0a0a] border border-milk/10 rounded-2xl max-h-[92vh] ${
+          fill ? 'flex flex-col overflow-hidden' : 'p-8 overflow-y-auto'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

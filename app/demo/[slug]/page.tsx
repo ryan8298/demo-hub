@@ -319,7 +319,7 @@ export default async function PublicDemoPage({
         <DemoConversionCTA demoTitle={demo.title} />
       </main>
 
-      <SiteFooter audience={isPartner ? 'microsoft' : 'customer'} />
+      <SiteFooter showCta={false} />
     </div>
   );
 }

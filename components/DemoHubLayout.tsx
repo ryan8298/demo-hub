@@ -240,7 +240,7 @@ export function DemoHubLayout({
         )}
       </main>
 
-      <SiteFooter audience={variant.audience} />
+      <SiteFooter />
     </div>
   );
 }

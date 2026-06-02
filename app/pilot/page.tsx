@@ -220,7 +220,7 @@ export default function PilotPage() {
         </section>
       </main>
 
-      <SiteFooter showCatalog={false} />
+      <SiteFooter showCta={false} />
     </div>
   );
 }

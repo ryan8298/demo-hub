@@ -47,7 +47,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         <article className="legal-doc max-w-2xl">{children}</article>
       </div>
 
-      <SiteFooter showCatalog={false} />
+      <SiteFooter showCta={false} />
     </div>
   );
 }
