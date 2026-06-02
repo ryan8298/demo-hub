@@ -176,6 +176,10 @@ export default async function PublicDemoPage({
           <PublicDemoView demo={demo} />
         </div>
 
+        {/* Conversion CTA — compact, immediately after the demo so visitors
+            are prompted right when interest is highest. */}
+        <DemoConversionCTA demoTitle={demo.title} />
+
         {/* 4. AI Capabilities */}
         <CapabilityGrid items={demo.ai_capabilities ?? []} />
 
@@ -288,8 +292,8 @@ export default async function PublicDemoPage({
                   href={`/demo/${r.slug}`}
                   className="card card-lift overflow-hidden flex flex-col"
                 >
-                  <div className="relative w-full h-40 bg-gradient-to-br from-sage via-sage-dark to-black">
-                    {r.preview_image_url && (
+                  <div className="relative w-full h-40 bg-gradient-to-br from-sage via-sage-dark to-black overflow-hidden">
+                    {r.preview_image_url ? (
                       <Image
                         src={r.preview_image_url}
                         alt={r.title}
@@ -298,7 +302,26 @@ export default async function PublicDemoPage({
                         className="object-cover"
                         unoptimized={r.preview_image_url.startsWith('http')}
                       />
+                    ) : r.demo_url ? (
+                      // Most demos have no still image — they use a live preview.
+                      // Mirror the hub DemoCard's iframe fallback so the related
+                      // tile shows the actual app. pointer-events-none keeps the
+                      // whole card a single click target (navigates to detail).
+                      <iframe
+                        src={r.demo_url}
+                        className="demo-preview-frame pointer-events-none"
+                        sandbox="allow-scripts"
+                        loading="lazy"
+                        title={`${r.title} preview`}
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-milk/80">
+                        <div className="text-2xl mb-1 font-serif">◆</div>
+                        <p className="text-[9px] uppercase tracking-[0.2em]">Demo Preview</p>
+                      </div>
                     )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                   </div>
                   <div className="p-5">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-sage mb-2">
@@ -313,10 +336,6 @@ export default async function PublicDemoPage({
             </div>
           </section>
         )}
-
-        {/* Conversion band — replaces the old "Access the Demo Hub" CTA.
-            Book a call or submit a use case directly from the one-pager. */}
-        <DemoConversionCTA demoTitle={demo.title} />
       </main>
 
       <SiteFooter showCta={false} />
