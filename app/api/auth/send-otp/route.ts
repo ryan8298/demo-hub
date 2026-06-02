@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 import { supabaseAdmin } from "@/lib/supabase";
+import { isMicrosoftEmail } from "@/lib/microsoft-access";
 import { consume, clientIp } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,9 +19,15 @@ const SEND_WINDOW_SECONDS = 600;
  */
 export async function POST(req: NextRequest) {
   let email = "";
+  let first_name = "";
+  let last_name = "";
+  let company_name = "";
   try {
     const body = await req.json();
     email = String(body?.email ?? "").trim().toLowerCase();
+    first_name = String(body?.first_name ?? "").trim();
+    last_name = String(body?.last_name ?? "").trim();
+    company_name = String(body?.company_name ?? "").trim();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
@@ -92,6 +100,32 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: userMessage }, { status: httpStatus });
+  }
+
+  // Capture the lead at request time so it mirrors what Resend sees — even if
+  // the visitor never finishes verifying. The landing form collects the full
+  // profile before this call; we only upsert when those NOT NULL fields are
+  // present. verify-otp later upserts again to confirm. Best-effort: a failure
+  // here must never block the (already-sent) code.
+  if (first_name && last_name && company_name) {
+    try {
+      const { error: leadError } = await supabaseAdmin.from("visitor_sessions").upsert(
+        {
+          email,
+          first_name,
+          last_name,
+          company_name,
+          is_microsoft: isMicrosoftEmail(email),
+          session_token: uuidv4(),
+        },
+        { onConflict: "email" }
+      );
+      if (leadError) {
+        console.error("send-otp visitor_sessions upsert failed:", leadError.message);
+      }
+    } catch (e) {
+      console.error("send-otp visitor_sessions upsert threw:", e);
+    }
   }
 
   return NextResponse.json({ success: true });

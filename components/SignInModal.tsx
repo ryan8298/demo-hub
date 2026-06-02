@@ -62,7 +62,14 @@ export function SignInModal({ open, onClose }: { open: boolean; onClose: () => v
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email }),
+        // Send the profile too so the lead is captured at request time
+        // (mirrors Resend), not only on successful verification.
+        body: JSON.stringify({
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          company_name: formData.company_name,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
