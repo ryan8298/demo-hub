@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Demo } from '@/lib/types';
 import { trackDemoEvent } from '@/lib/track';
@@ -36,9 +37,9 @@ export function HubNav({ label, partner }: { label: string; partner?: boolean })
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-1 md:py-1 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <EchelixLogo className="h-16 md:h-20 w-auto" />
-        </a>
+        </Link>
         <div className="flex items-center gap-4 md:gap-5">
           {/* Marketing tabs — mirror the landing/offerings nav so hub
               visitors can reach offerings, the pilot form, and booking
@@ -113,15 +114,15 @@ export function PublicNav({ backHref }: { backHref?: string }) {
             </a>
           ) : (
             <>
-              <a
+              <Link
                 href="/"
                 className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition hidden md:inline"
               >
                 All solutions
-              </a>
-              <a href="/" className="btn-pill text-xs">
+              </Link>
+              <Link href="/" className="btn-pill text-xs">
                 Sign in
-              </a>
+              </Link>
             </>
           )}
         </div>

@@ -65,7 +65,6 @@ const genericFlow = (steps) =>
     typeof s === 'string' ? { step: s, description: '' } : s
   );
 
-/* eslint-disable max-len */
 const DEMOS = [
   // ============================================================
   // 1. Iron Scout RTI — Partner only (customer already exists)
@@ -662,8 +661,6 @@ const DEMOS = [
       'Sized for an investor-owned utility running 1–3 concurrent rate case proceedings (12–18 months each). Dominant Azure consumption: Microsoft Graph ingestion across M365 + SharePoint + Teams + Outlook (high data volume — thousands of documents, conversations, and emails per case), Azure OpenAI for commitment extraction + discovery response drafting + obligation surfacing, Azure AI Search semantic index across long-retention regulatory corpus (~50K+ documents per case), Microsoft Purview for audit-defensible governance + privileged-content classification, Dynamics 365 Project Operations for cross-functional task orchestration, Power BI Premium for executive proceeding dashboards, Teams transcript processing, Service Bus event-driven workflows, and multi-year regulatory document storage. Higher end of the portfolio because long-retention archival + continuous Graph ingestion across the full M365 surface area are persistent cost drivers — not bursty workloads.',
   }),
 ];
-
-/* eslint-enable max-len */
 
 /**
  * Helper that builds the customer + Microsoft-partner pair from a single

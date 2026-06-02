@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo } from '@/components/HubShared';
 
@@ -31,9 +32,9 @@ export function AdminNav({
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 md:py-5 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <EchelixLogo className="h-20 md:h-24 w-auto" />
-        </a>
+        </Link>
         <div className="flex items-center gap-3 md:gap-4">
           <a href="/admin" className={linkClass(current === 'index')}>
             All demos

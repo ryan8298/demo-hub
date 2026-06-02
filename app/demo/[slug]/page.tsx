@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { cookies, headers } from 'next/headers';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { getDemoBySlug, listRelatedDemos } from '@/lib/demos';
 import { PublicNav, MicrosoftSquares } from '@/components/HubShared';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -104,12 +105,12 @@ export default async function PublicDemoPage({
       <header className="pt-44 pb-10 border-b hairline">
         <div className="max-w-[1200px] mx-auto px-6 md:px-8">
           <div className="flex items-center gap-3 flex-wrap mb-6">
-            <a
+            <Link
               href="/"
               className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
             >
               Demos
-            </a>
+            </Link>
             <span className="text-grey-700">/</span>
             {demo.industry && (
               <span className="badge badge-sage">{demo.industry}</span>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { EchelixLogo } from '@/components/HubShared';
 
 export default function NotFound() {
@@ -5,9 +6,9 @@ export default function NotFound() {
     <div className="min-h-screen text-milk flex flex-col">
       <nav className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-5 flex items-center">
-          <a href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-20 md:h-24 w-auto" />
-          </a>
+          </Link>
         </div>
       </nav>
       <main className="flex-1 flex items-center justify-center px-6 bg-wave relative">
@@ -22,9 +23,9 @@ export default function NotFound() {
             We couldn&apos;t find what you were looking for. It may have moved
             or never existed.
           </p>
-          <a href="/" className="btn-pill">
+          <Link href="/" className="btn-pill">
             Return home
-          </a>
+          </Link>
         </div>
       </main>
     </div>

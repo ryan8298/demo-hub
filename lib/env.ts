@@ -34,7 +34,6 @@ function read(
     }
     if (!warned.has(key)) {
       warned.add(key);
-      // eslint-disable-next-line no-console
       console.warn(
         `[Echelix] env var "${key}" is not set — using empty fallback (dev only).`
       );

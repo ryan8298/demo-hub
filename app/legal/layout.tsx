@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { EchelixLogo } from '@/components/HubShared';
 import { SiteFooter } from '@/components/SiteFooter';
 import { LEGAL_LINKS } from '@/lib/site';
@@ -12,15 +13,15 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen text-milk">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
         <div className="max-w-[1100px] mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-16 md:h-20 w-auto" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
           >
             ← Back to site
-          </a>
+          </Link>
         </div>
       </nav>
 

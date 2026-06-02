@@ -8,6 +8,7 @@
  * page reload — useful for transient errors (Supabase blip, etc).
  */
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { EchelixLogo } from '@/components/HubShared';
 
 export default function GlobalError({
@@ -30,9 +31,9 @@ export default function GlobalError({
     <div className="min-h-screen text-milk flex flex-col">
       <nav className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-5 flex items-center">
-          <a href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-20 md:h-24 w-auto" />
-          </a>
+          </Link>
         </div>
       </nav>
       <main className="flex-1 flex items-center justify-center px-6 bg-wave relative">
@@ -50,9 +51,9 @@ export default function GlobalError({
             <button onClick={reset} className="btn-pill">
               Try again
             </button>
-            <a href="/" className="btn-ghost">
+            <Link href="/" className="btn-ghost">
               Go home
-            </a>
+            </Link>
           </div>
           {error.digest && (
             <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-grey-600">

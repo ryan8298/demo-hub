@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { MarketingNav } from '@/components/MarketingNav';
 import { SignInModal } from '@/components/SignInModal';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -123,7 +124,7 @@ export default function PilotPage() {
                 <span className="text-milk">{form.email}</span> to confirm scope
                 and timing.
               </p>
-              <a href="/" className="btn-pill">Back to the demo hub →</a>
+              <Link href="/" className="btn-pill">Back to the demo hub →</Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="card p-6 md:p-8 space-y-4">

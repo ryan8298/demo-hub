@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { EchelixLogo } from '@/components/HubShared';
 
@@ -58,9 +59,9 @@ function AdminLoginInner() {
       {/* Minimal top bar */}
       <nav className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <EchelixLogo className="h-20 md:h-24 w-auto" />
-          </a>
+          </Link>
           <span className="badge badge-muted">Admin</span>
         </div>
       </nav>
