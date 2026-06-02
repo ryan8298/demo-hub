@@ -53,8 +53,8 @@ export function RecentlyViewedRow({ demos }: { demos: Demo[] }) {
             onClick={() => trackDemoEvent(demo.id, 'click')}
             className="card card-lift overflow-hidden flex flex-col group"
           >
-            <div className="relative w-full h-24 md:h-28 bg-gradient-to-br from-sage via-sage-dark to-black">
-              {demo.preview_image_url && (
+            <div className="relative w-full h-24 md:h-28 bg-gradient-to-br from-sage via-sage-dark to-black overflow-hidden">
+              {demo.preview_image_url ? (
                 <Image
                   src={demo.preview_image_url}
                   alt={demo.title}
@@ -63,7 +63,20 @@ export function RecentlyViewedRow({ demos }: { demos: Demo[] }) {
                   className="object-cover"
                   unoptimized={demo.preview_image_url.startsWith('http')}
                 />
-              )}
+              ) : demo.demo_url ? (
+                // No still image — these demos use a live preview. Mirror the
+                // DemoCard iframe fallback; pointer-events-none keeps the whole
+                // tile a single click target.
+                <iframe
+                  src={demo.demo_url}
+                  className="demo-preview-frame pointer-events-none"
+                  sandbox="allow-scripts"
+                  loading="lazy"
+                  title={`${demo.title} preview`}
+                  aria-hidden="true"
+                />
+              ) : null}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
             </div>
             <div className="p-3">
               <h3 className="font-serif text-sm text-milk leading-snug line-clamp-2 group-hover:text-sea-foam transition">

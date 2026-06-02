@@ -233,6 +233,12 @@ export function DemoHubLayout({
 
       {/* Grid */}
       <main className="max-w-[1400px] mx-auto px-6 md:px-8 py-12 md:py-16">
+        {/* Industry one-pagers — compact download strip at the top, between
+            the filter bar and "Continue exploring". Hidden while filtering. */}
+        {!filtersActive && (
+          <OnePagersSection compact className="mb-10 pb-10 border-b hairline" />
+        )}
+
         {filtered.length === 0 ? (
           <EmptyState
             filtersActive={filtersActive}
@@ -280,12 +286,6 @@ export function DemoHubLayout({
               </section>
             )}
           </>
-        )}
-
-        {/* Industry one-pagers — compact download strip. Full 5-tile section
-            lives on /offerings. Hidden while filtering. */}
-        {!filtersActive && (
-          <OnePagersSection compact className="mt-16 pt-10 border-t hairline" />
         )}
       </main>
 
