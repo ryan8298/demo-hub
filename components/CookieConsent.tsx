@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Lightweight cookie/privacy notice banner.
- *
- * Echelix sets only a strictly-necessary, HMAC-signed session cookie and uses
- * cookieless Vercel Analytics — so under ePrivacy/GDPR this is a NOTICE, not a
- * consent gate (no tracking is blocked behind it). We persist the dismissal in
- * localStorage so it shows once. Mounted globally from app/layout.tsx.
+ * Lightweight cookie notice banner. Wording is kept consistent with the
+ * Privacy Policy and Cookie Policy (which cover performance, functionality,
+ * and advertising cookies). We persist the dismissal in localStorage so it
+ * shows once. Mounted globally from app/layout.tsx.
  */
 const STORAGE_KEY = 'echelix_cookie_notice_v1';
 
@@ -50,10 +48,10 @@ export function CookieConsent() {
     >
       <p className="text-xs uppercase tracking-[0.25em] text-sage mb-2">Cookies</p>
       <p className="text-sm text-grey-300 leading-relaxed mb-4">
-        We use a single, strictly-necessary cookie to keep you signed in, plus
-        privacy-friendly, cookieless analytics. No advertising trackers. See our{' '}
+        We use cookies to run our sites, remember your choices, understand how
+        our sites are used, and provide more relevant content and ads. See our{' '}
         <a href="/legal/cookies" className="text-sea-foam hover:underline">
-          Cookie Notice
+          Cookie Policy
         </a>{' '}
         and{' '}
         <a href="/legal/privacy" className="text-sea-foam hover:underline">

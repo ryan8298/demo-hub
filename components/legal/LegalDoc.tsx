@@ -8,10 +8,12 @@ export function DocHeader({
   title,
   updated,
   intro,
+  dateLabel = 'Last updated',
 }: {
   title: string;
   updated: string;
   intro?: string;
+  dateLabel?: string;
 }) {
   return (
     <header className="mb-10 pb-8 border-b hairline">
@@ -22,7 +24,7 @@ export function DocHeader({
         {title}
       </h1>
       <p className="text-[11px] uppercase tracking-[0.2em] text-grey-500">
-        Last updated · {updated}
+        {dateLabel} · {updated}
       </p>
       {intro && (
         <p className="text-sm md:text-base text-grey-300 leading-relaxed mt-6">

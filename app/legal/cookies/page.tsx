@@ -3,72 +3,92 @@ import { DocHeader, H2, P, UL, LI, MailLink, PageLink } from '@/components/legal
 import { COMPANY, LEGAL_EFFECTIVE_DATE } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Cookie Notice',
-  description: `How the Echelix Demo Hub uses cookies and similar technologies.`,
+  title: 'Cookie Policy',
+  description: `How ${COMPANY.legalName} uses cookies and similar technologies on our sites.`,
 };
 
 export default function CookiesPage() {
   return (
     <>
       <DocHeader
-        title="Cookie Notice"
+        title="Cookie Policy"
         updated={LEGAL_EFFECTIVE_DATE}
-        intro={`This Cookie Notice explains how ${COMPANY.legalName} uses cookies and similar technologies on ${COMPANY.domain}. We keep our use of cookies deliberately minimal.`}
+        dateLabel="Effective date"
+        intro={`This Cookie Policy explains how ${COMPANY.legalName} ("Echelix," "we," or "us") uses cookies and similar technologies on our websites and mobile sites that link to this policy (our "sites"). It should be read together with our Privacy Policy.`}
       />
 
       <H2>What are cookies?</H2>
       <P>
         Cookies are small text files placed on your device when you visit a
-        website. They are widely used to make websites work, or work more
-        efficiently, and to provide information to site operators.
+        website. They are widely used to make sites work, or work more
+        efficiently, and to provide information to site operators. We also use
+        similar technologies such as pixels, tags, and local storage, which we
+        refer to together with cookies as &ldquo;cookies&rdquo; in this policy.
       </P>
 
-      <H2>The cookies we use</H2>
+      <H2>Why we use cookies</H2>
+      <P>
+        Our sites may use cookies and similar technologies to tell us that your
+        browser has visited our sites and to help us:
+      </P>
+      <UL>
+        <LI>understand how our sites are used</LI>
+        <LI>remember your choices</LI>
+        <LI>improve performance</LI>
+        <LI>provide more relevant content and ads</LI>
+      </UL>
+
+      <H2>Types of cookies we use</H2>
       <UL>
         <LI>
-          <strong>Strictly-necessary session cookie</strong> — when you sign in,
-          we set a single signed (HMAC) cookie that keeps you authenticated as
-          you move between pages. Without it, the Demo Hub cannot keep you
-          logged in. This cookie is essential and is not used for advertising or
-          cross-site tracking. Visitor sessions last up to 30 days; admin
-          sessions are short-lived.
+          <strong>Essential cookies</strong> — required for the sites to
+          function, including keeping you signed in to secure areas such as the
+          demo hub.
         </LI>
         <LI>
-          <strong>No advertising or third-party tracking cookies</strong> — we
-          do not use cookies to build advertising profiles or track you across
-          other websites.
+          <strong>Performance and analytics cookies</strong> — help us
+          understand how visitors use our sites so we can measure and improve
+          performance.
+        </LI>
+        <LI>
+          <strong>Functionality cookies</strong> — remember your choices and
+          preferences.
+        </LI>
+        <LI>
+          <strong>Advertising and targeting cookies</strong> — help us and our
+          partners measure the effectiveness of marketing and deliver content
+          and ads that may be more relevant to your interests.
         </LI>
       </UL>
 
-      <H2>Analytics (cookieless)</H2>
+      <H2>Third parties</H2>
       <P>
-        We use Vercel Analytics and Speed Insights to understand aggregate
-        traffic and performance. These tools are designed to be privacy-friendly
-        and operate without using cookies or persistently identifying individual
-        visitors.
+        Some cookies may be set by the service providers and partners described
+        in our Privacy Policy — including cloud hosting, analytics, and
+        marketing or advertising partners. Their use of information is governed
+        by their own policies.
       </P>
 
-      <H2>Local storage</H2>
+      <H2>&ldquo;Do Not Track&rdquo;</H2>
       <P>
-        We use your browser&apos;s local storage for small conveniences — for
-        example, remembering that you dismissed our cookie banner and your
-        recently viewed demos. This information stays on your device and is not
-        a cookie.
+        Some web browsers offer a &ldquo;Do Not Track&rdquo; setting. There is
+        no common standard for how to respond to these signals. At this time,
+        our sites may not respond to these signals.
       </P>
 
       <H2>Managing cookies</H2>
       <P>
-        Because our only cookie is strictly necessary for the Service to
-        function, there is nothing to opt into for advertising. You can still
-        clear or block cookies through your browser settings, but doing so will
-        prevent you from staying signed in to the Demo Hub.
+        You can manage some cookie choices in your browser and, where offered,
+        in our cookie or privacy preference tools. Most browsers let you refuse
+        or delete cookies; if you do, some parts of our sites — including signed-in
+        areas — may not work properly.
       </P>
 
       <H2>More information</H2>
       <P>
         For how we handle personal information generally, see our{' '}
         <PageLink href="/legal/privacy">Privacy Policy</PageLink>. Questions
-        about this notice? Email <MailLink email={COMPANY.email.privacy} />.
+        about this policy? Email <MailLink email={COMPANY.email.privacy} />.
       </P>
     </>
   );

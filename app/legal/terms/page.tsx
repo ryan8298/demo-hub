@@ -3,7 +3,7 @@ import { DocHeader, H2, P, UL, LI, MailLink, PageLink } from '@/components/legal
 import { COMPANY, LEGAL_EFFECTIVE_DATE } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service',
+  title: 'Terms of Use',
   description: `The terms governing your use of the Echelix Demo Hub, operated by ${COMPANY.legalName}.`,
 };
 
@@ -11,9 +11,10 @@ export default function TermsPage() {
   return (
     <>
       <DocHeader
-        title="Terms of Service"
+        title="Terms of Use"
         updated={LEGAL_EFFECTIVE_DATE}
-        intro={`These Terms of Service ("Terms") govern your access to and use of ${COMPANY.domain} and the Echelix Demo Hub (the "Service"), operated by ${COMPANY.legalName} ("Echelix," "we," "us," or "our"). By accessing or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.`}
+        dateLabel="Effective date"
+        intro={`These Terms of Use ("Terms") govern your access to and use of ${COMPANY.domain} and the Echelix Demo Hub (the "Service"), operated by ${COMPANY.legalName} ("Echelix," "we," "us," or "our"). By accessing or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.`}
       />
 
       <H2>1. Eligibility &amp; accounts</H2>

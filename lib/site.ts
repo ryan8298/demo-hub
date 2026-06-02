@@ -11,27 +11,31 @@
 export const COMPANY = {
   legalName: "Echelix, LLC",
   shortName: "Echelix",
+  // The demo hub is hosted at echelix.app; the corporate domain / contact
+  // mailboxes are echelix.com (per the official Privacy Policy).
   domain: "echelix.app",
   siteUrl: "https://echelix.app",
-  // Echelix is organized as a Delaware limited liability company.
-  jurisdiction: "State of Delaware, United States",
-  governingLaw: "State of Delaware, United States",
-  location: "Wilmington, Delaware, United States",
+  // Echelix, LLC operates a single U.S. office in Phoenix, Arizona.
+  jurisdiction: "State of Arizona, United States",
+  governingLaw: "State of Arizona, United States",
+  location: "Phoenix, Arizona, United States",
+  mailingAddress: "Echelix, LLC, 1141 E. Glendale Ave number 1004, Phoenix, AZ 85020, United States",
   tagline: "Modernize. Build Agentic Apps. Deliver Business Value.",
-  // Contact addresses (route mailboxes as you like in M365).
+  // Contact addresses on the corporate domain (echelix.com).
   email: {
-    general: "hello@echelix.app",
-    privacy: "privacy@echelix.app",
-    legal: "legal@echelix.app",
-    accessibility: "accessibility@echelix.app",
-    security: "security@echelix.app",
-    sales: process.env.SALES_NOTIFICATION_EMAIL || "sales@echelix.app",
+    general: "privacy@echelix.com",
+    privacy: "privacy@echelix.com",
+    legal: "privacy@echelix.com",
+    accessibility: "privacy@echelix.com",
+    security: "privacy@echelix.com",
+    sales: process.env.SALES_NOTIFICATION_EMAIL || "sales@echelix.com",
   },
 } as const;
 
-// Effective/last-updated date stamped on the legal pages.
-// Bump when the policies change.
-export const LEGAL_EFFECTIVE_DATE = "June 2, 2026";
+// Effective/last-updated dates stamped on the legal pages.
+// The Privacy Policy carries its own effective date from the official policy.
+export const LEGAL_EFFECTIVE_DATE = "April 1, 2025";
+export const PRIVACY_EFFECTIVE_DATE = "April 1, 2025";
 
 // ---- Outlook Bookings (discovery / consultation call) -------------------
 // Public Bookings page URL, e.g.
@@ -63,7 +67,7 @@ export function catalogPdfFor(audience: "customer" | "microsoft"): string {
 // ---- Legal nav (used by footer + legal layout) --------------------------
 export const LEGAL_LINKS: { href: string; label: string }[] = [
   { href: "/legal/privacy", label: "Privacy Policy" },
-  { href: "/legal/terms", label: "Terms of Service" },
+  { href: "/legal/terms", label: "Terms of Use" },
   { href: "/legal/accessibility", label: "Accessibility" },
-  { href: "/legal/cookies", label: "Cookie Notice" },
+  { href: "/legal/cookies", label: "Cookie Policy" },
 ];

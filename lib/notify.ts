@@ -10,7 +10,7 @@
  * Requires (optional) env:
  *   RESEND_API_KEY            — Resend API key
  *   RESEND_FROM               — verified sender, e.g. "Echelix <notifications@echelix.app>"
- *   SALES_NOTIFICATION_EMAIL  — recipient (defaults to sales@echelix.app via lib/site)
+ *   SALES_NOTIFICATION_EMAIL  — recipient (defaults to sales@echelix.com via lib/site)
  */
 import { COMPANY } from "@/lib/site";
 
