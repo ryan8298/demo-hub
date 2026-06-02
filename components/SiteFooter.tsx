@@ -49,7 +49,9 @@ export function SiteFooter({
       {/* Lower footer */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex flex-col gap-3">
-          <EchelixLogo className="h-14 w-auto opacity-80" />
+          {/* self-start: the parent is a flex column (align-items:stretch),
+              which would otherwise stretch the logo's width and distort it. */}
+          <EchelixLogo className="h-14 w-auto opacity-80 self-start" />
           <p className="text-xs text-grey-600">{COMPANY.tagline}</p>
           <p className="text-[10px] text-grey-700">
             © {year} {COMPANY.legalName}. All rights reserved.
