@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EchelixLogo, Modal } from '@/components/HubShared';
+import { SiteFooter } from '@/components/SiteFooter';
+import { BookCallButton } from '@/components/BookCall';
 import { getBypassLogin } from '@/lib/bypass-logins';
 
 export default function Landing() {
@@ -243,21 +245,20 @@ export default function Landing() {
           <h2 className="font-serif text-4xl md:text-6xl text-milk mb-8 max-w-3xl mx-auto leading-[1.05]">
             See what <em className="text-sea-foam not-italic">agentic</em> looks like in production.
           </h2>
-          <button onClick={openModal} className="btn-pill">
-            Access Demos →
-          </button>
+          <div className="flex flex-wrap gap-3 items-center justify-center">
+            <button onClick={openModal} className="btn-pill">
+              Access Demos →
+            </button>
+            <BookCallButton variant="ghost" />
+            <a href="/pilot" className="btn-ghost">
+              Submit a use case →
+            </a>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t hairline">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <EchelixLogo className="h-16 w-auto opacity-80" />
-          <p className="text-xs text-grey-600">
-            Modernize. Build Agentic Apps. Deliver Business Value.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
 
       {/* Sign-in Modal (a11y: ESC to close, focus trap, scroll lock) */}
       <Modal

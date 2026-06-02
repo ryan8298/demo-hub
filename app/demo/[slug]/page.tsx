@@ -3,7 +3,9 @@ import { cookies, headers } from 'next/headers';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getDemoBySlug, listRelatedDemos } from '@/lib/demos';
-import { PublicNav, HubFooter, MicrosoftSquares } from '@/components/HubShared';
+import { PublicNav, MicrosoftSquares } from '@/components/HubShared';
+import { SiteFooter } from '@/components/SiteFooter';
+import { DemoConversionCTA } from '@/components/DemoConversionCTA';
 import { PublicDemoView } from '@/components/PublicDemoView';
 import { verifySession, COOKIE_VISITOR, COOKIE_ADMIN } from '@/lib/session';
 import { isMicrosoftEmail } from '@/lib/microsoft-access';
@@ -311,9 +313,13 @@ export default async function PublicDemoPage({
             </div>
           </section>
         )}
+
+        {/* Conversion band — replaces the old "Access the Demo Hub" CTA.
+            Book a call or submit a use case directly from the one-pager. */}
+        <DemoConversionCTA demoTitle={demo.title} />
       </main>
 
-      <HubFooter />
+      <SiteFooter audience={isPartner ? 'microsoft' : 'customer'} />
     </div>
   );
 }

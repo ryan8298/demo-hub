@@ -3,6 +3,7 @@ import { Inter, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { EchelixAtmosphere } from "@/components/EchelixAtmosphere";
+import { CookieConsent } from "@/components/CookieConsent";
 import "./globals.css";
 
 const inter = Inter({
@@ -84,6 +85,8 @@ export default function RootLayout({
             + z-index: -10. Applies to every route in the app. */}
         <EchelixAtmosphere />
         {children}
+        {/* Strictly-necessary cookie notice — shows once, persists dismissal */}
+        <CookieConsent />
         {/* Vercel observability — free, no PII, no setup beyond enabling in dashboard */}
         <Analytics />
         <SpeedInsights />

@@ -4,10 +4,10 @@ import { useMemo, useState } from 'react';
 import { Demo } from '@/lib/types';
 import {
   HubNav,
-  HubFooter,
   DemoCard,
   MicrosoftSquares,
 } from '@/components/HubShared';
+import { SiteFooter } from '@/components/SiteFooter';
 import { RecentlyViewedRow } from '@/components/RecentlyViewedRow';
 
 /**
@@ -240,7 +240,7 @@ export function DemoHubLayout({
         )}
       </main>
 
-      <HubFooter />
+      <SiteFooter audience={variant.audience} />
     </div>
   );
 }

@@ -7,7 +7,11 @@ import { EchelixLogo } from '@/components/HubShared';
  * Shared nav for all admin pages — logo, current view label, "All demos"
  * link, and Sign Out. Used by /admin, /admin/demo/add, /admin/demo/[id]/edit.
  */
-export function AdminNav({ current }: { current: 'index' | 'add' | 'edit' }) {
+export function AdminNav({
+  current,
+}: {
+  current: 'index' | 'add' | 'edit' | 'submissions';
+}) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -36,6 +40,9 @@ export function AdminNav({ current }: { current: 'index' | 'add' | 'edit' }) {
           </a>
           <a href="/admin/demo/add" className={linkClass(current === 'add')}>
             Publish new
+          </a>
+          <a href="/admin/submissions" className={linkClass(current === 'submissions')}>
+            Submissions
           </a>
 
           {/* Preview links — open hubs in a new tab without logging out

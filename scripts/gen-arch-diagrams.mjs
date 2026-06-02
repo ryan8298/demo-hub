@@ -373,7 +373,178 @@ const DEMOS = [
     ],
     footerRight: 'SafeSignal · System Architecture',
   },
+
+  {
+    slug: 'configureflow-engineered-quote-studio',
+    pairSlugs: ['configureflow-engineered-quote-studio', 'configureflow-engineered-quote-studio-partner'],
+    title: 'ConfigureFlow',
+    subtitle: 'ENGINEERED QUOTE STUDIO  ·  SYSTEM ARCHITECTURE',
+    topRight: 'Manufacturing · make-to-order CPQ',
+    userLayer: [
+      { title: 'Sales Engineer Studio', desc: 'quote build · configuration', kicker: 'WEB' },
+      { title: 'Outlook',              desc: 'inbound RFQ intake',          kicker: 'M365' },
+      { title: 'Microsoft Teams',      desc: 'discount approval routing',   kicker: 'M365' },
+      { title: 'Power BI',             desc: 'quote velocity · margin views', kicker: 'M365' },
+    ],
+    agents: [
+      { title: 'SPEC INTAKE + CONFIG AGENT', lines: ['parses RFQ emails + PDF schedules', 'into structured requirements ·',     'validates build against rules'] },
+      { title: 'MARGIN PRICING AGENT',       lines: ['prices line items · applies',      'discount tiers · checks every',      'quote against the margin floor'] },
+      { title: 'SCHEDULE + APPROVAL AGENT',  lines: ['checks multi-plant capacity for',  'earliest ship date · routes below-', 'floor quotes to the right approver'] },
+    ],
+    workloadServices: [
+      { title: 'Azure AI Foundry',         lines: ['configuration reasoning',   'compatibility-rule models'],   cat: 'ai' },
+      { title: 'Azure OpenAI',             lines: ['quote drafting · pricing',   'rationale generation'],        cat: 'ai' },
+      { title: 'Azure AI Search',          lines: ['catalog + pricing RAG',      'compliant-substitute lookup'], cat: 'ai' },
+      { title: 'AI Document Intelligence', lines: ['spec-sheet + PDF schedule',  'parsing'],                     cat: 'data' },
+      { title: 'Azure Service Bus',        lines: ['agent messaging ·',          'approval workflow'],           cat: 'integration' },
+    ],
+    businessApp: { title: 'Dynamics 365', titleLine2: 'Sales', desc: 'quote-to-order · external M365 SaaS' },
+    eventSources: [
+      { title: 'Inbound RFQs (email + PDF schedules)', desc: 'customer requirements · spec sheets · line-item schedules · quantity + delivery asks' },
+      { title: 'Product Catalog + Pricing + Rules',    desc: 'configurable SKUs · compatibility rules · discount tiers · margin floors · plant capacity calendars' },
+    ],
+    footerRight: 'ConfigureFlow · System Architecture',
+  },
+
+  {
+    slug: 'edgesentry-connected-fleet-predictive-maintenance',
+    pairSlugs: ['edgesentry-connected-fleet-predictive-maintenance', 'edgesentry-connected-fleet-predictive-maintenance-partner'],
+    title: 'EdgeSentry',
+    subtitle: 'CONNECTED-FLEET PREDICTIVE MAINTENANCE  ·  SYSTEM ARCHITECTURE',
+    topRight: 'Manufacturing · ~4,000 connected assets',
+    userLayer: [
+      { title: 'Fleet Operations Console', desc: 'fleet health · alerts',         kicker: 'WEB' },
+      { title: 'Field Service Mobile',     desc: 'tablet · in-field service',     kicker: 'iOS · ANDROID' },
+      { title: 'Microsoft Teams',          desc: 'service alerts · scheduling',   kicker: 'M365' },
+      { title: 'Power BI',                 desc: 'uptime + maintenance dashboards', kicker: 'M365' },
+    ],
+    agents: [
+      { title: 'ANOMALY DETECTION AGENT',   lines: ['watches streaming telemetry ·',  'flags deviations from each',         'asset baseline · ~18K pts/sec'] },
+      { title: 'DIAGNOSTICS + RUL AGENT',   lines: ['matches anomalies to failure',   'signatures · estimates remaining',   'useful life + cost of inaction'] },
+      { title: 'PROACTIVE SCHEDULING AGENT', lines: ['books off-hours service · parts','reserved · tech assigned · learns',  'from dismissed false positives'] },
+    ],
+    workloadServices: [
+      { title: 'Azure IoT Hub',     lines: ['fleet telemetry ingest',    '~4,000 assets · 24/7'],        cat: 'data' },
+      { title: 'Azure AI Foundry',  lines: ['anomaly + RUL models',      'per asset type'],              cat: 'ai' },
+      { title: 'Azure OpenAI',      lines: ['diagnostics rationale ·',   'service narrative gen'],       cat: 'ai' },
+      { title: 'Azure AI Search',   lines: ['failure signatures +',      'service-manual retrieval'],    cat: 'ai' },
+      { title: 'Azure Web PubSub',  lines: ['real-time agent state',     'live fleet sync'],             cat: 'integration' },
+    ],
+    businessApp: { title: 'Dynamics 365', titleLine2: 'Field Service', desc: 'service scheduling · dispatch' },
+    eventSources: [
+      { title: 'Connected Fleet Telemetry (~4,000 assets)', desc: 'vibration · temperature · pressure · current draw · cycle counts streaming at ~18K points/sec' },
+      { title: 'Failure Signatures + Service Manuals',      desc: 'known failure modes · OEM manuals · service history · parts catalog · baseline profiles' },
+    ],
+    footerRight: 'EdgeSentry · System Architecture',
+  },
+
+  {
+    slug: 'servicemesh-aftermarket-warranty-triage',
+    pairSlugs: ['servicemesh-aftermarket-warranty-triage', 'servicemesh-aftermarket-warranty-triage-partner'],
+    title: 'ServiceMesh',
+    subtitle: 'AFTERMARKET & WARRANTY TRIAGE  ·  SYSTEM ARCHITECTURE',
+    topRight: 'Manufacturing · ~30K service events/yr',
+    userLayer: [
+      { title: 'Service Coordinator Console', desc: 'triage queue · dispatch',     kicker: 'WEB' },
+      { title: 'Field Tech Mobile',           desc: 'tablet · work order + parts', kicker: 'iOS · ANDROID' },
+      { title: 'Microsoft Teams',             desc: 'dispatch alerts · escalation', kicker: 'M365' },
+      { title: 'Power BI',                    desc: 'first-time-fix + warranty views', kicker: 'M365' },
+    ],
+    agents: [
+      { title: 'FAULT TRIAGE AGENT',          lines: ['classifies inbound requests ·',  'sets severity from text, photo,',    'and asset telemetry'] },
+      { title: 'WARRANTY + ROOT-CAUSE AGENT', lines: ['validates coverage · cites the',  'exact warranty clause · ranks',      'likely causes from manuals (RAG)'] },
+      { title: 'PARTS + DISPATCH AGENT',      lines: ['reserves the right part from',    'nearest depot · assigns qualified',  'tech · escalates unresolved cases'] },
+    ],
+    workloadServices: [
+      { title: 'Azure AI Foundry',         lines: ['triage + severity',         'classification models'],       cat: 'ai' },
+      { title: 'Azure OpenAI',             lines: ['root-cause reasoning ·',     'denial narrative gen'],        cat: 'ai' },
+      { title: 'Azure AI Search',          lines: ['manuals + ticket history',   'RAG · warranty terms'],        cat: 'ai' },
+      { title: 'AI Document Intelligence', lines: ['photo + PDF intake',         'evidence extraction'],         cat: 'data' },
+      { title: 'Azure Service Bus',        lines: ['agent messaging ·',          'dispatch workflow'],           cat: 'integration' },
+    ],
+    businessApp: { title: 'Dynamics 365', titleLine2: 'Field Service', desc: 'warranty · dispatch lifecycle' },
+    eventSources: [
+      { title: 'Inbound Service Requests (text · photo · telemetry)', desc: 'customer + dealer tickets · uploaded photos · asset telemetry · symptom descriptions' },
+      { title: 'Manuals + Ticket History + Warranty Terms',          desc: 'service manuals · past ticket corpus · warranty clauses · parts catalog · depot inventory' },
+    ],
+    footerRight: 'ServiceMesh · System Architecture',
+  },
+
+  {
+    slug: 'mergedesk-acquisition-integration-room',
+    pairSlugs: ['mergedesk-acquisition-integration-room', 'mergedesk-acquisition-integration-room-partner'],
+    title: 'MergeDesk',
+    subtitle: 'ACQUISITION INTEGRATION ROOM  ·  SYSTEM ARCHITECTURE',
+    topRight: 'Manufacturing · M&A integration',
+    userLayer: [
+      { title: 'Integration Workspace', desc: 'deal room · match review',      kicker: 'WEB' },
+      { title: 'Word + Copilot',        desc: 'contract review · redlines',    kicker: 'M365' },
+      { title: 'Microsoft Teams',       desc: 'IMO + workstream coordination', kicker: 'M365' },
+      { title: 'Power BI',              desc: 'synergy + reconciliation views', kicker: 'M365' },
+    ],
+    agents: [
+      { title: 'CATALOG + MASTER-DATA AGENT', lines: ['fuzzy-matches SKUs across both',  'catalogs · builds golden records',  'with lineage + reversible merges'] },
+      { title: 'CONTRACT INTELLIGENCE AGENT', lines: ['extracts terms from PDFs · flags', 'change-of-control + pricing risk',   'across the contract stack'] },
+      { title: 'SYNERGY + REVIEW AGENT',      lines: ['quantifies supplier consolidation','savings · auto-approves high-',     'confidence · queues uncertain band'] },
+    ],
+    workloadServices: [
+      { title: 'Azure AI Foundry',         lines: ['matching + extraction',     'reasoning models'],            cat: 'ai' },
+      { title: 'Azure OpenAI',             lines: ['contract summarization ·',   'synergy narrative gen'],       cat: 'ai' },
+      { title: 'Azure AI Search',          lines: ['catalog + master-record',    'retrieval across both cos.'],  cat: 'ai' },
+      { title: 'AI Document Intelligence', lines: ['contract + PDF parsing',     'term extraction'],             cat: 'data' },
+      { title: 'Microsoft Purview',        lines: ['lineage + classification',   'governance + golden records'], cat: 'data' },
+    ],
+    businessApp: { title: 'Dynamics 365', titleLine2: 'Supply Chain', desc: 'master data · procurement' },
+    eventSources: [
+      { title: 'Two Companies’ Catalogs + Master Data', desc: '~25K SKUs · ~9K customer + vendor master records · duplicate + mismatched entries per deal' },
+      { title: 'Contract Stack (PDF)',                     desc: 'supplier + customer contracts · change-of-control clauses · pricing terms · renewal + termination terms' },
+    ],
+    footerRight: 'MergeDesk · System Architecture',
+  },
+
+  {
+    slug: 'sourceguard-procurement-situation-room',
+    pairSlugs: ['sourceguard-procurement-situation-room', 'sourceguard-procurement-situation-room-partner'],
+    title: 'SourceGuard',
+    subtitle: 'PROCUREMENT SITUATION ROOM  ·  SYSTEM ARCHITECTURE',
+    topRight: 'Manufacturing · multi-category sourcing',
+    userLayer: [
+      { title: 'Procurement Cockpit', desc: 'exposure · sourcing runs',     kicker: 'WEB' },
+      { title: 'Outlook',             desc: 'supplier comms · RFQs',        kicker: 'M365' },
+      { title: 'Microsoft Teams',     desc: 'spend-authority approvals',    kicker: 'M365' },
+      { title: 'Power BI',            desc: 'spend + exposure dashboards',  kicker: 'M365' },
+    ],
+    agents: [
+      { title: 'DEMAND + EXPOSURE AGENT',   lines: ['reads open orders + forecast ·',  'watches tariff, cost, lead-time',    'moves · quantifies exposure'] },
+      { title: 'ALTERNATIVE SOURCING AGENT', lines: ['searches approved suppliers +',   'alternates with price, lead time,',  'and risk for each category'] },
+      { title: 'SCENARIO + PO ROUTING AGENT', lines: ['models stay vs. switch vs. dual-','source · stages POs · routes over-', 'limit spend to the right approver'] },
+    ],
+    workloadServices: [
+      { title: 'Azure AI Foundry',  lines: ['scenario + sourcing',       'reasoning models'],            cat: 'ai' },
+      { title: 'Azure OpenAI',      lines: ['exposure rationale ·',      'recommendation drafting'],     cat: 'ai' },
+      { title: 'Azure AI Search',   lines: ['supplier lists, alternates,', 'contracts retrieval'],       cat: 'ai' },
+      { title: 'Azure Functions',   lines: ['external market + tariff',   'signal connectors'],          cat: 'integration' },
+      { title: 'Azure Service Bus', lines: ['agent messaging ·',          'PO approval workflow'],        cat: 'integration' },
+    ],
+    businessApp: { title: 'Dynamics 365', titleLine2: 'Supply Chain', desc: 'PO + procurement lifecycle' },
+    eventSources: [
+      { title: 'Open Orders + Demand Forecast', desc: 'committed input volume + timing · BOM consumption · production schedule · forecast signals' },
+      { title: 'Market Signals + Approved Suppliers', desc: 'tariff changes · commodity prices · lead-time slips · approved-supplier lists · qualified alternates' },
+    ],
+    footerRight: 'SourceGuard · System Architecture',
+  },
 ];
+
+// Limit the pipeline to a subset of base slugs. Empty set = process all.
+// We only want to generate diagrams for the 5 new Manufacturing demos so we
+// don't re-upload + re-patch the existing 10 with fresh timestamps/URLs.
+const RUN_ONLY = new Set([
+  'configureflow-engineered-quote-studio',
+  'edgesentry-connected-fleet-predictive-maintenance',
+  'servicemesh-aftermarket-warranty-triage',
+  'mergedesk-acquisition-integration-room',
+  'sourceguard-procurement-situation-room',
+]);
 
 // =============================================================================
 //  SVG GENERATOR  ·  v3 foundation pattern
@@ -631,9 +802,11 @@ async function patchDemo(slug, url) {
   return data[0];
 }
 
-console.log(`\n=== Architecture diagram pipeline (v3 foundation pattern) · ${DEMOS.length} demos ===\n`);
+const QUEUE = RUN_ONLY.size > 0 ? DEMOS.filter((d) => RUN_ONLY.has(d.slug)) : DEMOS;
 
-for (const demo of DEMOS) {
+console.log(`\n=== Architecture diagram pipeline (v3 foundation pattern) · ${QUEUE.length} demos ===\n`);
+
+for (const demo of QUEUE) {
   console.log(`▸ ${demo.slug}`);
 
   // 1. SVG
