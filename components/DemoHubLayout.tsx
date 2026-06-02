@@ -9,6 +9,7 @@ import {
 } from '@/components/HubShared';
 import { SiteFooter } from '@/components/SiteFooter';
 import { OnePagersSection } from '@/components/OnePagersSection';
+import type { Viewer } from '@/components/PdfDownloadLink';
 import { RecentlyViewedRow } from '@/components/RecentlyViewedRow';
 
 /**
@@ -31,9 +32,13 @@ export type HubVariant = {
 export function DemoHubLayout({
   variant,
   initialDemos,
+  viewer = null,
 }: {
   variant: HubVariant;
   initialDemos: Demo[];
+  /** Signed-in visitor identity, from the hub server page. Lets the one-pager
+   *  strip log downloads in the background without prompting for email. */
+  viewer?: Viewer | null;
 }) {
   const [demos] = useState<Demo[]>(initialDemos);
   const [search, setSearch] = useState('');
@@ -236,7 +241,7 @@ export function DemoHubLayout({
         {/* Industry one-pagers — compact download strip at the top, between
             the filter bar and "Continue exploring". Hidden while filtering. */}
         {!filtersActive && (
-          <OnePagersSection compact className="mb-10 pb-10 border-b hairline" />
+          <OnePagersSection compact viewer={viewer} className="mb-10 pb-10 border-b hairline" />
         )}
 
         {filtered.length === 0 ? (

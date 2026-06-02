@@ -1,16 +1,21 @@
 import { DemoHubLayout, MicrosoftSquares } from '@/components/DemoHubLayout';
 import { listDemosForAudience } from '@/lib/demos';
+import { getViewer } from '@/lib/viewer';
 
-// Server Component — fetches demos at request time and ships them in the
-// initial HTML. Cached for 60s at the route level (revalidate below).
-export const revalidate = 60;
+// Dynamic (per-request): we read the visitor session to attribute one-pager
+// downloads to the signed-in user without prompting them.
+export const dynamic = 'force-dynamic';
 
 export default async function MicrosoftHub() {
-  const demos = await listDemosForAudience('microsoft');
+  const [demos, viewer] = await Promise.all([
+    listDemosForAudience('microsoft'),
+    getViewer(),
+  ]);
 
   return (
     <DemoHubLayout
       initialDemos={demos}
+      viewer={viewer}
       variant={{
         audience: 'microsoft',
         navLabel: 'Partner Hub',

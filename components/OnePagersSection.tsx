@@ -1,5 +1,5 @@
 import { ONE_PAGERS, ONE_PAGER_SUMMARY } from '@/lib/one-pagers';
-import { PdfDownloadLink } from '@/components/PdfDownloadLink';
+import { PdfDownloadLink, type Viewer } from '@/components/PdfDownloadLink';
 
 /**
  * "Industry one-pagers" — a grid of downloadable Embedded Agent Pilot PDFs,
@@ -13,6 +13,7 @@ export function OnePagersSection({
   intro = 'The Embedded Agent Pilot, tailored by industry. Download the full one-pager.',
   className = '',
   compact = false,
+  viewer = null,
 }: {
   heading?: string;
   intro?: string;
@@ -20,6 +21,9 @@ export function OnePagersSection({
   /** Slim one-row strip of download links (used in the hubs). The full
    *  tile grid lives on the Offerings page. */
   compact?: boolean;
+  /** Signed-in viewer (hub only). When set, the compact strip logs downloads
+   *  in the background with no email prompt. */
+  viewer?: Viewer | null;
 }) {
   if (compact) {
     return (
@@ -40,7 +44,8 @@ export function OnePagersSection({
                 pdfKey={op.slug}
                 pdfLabel={op.industry}
                 pdfUrl={op.pdfUrl}
-                promptEachTime={false}
+                hub
+                viewer={viewer}
                 className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-grey-200 px-3 py-2 rounded-full border border-milk/15 hover:border-sea-foam hover:text-sea-foam transition whitespace-nowrap cursor-pointer"
               >
                 {op.industry}

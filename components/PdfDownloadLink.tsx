@@ -1,36 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal } from '@/components/HubShared';
 
 /**
  * A download link that captures who downloaded which PDF.
  *
- * Rules:
- *   - Signed-in visitor → no prompt. We attribute the download to their
- *     session identity and log it (every download is captured).
- *   - Anonymous visitor → an email-capture modal EVERY time. Each PDF needs
- *     its own email entry (no remembering); each entry is logged.
+ * Two deterministic modes (decided by the rendering surface, not by a
+ * client-read cookie):
  *
- * Logging is best-effort: the PDF always opens even if /api/pdf-download
- * fails.
+ *   - Public pages (default, hub=false): an email-capture modal on EVERY
+ *     download. Each PDF needs its own email entry.
+ *   - Gated hub (hub=true): NO prompt. The signed-in viewer's identity is
+ *     passed in from the server, so we log the download in the background.
+ *     (If no viewer — e.g. an admin previewing — we just open the PDF.)
+ *
+ * Logging is best-effort: the PDF always opens even if /api/pdf-download fails.
  */
 
-type Lead = { email: string; name?: string | null; company_name?: string | null };
-type Visitor = { authenticated: boolean; email?: string; name?: string | null; company_name?: string | null };
+export type Viewer = { email: string; name?: string | null; company_name?: string | null };
+type Lead = Viewer;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Shared, memoized so all links on a page make a single /api/me call.
-let visitorPromise: Promise<Visitor> | null = null;
-function getVisitor(): Promise<Visitor> {
-  if (!visitorPromise) {
-    visitorPromise = fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
-      .then((r) => r.json())
-      .catch(() => ({ authenticated: false }));
-  }
-  return visitorPromise;
-}
 
 export function PdfDownloadLink({
   pdfKey,
@@ -38,38 +29,22 @@ export function PdfDownloadLink({
   pdfUrl,
   className = '',
   children,
-  promptEachTime = true,
+  hub = false,
+  viewer = null,
 }: {
   pdfKey: string;
   pdfLabel: string;
   pdfUrl: string;
   className?: string;
   children: React.ReactNode;
-  /**
-   * true  (default) → public marketing pages: prompt for email on EVERY
-   *                    download, regardless of any lingering session cookie.
-   * false           → gated hub: attribute the download to the signed-in
-   *                    visitor's session, no prompt.
-   */
-  promptEachTime?: boolean;
+  /** Rendered inside the gated hub → never prompt; attribute to `viewer`. */
+  hub?: boolean;
+  /** The signed-in visitor's identity (hub only), supplied by the server. */
+  viewer?: Viewer | null;
 }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', company_name: '' });
   const [error, setError] = useState('');
-  const [visitor, setVisitor] = useState<Visitor | null>(null);
-
-  // Only resolve session identity in the gated (no-prompt) context. Public
-  // pages always prompt, so they don't need to know who's signed in.
-  useEffect(() => {
-    if (promptEachTime) return;
-    let alive = true;
-    getVisitor().then((v) => {
-      if (alive) setVisitor(v);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [promptEachTime]);
 
   function openPdf() {
     window.open(pdfUrl, '_blank', 'noopener,noreferrer');
@@ -101,17 +76,19 @@ export function PdfDownloadLink({
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
-    // Gated hub + signed-in visitor → attribute to their identity, no prompt.
-    if (!promptEachTime && visitor?.authenticated && visitor.email) {
+    if (hub) {
+      // Gated hub: open immediately, log in the background, never prompt.
       openPdf();
-      logDownload({
-        email: visitor.email,
-        name: visitor.name ?? null,
-        company_name: visitor.company_name ?? null,
-      });
+      if (viewer?.email) {
+        logDownload({
+          email: viewer.email,
+          name: viewer.name ?? null,
+          company_name: viewer.company_name ?? null,
+        });
+      }
       return;
     }
-    // Public pages (and any non-attributable case) → prompt every time.
+    // Public pages: prompt for email every time.
     setError('');
     setForm({ name: '', email: '', company_name: '' });
     setOpen(true);

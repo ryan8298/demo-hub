@@ -1,16 +1,21 @@
 import { DemoHubLayout } from '@/components/DemoHubLayout';
 import { listDemosForAudience } from '@/lib/demos';
+import { getViewer } from '@/lib/viewer';
 
-// Server Component — fetches demos at request time and ships them in the
-// initial HTML. Cached for 60s at the route level (revalidate below).
-export const revalidate = 60;
+// Dynamic (per-request): we read the visitor session to attribute one-pager
+// downloads to the signed-in user without prompting them.
+export const dynamic = 'force-dynamic';
 
 export default async function CustomerHub() {
-  const demos = await listDemosForAudience('customer');
+  const [demos, viewer] = await Promise.all([
+    listDemosForAudience('customer'),
+    getViewer(),
+  ]);
 
   return (
     <DemoHubLayout
       initialDemos={demos}
+      viewer={viewer}
       variant={{
         audience: 'customer',
         navLabel: 'Demo Hub',
