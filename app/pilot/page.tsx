@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { EchelixLogo } from '@/components/HubShared';
+import { MarketingNav } from '@/components/MarketingNav';
+import { SignInModal } from '@/components/SignInModal';
 import { SiteFooter } from '@/components/SiteFooter';
 
 const INDUSTRIES = [
@@ -23,6 +24,7 @@ export default function PilotPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
+  const [showSignIn, setShowSignIn] = useState(false);
 
   function update<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -53,20 +55,7 @@ export default function PilotPage() {
 
   return (
     <div className="min-h-screen text-milk">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur border-b hairline">
-        <div className="max-w-[1100px] mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-3">
-            <EchelixLogo className="h-16 md:h-20 w-auto" />
-          </a>
-          <a
-            href="/"
-            className="text-[10px] uppercase tracking-[0.25em] text-grey-400 hover:text-sea-foam transition"
-          >
-            ← Back to site
-          </a>
-        </div>
-      </nav>
+      <MarketingNav onSignIn={() => setShowSignIn(true)} />
 
       {/* Hero */}
       <header className="bg-wave relative pt-40 pb-14 border-b hairline">
@@ -221,6 +210,8 @@ export default function PilotPage() {
       </main>
 
       <SiteFooter showCta={false} />
+
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </div>
   );
 }

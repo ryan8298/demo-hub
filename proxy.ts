@@ -12,6 +12,16 @@ import { isMicrosoftEmail } from "@/lib/microsoft-access";
  *   (Microsoft hub additionally requires the email to be @microsoft.com)
  * - /api/admin/* is enforced separately at the route level (uses same helpers)
  */
+// Gated pages must never be served from the browser's back/forward cache —
+// otherwise a signed-out visitor could hit "back" and see a stale, authed
+// hub. no-store disables bfcache and forces this proxy to re-run (and
+// redirect) on every navigation.
+function gatedResponse(): NextResponse {
+  const res = NextResponse.next();
+  res.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+  return res;
+}
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -35,7 +45,7 @@ export async function proxy(req: NextRequest) {
     // Admin gets preview access to both hubs without needing a visitor
     // cookie or matching the Microsoft email rule. Convenience feature
     // so admins can demo the hubs without logging out of /admin.
-    if (isAdmin) return NextResponse.next();
+    if (isAdmin) return gatedResponse();
 
     const visitorToken = req.cookies.get(COOKIE_VISITOR)?.value;
     const session = await verifySession(visitorToken);
@@ -58,7 +68,9 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  // Matched routes are all gated → no-store so back/forward can't show a
+  // cached authed page after sign-out.
+  return gatedResponse();
 }
 
 export const config = {

@@ -23,6 +23,7 @@ export async function GET() {
       first_name?: string;
       last_name?: string;
       company_name?: string;
+      is_microsoft?: boolean;
     };
     const name = [d.first_name, d.last_name].filter(Boolean).join(" ").trim();
     return NextResponse.json({
@@ -30,6 +31,7 @@ export async function GET() {
       email: String(session.sub || ""),
       name: name || null,
       company_name: d.company_name || null,
+      isMicrosoft: !!d.is_microsoft,
     });
   }
 

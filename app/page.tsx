@@ -5,10 +5,14 @@ import { MarketingNav } from '@/components/MarketingNav';
 import { SignInModal } from '@/components/SignInModal';
 import { SiteFooter } from '@/components/SiteFooter';
 import { BookCallButton } from '@/components/BookCall';
+import { useViewer, hubHrefFor } from '@/lib/useViewer';
 
 export default function Landing() {
   const [showSignIn, setShowSignIn] = useState(false);
   const openSignIn = () => setShowSignIn(true);
+  const viewer = useViewer();
+  const authed = !!viewer?.authenticated;
+  const hubHref = hubHrefFor(viewer);
 
   return (
     <div className="min-h-screen text-milk relative">
@@ -37,9 +41,15 @@ export default function Landing() {
               full catalog.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center">
-              <button onClick={openSignIn} className="btn-pill">
-                Access Demos →
-              </button>
+              {authed ? (
+                <a href={hubHref} className="btn-pill">
+                  Access Demos →
+                </a>
+              ) : (
+                <button onClick={openSignIn} className="btn-pill">
+                  Access Demos →
+                </button>
+              )}
               <a href="/offerings" className="btn-ghost">
                 View Offerings
               </a>
