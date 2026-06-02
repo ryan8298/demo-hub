@@ -125,7 +125,7 @@ export function DemoHubLayout({
           toggle). The tag cloud is collapsible so it never bloats the sticky
           header. Not sticky on mobile to avoid overlapping the nav. */}
       <section className="border-b hairline md:sticky md:top-[88px] z-40 bg-black/85 backdrop-blur">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-3 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-4 flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
           <div className="relative flex-1 md:max-w-xs">
             <input
               type="text"
@@ -154,7 +154,7 @@ export function DemoHubLayout({
               />
             </svg>
           </div>
-          <div className="flex gap-2 overflow-x-auto -mx-1 px-1 flex-1 md:justify-start">
+          <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-2.5 flex-1 md:justify-start">
             {industries.map((ind) => {
               const count =
                 ind === 'All' ? demos.length : demos.filter((d) => d.industry === ind).length;
