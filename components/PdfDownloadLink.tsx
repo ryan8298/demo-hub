@@ -1,34 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '@/components/HubShared';
 
 /**
- * A download link that captures the visitor's email before opening a PDF.
+ * A download link that captures who downloaded which PDF.
  *
- * Behavior:
- *   - First download in this browser → an email-capture modal. On submit we
- *     remember the lead (localStorage), log the download, and open the PDF.
- *   - Subsequent downloads → we reuse the remembered email, log silently, and
- *     open the PDF immediately (no nag).
+ * Rules:
+ *   - Signed-in visitor → no prompt. We attribute the download to their
+ *     session identity and log it (every download is captured).
+ *   - Anonymous visitor → an email-capture modal EVERY time. Each PDF needs
+ *     its own email entry (no remembering); each entry is logged.
  *
- * Logging is best-effort (fire-and-forget): the PDF always opens even if the
- * /api/pdf-download call fails, so a logging hiccup never blocks a download.
+ * Logging is best-effort: the PDF always opens even if /api/pdf-download
+ * fails.
  */
-const LEAD_KEY = 'echelix.pdfLead.v1';
 
-type Lead = { email: string; name?: string; company_name?: string };
+type Lead = { email: string; name?: string | null; company_name?: string | null };
+type Visitor = { authenticated: boolean; email?: string; name?: string | null; company_name?: string | null };
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function readLead(): Lead | null {
-  try {
-    const raw = localStorage.getItem(LEAD_KEY);
-    if (!raw) return null;
-    const v = JSON.parse(raw);
-    return v && typeof v.email === 'string' ? v : null;
-  } catch {
-    return null;
+// Shared, memoized so all links on a page make a single /api/me call.
+let visitorPromise: Promise<Visitor> | null = null;
+function getVisitor(): Promise<Visitor> {
+  if (!visitorPromise) {
+    visitorPromise = fetch('/api/me', { credentials: 'same-origin', cache: 'no-store' })
+      .then((r) => r.json())
+      .catch(() => ({ authenticated: false }));
   }
+  return visitorPromise;
 }
 
 export function PdfDownloadLink({
@@ -47,13 +48,25 @@ export function PdfDownloadLink({
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', company_name: '' });
   const [error, setError] = useState('');
+  const [visitor, setVisitor] = useState<Visitor | null>(null);
+
+  // Resolve auth state up-front so the click handler can open the PDF
+  // synchronously (no async before window.open → no popup blocking).
+  useEffect(() => {
+    let alive = true;
+    getVisitor().then((v) => {
+      if (alive) setVisitor(v);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   function openPdf() {
     window.open(pdfUrl, '_blank', 'noopener,noreferrer');
   }
 
   function logDownload(lead: Lead) {
-    // Fire-and-forget. Never blocks the download.
     try {
       const body = JSON.stringify({
         ...lead,
@@ -79,12 +92,17 @@ export function PdfDownloadLink({
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
-    const lead = readLead();
-    if (lead?.email) {
+    // Signed-in visitor → attribute to their identity, no prompt.
+    if (visitor?.authenticated && visitor.email) {
       openPdf();
-      logDownload(lead);
+      logDownload({
+        email: visitor.email,
+        name: visitor.name ?? null,
+        company_name: visitor.company_name ?? null,
+      });
       return;
     }
+    // Anonymous → prompt every time.
     setError('');
     setForm({ name: '', email: '', company_name: '' });
     setOpen(true);
@@ -97,18 +115,12 @@ export function PdfDownloadLink({
       setError('Please enter a valid work email.');
       return;
     }
-    const lead: Lead = {
-      email,
-      name: form.name.trim() || undefined,
-      company_name: form.company_name.trim() || undefined,
-    };
-    try {
-      localStorage.setItem(LEAD_KEY, JSON.stringify(lead));
-    } catch {
-      /* ignore */
-    }
     openPdf(); // user gesture — open before any async work
-    logDownload(lead);
+    logDownload({
+      email,
+      name: form.name.trim() || null,
+      company_name: form.company_name.trim() || null,
+    });
     setOpen(false);
   }
 
