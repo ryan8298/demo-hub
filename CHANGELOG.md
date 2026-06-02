@@ -8,6 +8,27 @@ This is not strictly semver — it's a delivery log.
 
 ---
 
+## 2026-06-02 — Conversion funnel, lead capture & hardening
+
+- **Offerings page** (`/offerings`) — Embedded Agent Pilot (+ Lattice
+  "included" / Cortex "add-on") and five downloadable industry one-pagers.
+- **Use-case pilot intake** (`/pilot`) → `use_case_submissions` table, admin
+  inbox at `/admin/submissions`, and a best-effort Resend alert to sales.
+- **PDF lead capture** — public pages prompt for email on every download;
+  signed-in hub visitors are attributed silently in the background. Stored in
+  `pdf_downloads`; surfaced at `/admin/downloads` (popularity + follow-up).
+- **Sign-in capture at request time** — `visitor_sessions` now records the
+  lead when the OTP is requested, mirroring Resend (not only on completion).
+- **Book-a-discovery-call** modal (embedded Outlook Bookings, mailto fallback).
+- **Legal suite** — Privacy / Terms of Use / Accessibility / Cookie pages +
+  consent banner, using the official Echelix, LLC policy text.
+- **Auth-coherent marketing nav** — shows Demo Hub / Sign out when signed in;
+  gated routes now send `Cache-Control: no-store` (no stale back-button views).
+- **30 demo tiles** (15 customer + 15 co-sell), Manufacturing vertical added,
+  each with a Lattice + Azure architecture diagram.
+- **Code-health pass** — 0 ESLint problems, 0 TS errors, full security headers
+  verified live, RLS verified on all PII tables, dead catalog-PDF code removed.
+
 ## 2026-05-29 — Sales-demo bypass + admin preview
 
 - **Bypass logins** for live demos: `client@echelix.com`,
