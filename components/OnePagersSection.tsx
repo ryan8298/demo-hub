@@ -40,6 +40,7 @@ export function OnePagersSection({
                 pdfKey={op.slug}
                 pdfLabel={op.industry}
                 pdfUrl={op.pdfUrl}
+                promptEachTime={false}
                 className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-grey-200 px-3 py-2 rounded-full border border-milk/15 hover:border-sea-foam hover:text-sea-foam transition whitespace-nowrap cursor-pointer"
               >
                 {op.industry}

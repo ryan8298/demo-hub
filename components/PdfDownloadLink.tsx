@@ -38,21 +38,30 @@ export function PdfDownloadLink({
   pdfUrl,
   className = '',
   children,
+  promptEachTime = true,
 }: {
   pdfKey: string;
   pdfLabel: string;
   pdfUrl: string;
   className?: string;
   children: React.ReactNode;
+  /**
+   * true  (default) → public marketing pages: prompt for email on EVERY
+   *                    download, regardless of any lingering session cookie.
+   * false           → gated hub: attribute the download to the signed-in
+   *                    visitor's session, no prompt.
+   */
+  promptEachTime?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', company_name: '' });
   const [error, setError] = useState('');
   const [visitor, setVisitor] = useState<Visitor | null>(null);
 
-  // Resolve auth state up-front so the click handler can open the PDF
-  // synchronously (no async before window.open → no popup blocking).
+  // Only resolve session identity in the gated (no-prompt) context. Public
+  // pages always prompt, so they don't need to know who's signed in.
   useEffect(() => {
+    if (promptEachTime) return;
     let alive = true;
     getVisitor().then((v) => {
       if (alive) setVisitor(v);
@@ -60,7 +69,7 @@ export function PdfDownloadLink({
     return () => {
       alive = false;
     };
-  }, []);
+  }, [promptEachTime]);
 
   function openPdf() {
     window.open(pdfUrl, '_blank', 'noopener,noreferrer');
@@ -92,8 +101,8 @@ export function PdfDownloadLink({
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
-    // Signed-in visitor → attribute to their identity, no prompt.
-    if (visitor?.authenticated && visitor.email) {
+    // Gated hub + signed-in visitor → attribute to their identity, no prompt.
+    if (!promptEachTime && visitor?.authenticated && visitor.email) {
       openPdf();
       logDownload({
         email: visitor.email,
@@ -102,7 +111,7 @@ export function PdfDownloadLink({
       });
       return;
     }
-    // Anonymous → prompt every time.
+    // Public pages (and any non-attributable case) → prompt every time.
     setError('');
     setForm({ name: '', email: '', company_name: '' });
     setOpen(true);
