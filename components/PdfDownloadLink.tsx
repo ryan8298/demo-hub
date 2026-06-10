@@ -47,7 +47,17 @@ export function PdfDownloadLink({
   const [error, setError] = useState('');
 
   function openPdf() {
-    window.open(pdfUrl, '_blank', 'noopener,noreferrer');
+    // Open via a programmatically-clicked anchor rather than window.open with
+    // a features string — the latter is treated as a popup and silently killed
+    // by popup blockers (the PDF just never opens). A real <a target="_blank">
+    // click is a legitimate user-initiated navigation that browsers allow.
+    const a = document.createElement('a');
+    a.href = pdfUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
 
   function logDownload(lead: Lead) {
